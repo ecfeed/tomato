@@ -3,12 +3,10 @@
 import sys
 import yaml
 from copy import deepcopy
-
-from typing import List
 from itertools import product
 
 class Choice:
-    def __init__(self, description:List):
+    def __init__(self, description):
         self.name = ''
         self.value = ''
         self.choices = []
@@ -67,7 +65,7 @@ class OutputParameter:
         
         
 class Parameter:
-    def __init__(self, description:List) -> None:
+    def __init__(self, description, global_params) -> None:
         self.name = ''
         self.choices = []
         self.parameters = []
@@ -86,7 +84,7 @@ class Parameter:
                         copy.name = name
                         self.parameters.append(copy)
                     else:
-                        self.parameters.append(Parameter(parameter))
+                        self.parameters.append(Parameter(parameter, global_params))
             if 'choices' in description:
                 self.choices = [Choice(choice) for choice in description['choices']]
                 
@@ -143,7 +141,7 @@ class Function:
                 copy.name = name
                 self.parameters.append(copy)
             else:
-                self.parameters.append(Parameter(parameter))
+                self.parameters.append(Parameter(parameter, global_params))
         
     def __str__(self):
         return f'{self.name}({[parameter.name for parameter in self.parameters]})'
@@ -180,7 +178,7 @@ class Model:
         try:
             with open(file, 'r') as f:
                 model = yaml.safe_load(f.read())
-                global_params = {parameter['parameter']: Parameter(parameter) for parameter in model['global parameters']}
+                global_params = {parameter['parameter']: Parameter(parameter, None) for parameter in model['global parameters']}
                 if 'functions' in model:
                     self.functions = [Function(global_params, function) for function in model['functions']]
                 else:
