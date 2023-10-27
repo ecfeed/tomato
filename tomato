@@ -195,19 +195,26 @@ class CartesianGenerator:
         self.cartesian_product = list(product(*choices))
         
     def export_csv(self, file):
-        with open(file, 'w') as f:
-            f.write(','.join(self.parameter_names) + '\n')
+        if file is None:
             for tuple in self.cartesian_product:
-                f.write(','.join(tuple) + '\n')
+                print(','.join(tuple))
+        else:
+            with open(file, 'w') as f:
+                f.write(','.join(self.parameter_names) + '\n')
+                for tuple in self.cartesian_product:
+                    f.write(','.join(tuple) + '\n')
         
     
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print('Usage: python ecr_feed <input_file> <output_file>')
+    if len(sys.argv) < 2 or len(sys.argv) > 3:
+        print('Usage: python ecr_feed <input_file> [<output_file>]')
         sys.exit(1)
         
     input_file = sys.argv[1]
-    output_file = sys.argv[2]
+    if len(sys.argv) == 3:
+        output_file = sys.argv[2]
+    else:
+        output_file = None
     
     model = Model(input_file)
     function = model.functions[0]

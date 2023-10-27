@@ -40,6 +40,14 @@ functions:
       choices:
       - China: CN
       - Japan: JP
+    - Africa:
+      choices:
+      - Egypt: EG
+      - Kenya: KE
+    - America:
+      choices:
+      - USA: US
+      - Canada: CA
   - output parameter: price
     default value: 0
 
@@ -50,5 +58,9 @@ functions:
   - constraint: "'delivery type' IS 'drone' AND 'country' IS 'Asia' => 'price' IS 'very high'"
   - constfaint: "'country' IS 'Africa' => 'delivery type' IS NOT 'drone'"
   - constraint: "'delivery type' IS 'teleport' => 'price' IS 'free'"
+  - constraint: "'item type' IN ['food', 'animal'] => 'delivery type' IS NOT 'courier'"
+  # delivery to Mary Jones is done only by drone
+  - constraint: "'person' IS 'Mary Jones' => 'delivery type' IS 'drone'"
   assignments:
   - assignment: "'item type' IS 'food' => 'price' = 10"
+  
