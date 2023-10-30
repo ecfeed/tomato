@@ -5,7 +5,9 @@ global parameters:
     choices: [John, Mary, Peter, Paul, George, Ringo]
   - parameter: surname
     choices: [Smith, Jones, Taylor, Brown, Williams, Wilson]
-  - parameter: age
+  # - linked parameter: age
+  #   linked to: Age
+  - parameter: Age
     parameters:
     - parameter: years
       choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -35,7 +37,7 @@ functions:
     - Europe:
       choices:
       - Poland:  PL
-      - Germany: DE
+      - Germany: DE      
     - Asia:
       choices:
       - China: CN
@@ -60,7 +62,9 @@ functions:
   - constraint: "'delivery type' IS 'teleport' => 'price' IS 'free'"
   - constraint: "'item type' IN ['food', 'animal'] => 'delivery type' IS NOT 'courier'"
   # delivery to Mary Jones is done only by drone
-  - constraint: "'person' IS 'Mary Jones' => 'delivery type' IS 'drone'"
+  - constraint: "'person::name' IS 'Mary' AND 'person::surmname' IS 'Jones' => 'delivery type' IS 'drone'"
+  # if agre is 3 years and 6 months, th price is low
+  - constraint: "'person::age::years' IS 3 AND 'person::age::months' IS 6 => 'price' IS 'low'"
   assignments:
   - assignment: "'item type' IS 'food' => 'price' = 10"
   

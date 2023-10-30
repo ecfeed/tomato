@@ -3,7 +3,9 @@
 import sys
 import yaml
 from copy import deepcopy
-from itertools import product
+from itertools import combinations, product
+from collections import Counter
+import random
 
 class Choice:
     def __init__(self, description):
@@ -61,7 +63,7 @@ class OutputParameter:
         return str(self)
     
     def get_choice_names(self):
-        return ['output parameter']
+        return [str(self.default_value)]
         
         
 class Parameter:
@@ -187,24 +189,90 @@ class Model:
             print(f'Error: unable to open file {file}: {e}')
             sys.exit(1)
 
-class CartesianGenerator:
-    def __init__(self, parameter_names, choices):
-        self.parameter_names = parameter_names
-        self.choices = choices
+def nwise(input_list, n, solver, assigner):
+    if n > len(input_list):
+        raise ValueError("n cannot be greater than the length of the input list")
+
+    def tuple_template(n, input_size):
+        if n > input_size:
+            raise ValueError("n cannot be greater than m")
+
+        for combination in combinations(range(input_size), n):
+            template = [False] * input_size
+            for index in combination:
+                template[index] = True
+            yield template
+
+    def tuples_covered(test_case, n, start=0, sublist=None):
+        if n > len(test_case):
+            raise ValueError("n cannot be greater than size of the test case")
         
-        self.cartesian_product = list(product(*choices))
+        def gen_sublists(arr, n, start=0, sublist=None):
+            if sublist is None:
+                sublist = [None] * len(arr)
+
+            if n == 0:
+                yield sublist[:]
+            else:
+                for i in range(start, len(arr)):
+                    sublist[i] = arr[i]
+                    yield from gen_sublists(arr, n - 1, i + 1, sublist)
+                    sublist[i] = None
+        result = list(gen_sublists(test_case, n))
+        return [tup for tup in result if tup.count(None) == len(tup) - n]
         
-    def export_csv(self, file):
-        if file is None:
-            for tuple in self.cartesian_product:
-                print(','.join(tuple))
+        
+    def tuples_from_template(input_list, template):
+        len_input_list = len(input_list)
+        if len_input_list != len(template):
+            raise ValueError("Input list and template must have the same length")
+
+        selected_indices = [i for i, is_selected in enumerate(template) if is_selected]
+
+        for combination in product(*[input_list[i] for i in selected_indices]):
+            result = [None] * len_input_list
+            for i, index in enumerate(selected_indices):
+                result[index] = combination[i]
+            yield result
+
+    def tuples(input_list, n):
+        if n > len(input_list):
+            raise ValueError("n cannot be greater than the length of the input list")
+
+        for template in tuple_template(n, len(input_list)):
+            yield from tuples_from_template(input_list, template)
+
+    tuples_to_cover = [tuple for tuple in tuples(input_list, n) if solver(tuple)]
+
+    def tuple_score(candidate):
+        if not solver(candidate):
+            return -1
         else:
-            with open(file, 'w') as f:
-                f.write(','.join(self.parameter_names) + '\n')
-                for tuple in self.cartesian_product:
-                    f.write(','.join(tuple) + '\n')
-        
+            covered_tuples = tuples_covered(candidate, n)
+            score = len([x for x in covered_tuples if x in tuples_to_cover]) 
+            return score
     
+    while len(tuples_to_cover) > 0:
+        for tuple_to_cover in tuples_to_cover:
+            indices = [i for i, x in enumerate(tuple_to_cover) if x is None]
+            random.shuffle(indices)
+            
+            constructed_test_case = tuple_to_cover.copy()
+            for i in indices:
+                best_candidate, best_score = None, -1
+                for value in input_list[i]:
+                    candidate = constructed_test_case.copy()
+                    candidate[i] = value                
+                    score = tuple_score(candidate)                    
+                    if score > best_score:
+                        best_candidate = candidate
+                        best_score = tuple_score(candidate)
+                        
+                constructed_test_case = best_candidate
+                tuples_to_cover[:] = [x for x in tuples_to_cover if x not in tuples_covered(constructed_test_case, n)]
+            assigner(constructed_test_case)
+            yield constructed_test_case
+
 if __name__ == '__main__':
     if len(sys.argv) < 2 or len(sys.argv) > 3:
         print('Usage: python ecr_feed <input_file> [<output_file>]')
@@ -218,8 +286,10 @@ if __name__ == '__main__':
     
     model = Model(input_file)
     function = model.functions[0]
-    print(function.get_generator_input())
+    params, choices = function.get_generator_input()
 
-    gen = CartesianGenerator(*function.get_generator_input())  
-    gen.export_csv(output_file)  
+    print(','.join(params))
+    for test in nwise(choices, 2, lambda x: True, lambda x: None):
+        print(','.join(test))
+    
     
