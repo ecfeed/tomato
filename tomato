@@ -132,6 +132,7 @@ class Parameter:
 
 class Function:
     def __init__(self, global_params, description):
+        self.name = description['function']
         self.parameters = []
         for parameter in description['parameters']:
             if 'output parameter' in parameter:
@@ -180,11 +181,18 @@ class Model:
         try:
             with open(file, 'r') as f:
                 model = yaml.safe_load(f.read())
-                global_params = {parameter['parameter']: Parameter(parameter, None) for parameter in model['global parameters']}
+                global_params = {}
+                if 'global parameters' in model:
+                    for parameter in model['global parameters']:
+                        global_params[parameter['parameter']] = Parameter(parameter, global_params)
+                        
                 if 'functions' in model:
-                    self.functions = [Function(global_params, function) for function in model['functions']]
+                    self.functions = {f.name : f for f in [Function(global_params, function) for function in model['functions']]}
+                elif 'function' in model:
+                    self.functions = {function.name : function for function in [Function(global_params, model['function'])]}
                 else:
-                    self.functions = [Function(global_params, model['function'])]
+                    print('Error: no function specified')
+                    sys.exit(1)
         except OSError as e:
             print(f'Error: unable to open file {file}: {e}')
             sys.exit(1)
@@ -193,17 +201,15 @@ def nwise(input_list, n, solver, assigner):
     if n > len(input_list):
         raise ValueError("n cannot be greater than the length of the input list")
 
-    def tuple_template(n, input_size):
-        if n > input_size:
-            raise ValueError("n cannot be greater than m")
+    def print_csv_line(line, output=sys.stdout):
+        cleaned_line = [str(element) if element is not None else ' ' for element in line]
+        output.write(','.join(cleaned_line) + '\n')
+        
+    def clean_line(output=sys.stdout):
+        output.write('\033[1A')
+        output.write('\033[K')
 
-        for combination in combinations(range(input_size), n):
-            template = [False] * input_size
-            for index in combination:
-                template[index] = True
-            yield template
-
-    def tuples_covered(test_case, n, start=0, sublist=None):
+    def tuples_covered(test_case, n):
         if n > len(test_case):
             raise ValueError("n cannot be greater than size of the test case")
         
@@ -221,21 +227,29 @@ def nwise(input_list, n, solver, assigner):
         result = list(gen_sublists(test_case, n))
         return [tup for tup in result if tup.count(None) == len(tup) - n]
         
-        
-    def tuples_from_template(input_list, template):
-        len_input_list = len(input_list)
-        if len_input_list != len(template):
-            raise ValueError("Input list and template must have the same length")
-
-        selected_indices = [i for i, is_selected in enumerate(template) if is_selected]
-
-        for combination in product(*[input_list[i] for i in selected_indices]):
-            result = [None] * len_input_list
-            for i, index in enumerate(selected_indices):
-                result[index] = combination[i]
-            yield result
-
     def tuples(input_list, n):
+        def tuple_template(n, input_size):
+            if n > input_size:
+                raise ValueError("n cannot be greater than m")
+
+            for combination in combinations(range(input_size), n):
+                template = [False] * input_size
+                for index in combination:
+                    template[index] = True
+                yield template
+
+        def tuples_from_template(input_list, template):
+            len_input_list = len(input_list)
+            if len_input_list != len(template):
+                raise ValueError("Input list and template must have the same length")
+
+            selected_indices = [i for i, is_selected in enumerate(template) if is_selected]
+
+            for combination in product(*[input_list[i] for i in selected_indices]):
+                result = [None] * len_input_list
+                for i, index in enumerate(selected_indices):
+                    result[index] = combination[i]
+                yield result
         if n > len(input_list):
             raise ValueError("n cannot be greater than the length of the input list")
 
@@ -258,11 +272,16 @@ def nwise(input_list, n, solver, assigner):
             random.shuffle(indices)
             
             constructed_test_case = tuple_to_cover.copy()
+            print_csv_line(constructed_test_case)
             for i in indices:
                 best_candidate, best_score = None, -1
-                for value in input_list[i]:
+                choices = input_list[i]
+                random.shuffle(choices)
+                for value in choices:
                     candidate = constructed_test_case.copy()
-                    candidate[i] = value                
+                    candidate[i] = value
+                    clean_line()
+                    print_csv_line(candidate)
                     score = tuple_score(candidate)                    
                     if score > best_score:
                         best_candidate = candidate
@@ -271,21 +290,26 @@ def nwise(input_list, n, solver, assigner):
                 constructed_test_case = best_candidate
                 tuples_to_cover[:] = [x for x in tuples_to_cover if x not in tuples_covered(constructed_test_case, n)]
             assigner(constructed_test_case)
+            clean_line()
             yield constructed_test_case
 
 if __name__ == '__main__':
     if len(sys.argv) < 2 or len(sys.argv) > 3:
-        print('Usage: python ecr_feed <input_file> [<output_file>]')
+        print('Usage: python3 tomato <input_file> [<\'function name\'>]')
         sys.exit(1)
         
     input_file = sys.argv[1]
+    
+    function_name = None
     if len(sys.argv) == 3:
-        output_file = sys.argv[2]
-    else:
-        output_file = None
+        function_name = sys.argv[2]
     
     model = Model(input_file)
-    function = model.functions[0]
+    if function_name is None:
+        function = list(model.functions.values())[0]
+    else:
+        function = model.functions[function_name]
+    
     params, choices = function.get_generator_input()
 
     print(','.join(params))
