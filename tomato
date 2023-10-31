@@ -65,7 +65,6 @@ class OutputParameter:
     def get_choice_names(self):
         return [str(self.default_value)]
         
-        
 class Parameter:
     def __init__(self, description, global_params) -> None:
         self.name = ''
@@ -128,7 +127,6 @@ class Parameter:
             return result
         else:
             return []
-        
 
 class Function:
     def __init__(self, global_params, description):
