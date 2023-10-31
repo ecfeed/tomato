@@ -1,0 +1,246 @@
+global parameters:
+- parameter: Age
+  parameters:
+  - parameter: years
+    choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  - parameter: months
+    choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+- parameter: Person
+  parameters:
+  - parameter: name
+    choices: [John, Mary, Peter, Paul, George, Ringo]
+  - parameter: surname
+    choices: [Smith, Jones, Taylor, Brown, Williams, Wilson]
+  - linked parameter: age
+    linked to: Age
+- parameter: ten
+  choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+- parameter: five
+  choices: [1, 2, 3, 4, 5]
+- parameter: two
+  choices: [1, 2]
+
+functions:
+- function: performance test 10x10 parameters
+  parameters:
+  - linked parameter: one
+    linked to: ten
+  - linked parameter: two
+    linked to: ten
+  - linked parameter: three
+    linked to: ten
+  - linked parameter: four
+    linked to: ten
+  - linked parameter: five
+    linked to: ten
+  - linked parameter: six
+    linked to: ten
+  - linked parameter: seven
+    linked to: ten
+  - linked parameter: eight
+    linked to: ten
+  - linked parameter: nine
+    linked to: ten
+  - linked parameter: ten
+    linked to: ten
+
+- function: performance test 20x5 parameters
+  parameters:
+  - linked parameter: one
+    linked to: five
+  - linked parameter: two
+    linked to: five
+  - linked parameter: three
+    linked to: five
+  - linked parameter: four
+    linked to: five
+  - linked parameter: five
+    linked to: five
+  - linked parameter: six
+    linked to: five
+  - linked parameter: seven
+    linked to: five
+  - linked parameter: eight
+    linked to: five
+  - linked parameter: nine
+    linked to: five
+  - linked parameter: ten
+    linked to: five
+  - linked parameter: eleven
+    linked to: five
+  - linked parameter: twelve
+    linked to: five
+  - linked parameter: thirteen
+    linked to: five
+  - linked parameter: fourteen
+    linked to: five
+  - linked parameter: fifteen
+    linked to: five
+  - linked parameter: sixteen
+    linked to: five
+  - linked parameter: seventeen
+    linked to: five
+  - linked parameter: eighteen
+    linked to: five
+  - linked parameter: nineteen
+    linked to: five
+  - linked parameter: twenty
+    linked to: five
+
+- function: performance test 100x2 parameters
+  parameters:
+  - linked parameter: one
+    linked to: two
+  - linked parameter: two
+    linked to: two
+  - linked parameter: three
+    linked to: two
+  - linked parameter: four
+    linked to: two
+  - linked parameter: five
+    linked to: two
+  - linked parameter: six
+    linked to: two
+  - linked parameter: seven
+    linked to: two
+  - linked parameter: eight
+    linked to: two
+  - linked parameter: nine
+    linked to: two
+  - linked parameter: ten
+    linked to: two
+  - linked parameter: eleven
+    linked to: two
+  - linked parameter: twelve
+    linked to: two
+  - linked parameter: thirteen
+    linked to: two
+  - linked parameter: fourteen
+    linked to: two
+  - linked parameter: fifteen
+    linked to: two
+  - linked parameter: sixteen
+    linked to: two
+  - linked parameter: seventeen
+    linked to: two
+  - linked parameter: eighteen
+    linked to: two
+  - linked parameter: nineteen
+    linked to: two
+  - linked parameter: twenty
+    linked to: two
+  - linked parameter: twenty one
+    linked to: two
+  - linked parameter: twenty two
+    linked to: two
+  - linked parameter: twenty three
+    linked to: two
+  - linked parameter: twenty four
+    linked to: two
+  - linked parameter: twenty five
+    linked to: two
+  - linked parameter: twenty six
+    linked to: two
+  - linked parameter: twenty seven
+    linked to: two
+  - linked parameter: twenty eight
+    linked to: two
+  - linked parameter: twenty nine
+    linked to: two
+  - linked parameter: thirty
+    linked to: two
+  - linked parameter: thirty one
+    linked to: two
+  - linked parameter: thirty two
+    linked to: two
+  - linked parameter: thirty three
+    linked to: two
+  - linked parameter: thirty four
+    linked to: two
+  - linked parameter: thirty five
+    linked to: two
+  - linked parameter: thirty six
+    linked to: two
+  - linked parameter: thirty seven
+    linked to: two
+  - linked parameter: thirty eight
+    linked to: two
+  - linked parameter: thirty nine
+    linked to: two
+  - linked parameter: forty
+    linked to: two
+  - linked parameter: forty one
+    linked to: two
+  - linked parameter: forty two
+    linked to: two
+  - linked parameter: forty three
+    linked to: two
+  - linked parameter: forty four
+    linked to: two
+  - linked parameter: forty five
+    linked to: two
+  - linked parameter: forty six
+    linked to: two
+  - linked parameter: forty seven
+    linked to: two
+  - linked parameter: forty eight
+    linked to: two
+  - linked parameter: forty nine
+    linked to: two
+  - linked parameter: fifty
+    linked to: two
+
+
+- function: basket checkout
+  parameters:
+  - linked parameter: person
+    linked to: Person
+  - parameter: item type
+    choices: 
+    - food:
+    - vehicle:
+    - animal:
+      choices: [a goat, a cow, a sheep, a pig, an elephant]
+  - parameter: delivery type
+    choices:
+    - standard:
+    - express:
+    - courier:
+    - drone:
+    - teleport:
+  - parameter: country
+    choices:
+    - Europe:
+      choices:
+      - Poland:  PL
+      - Germany: DE      
+    - Asia:
+      choices:
+      - China: CN
+      - Japan: JP
+    - Africa:
+      choices:
+      - Egypt: EG
+      - Kenya: KE
+    - America:
+      choices:
+      - USA: US
+      - Canada: CA
+  - output parameter: price
+    default value: 0
+
+  constraints:
+  - constraint: "'item type' IS 'vehicle' => 'price' IS 'high'"
+  - constraint: "('item type' IS 'food' OR 'item type' IS 'a goat') => price >= 50 "
+  #constraint that says that sending to Asia by drone results in very high price
+  - constraint: "'delivery type' IS 'drone' AND 'country' IS 'Asia' => 'price' IS 'very high'"
+  - constfaint: "'country' IS 'Africa' => 'delivery type' IS NOT 'drone'"
+  - constraint: "'delivery type' IS 'teleport' => 'price' IS 'free'"
+  - constraint: "'item type' IN ['food', 'animal'] => 'delivery type' IS NOT 'courier'"
+  # delivery to Mary Jones is done only by drone
+  - constraint: "'person::name' IS 'Mary' AND 'person::surmname' IS 'Jones' => 'delivery type' IS 'drone'"
+  # if agre is 3 years and 6 months, th price is low
+  - constraint: "'person::age::years' IS 3 AND 'person::age::months' IS 6 => 'price' IS 'low'"
+  assignments:
+  - assignment: "'item type' IS 'food' => 'price' = 10"
+  
