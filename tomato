@@ -215,11 +215,7 @@ def nwise(input_list, n, solver, assigner):
         
         combinations_ = combinations(indices, n)
         def uncompress(indices):
-            result = [None] * len(test_case)
-            for i in range(len(result)):
-                if i in indices:
-                    result[i] = test_case[i]
-            return result
+            return [test_case[i] if i in indices else None for i in range(len(test_case))]
         yield from [uncompress(test) for test in combinations_]
         
     def tuples(input_list, n):
