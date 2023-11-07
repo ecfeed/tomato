@@ -1,0 +1,113 @@
+* {
+  /* border: 1px solid black; */
+}
+
+@keyframes choiceActionFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+.choice {
+  border: 1px solid black;
+  border-radius: 10px;
+  margin: 5px;
+  cursor: default;
+  font-size: 20px;
+
+  .main {
+    text-align: left;
+    display: flex;
+
+    .markers {
+      border-right: 1px solid black;
+      display: absolute;
+      text-align: center;
+      padding: 0px 5px;
+    }
+
+    .markers_horizontal {
+      display: flex;
+    }
+
+    .markers_vertical {
+      width: 15px;
+    }
+
+    .marker {
+      min-width: 15px;
+      min-height: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .disabled {
+      text-decoration: line-through;
+    }
+    .folded {
+      margin: auto;
+      text-align: center;
+    }
+
+    .expanded {
+      padding: 0px 5px;
+      width: 100%;
+
+      .choice_key {
+        /* The text should be at the top of the component */
+        vertical-align: top;
+        width: 30%;
+        font-weight: bold;
+      }
+
+      .choice_value {
+        /* Forces text into a straight line and does not wrap to the next line. */
+        white-space: nowrap;
+        /* Causes text to be contained within the parent container. */
+        overflow: hidden;
+        /* How hidden overflow content is signaled to users. */
+        text-overflow: ellipsis;
+        /* Doesn't work without this property. */
+        max-width: 0px;
+        /* Other */
+        vertical-align: top;
+      }
+    }
+  }
+
+  .nested {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    border-top: 1px solid black;
+  }
+
+  .options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    animation: 1s choiceActionFadeIn;
+    animation-fill-mode: forwards;
+    visibility: hidden;
+
+    .option {
+      width: 100%;
+      text-align: center;
+      border-top: 1px solid black;
+    }
+
+    .left {
+      border-right: 1px solid black;
+    }
+
+    .right {
+      border-left: 1px solid black;
+    }
+  }
+}
