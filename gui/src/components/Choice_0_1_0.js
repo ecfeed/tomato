@@ -2,6 +2,13 @@ import { useEffect, useReducer } from "react";
 import "./Choice_0_1_0.css";
 import Tooltip from "./Tooltip_0_1_0";
 
+function getSampleChoice() {
+  return {
+    name: crypto.randomUUID(4),
+    value: crypto.randomUUID(),
+  };
+}
+
 const initialState = {
   structure: {},
   ui: {
@@ -18,6 +25,26 @@ function reducer(state, action) {
       return { ...state, ui: { ...state.ui, isFolded: !state.ui.isFolded } };
     case "setIsControlled":
       return { ...state, ui: { ...state.ui, isControlled: action.payload } };
+    case "mutateChoice":
+      const name = action.payload.name;
+
+      if (!name) {
+        throw new Error("The name of the choice is undefined!");
+      }
+
+      const structure = state.structure;
+
+      if (!structure.nested) {
+        structure.nested = [action.payload];
+      } else {
+        if (structure.nested.filter(e => e.name === name).length > 0) {
+          structure.nested = structure.nested.map(e => e.name === name ? action.payload : e);
+        } else {
+          structure.nested.push(action.payload);
+        }
+      }
+
+      return { ...state, structure: structure };
     default:
       throw new Error("not working");
   }
@@ -43,7 +70,10 @@ export default function Choice({ structure, handleParentClean, handleParentUpdat
   };
 
   const handleOnClickAdd = () => {
-    alert("Adding a new choice.");
+    if (handleParentUpdate) {
+    } else {
+      dispatch({ type: "mutateChoice", payload: getSampleChoice() });
+    }
   };
 
   const handleOnClickRemove = () => {
