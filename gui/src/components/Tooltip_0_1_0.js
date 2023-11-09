@@ -1,4 +1,4 @@
-import "./Tooltip_0_1_0.css";
+import styles from './Tooltip_0_1_0.module.css';
 import { useState } from "react";
 
 export default function Tooltip({ children, info }) {
@@ -14,9 +14,9 @@ export default function Tooltip({ children, info }) {
   };
 
   return (
-    <div className="tooltip" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div className={styles.tooltip} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       {children}
-      {isVisible && <div className="info">{ info }</div>}
+      {isVisible && <div className={styles.info}>{ info }</div>}
     </div>
   );
 }

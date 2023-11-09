@@ -88,14 +88,15 @@ export default function ChoiceDriver() {
   return (
     <>
       <h1>Choices</h1>
-      <h2>Nested</h2>
-      <div style={{ width: "250px" }}>
-        <Choice structure={choiceAbstract} />
-      </div>
       <h2>Simple</h2>
       <div style={{ width: "250px" }}>
         <Choice structure={choiceSimple} />
       </div>
+      <h2>Nested</h2>
+      <div style={{ width: "250px" }}>
+        <Choice structure={choiceAbstract} />
+      </div>
+
       <h2>Long value</h2>
       <div style={{ width: "250px" }}>
         <Choice structure={choiceLongValue} />

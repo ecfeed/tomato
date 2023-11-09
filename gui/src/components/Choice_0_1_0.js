@@ -4,7 +4,7 @@ import Tooltip from "./Tooltip_0_1_0";
 
 function getSampleChoice() {
   return {
-    name: crypto.randomUUID(4),
+    name: crypto.randomUUID(),
     value: crypto.randomUUID(),
   };
 }
@@ -23,34 +23,68 @@ function reducer(state, action) {
       return { ...state, structure: action.payload };
     case "toggleIsFolded":
       return { ...state, ui: { ...state.ui, isFolded: !state.ui.isFolded } };
+    case "setIsFolded":
+      return { ...state, ui: { ...state.ui, isFolded: action.payload } };
     case "setIsControlled":
       return { ...state, ui: { ...state.ui, isControlled: action.payload } };
     case "mutateChoice":
-      const name = action.payload.name;
+      const mutateName = action.payload.name;console.log('tera')
 
-      if (!name) {
+      if (!mutateName) {
         throw new Error("The name of the choice is undefined!");
       }
 
-      const structure = state.structure;
+      const mutateStructure = state.structure;
 
-      if (!structure.nested) {
-        structure.nested = [action.payload];
+      if (!mutateStructure.nested) {
+        mutateStructure.nested = [action.payload];
       } else {
-        if (structure.nested.filter(e => e.name === name).length > 0) {
-          structure.nested = structure.nested.map(e => e.name === name ? action.payload : e);
+        if (mutateStructure.nested.filter((e) => e.name === mutateName).length > 0) {
+          console.log('indeed')
+          mutateStructure.nested = mutateStructure.nested.map((e) =>
+            e.name === mutateName ? action.payload : e
+          );
         } else {
-          structure.nested.push(action.payload);
+          mutateStructure.nested.push(action.payload);
         }
       }
 
-      return { ...state, structure: structure };
+      return { ...state, ui: { ...state.ui, isFolded: false }, structure: mutateStructure };
+    case "deleteChoice":
+      const deleteName = action.payload.name;
+
+      if (!deleteName) {
+        throw new Error("The name of the choice is undefined!");
+      }
+
+      const deleteStructure = state.structure;
+
+      if (!deleteStructure.nested) {
+        throw new Error("The choice is not abstract!");
+      } else {
+        deleteStructure.nested = deleteStructure.nested.filter((e) => e.name !== deleteName);
+      }
+
+      return { ...state, structure: deleteStructure };
+    case "toggleIsDisabled":
+      const disabled = state.structure?.meta?.disabled;
+
+      return {
+        ...state,
+        structure: { ...state.structure, meta: { ...state.structure.meta, disabled: !disabled } },
+      };
+
     default:
       throw new Error("not working");
   }
 }
 
-export default function Choice({ structure, handleParentClean, handleParentUpdate }) {
+export default function Choice({
+  structure,
+  handleParentClean,
+  handleParentUpdate,
+  dispatchParent,
+}) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const { name, value, meta, nested } = state.structure;
@@ -63,25 +97,32 @@ export default function Choice({ structure, handleParentClean, handleParentUpdat
 
   useEffect(() => {
     dispatch({ type: "reload", payload: structure });
-  }, [structure]);
+  }, [structure])
+
+  // useEffect(() => {
+  //   if (dispatchParent && Object.keys(state.structure).length > 0) {
+  //     dispatchParent({ type: "mutateChoice", payload: state.structure });
+  //   }
+  // }, [dispatchParent, state.structure, state.nested]);
 
   const handleOnClickFold = () => {
     dispatch({ type: "toggleIsFolded" });
   };
 
   const handleOnClickAdd = () => {
-    if (handleParentUpdate) {
-    } else {
       dispatch({ type: "mutateChoice", payload: getSampleChoice() });
-    }
   };
 
   const handleOnClickRemove = () => {
-    alert("Removing the choice.");
+    if (dispatchParent) {
+      dispatchParent({ type: "deleteChoice", payload: state.structure });
+    } else {
+      alert("The top-level component cannot be removed!");
+    }
   };
 
-  const handleOnClickDisable = () => {
-    alert("Disabling the choice");
+  const handleOnClickDisable = () => {console.log('A')
+    dispatch({ type: "toggleIsDisabled" });
   };
 
   const handleMouseEnter = () => {
@@ -120,13 +161,17 @@ export default function Choice({ structure, handleParentClean, handleParentUpdat
       </div>
       <div className="">
         <Options
-          isFolded={isFolded}
           show={isControlled}
           handleAdd={handleOnClickAdd}
           handleRemove={handleOnClickRemove}
           handleDisable={handleOnClickDisable}
         />
-        <NestedChoices isFolded={isFolded} nested={nested} clean={handleCancelView} />
+        <NestedChoices
+          dispatch={dispatch}
+          isFolded={isFolded}
+          nested={nested}
+          clean={handleCancelView}
+        />
       </div>
     </div>
   );
@@ -141,40 +186,47 @@ function View({ isDisabled, isFolded, isAbstract, name, value, labels }) {
 }
 
 function ViewSimple({ isDisabled, name }) {
-  return <div className={`folded ${isDisabled ? "disabled" : ""}`}>{name}</div>;
+  return (
+    <div className={`folded ${isDisabled ? "disabled" : ""}`}>
+      <Tooltip info={name}>{name}</Tooltip>
+    </div>
+  );
 }
 
 function ViewExtended({ isDisabled, name, value, labels }) {
   return (
-    <table className="expanded">
-      <ViewExtendedRow isDisabled={isDisabled} name="name">
+    <div className="expanded">
+      <ViewExtendedName isDisabled={isDisabled}>
         <Tooltip info={name}>{name}</Tooltip>
-      </ViewExtendedRow>
+      </ViewExtendedName>
 
-      <ViewExtendedRow isDisabled={isDisabled} name="value">
+      <ViewExtendedValue>
         <Tooltip info={value}>{value}</Tooltip>
-      </ViewExtendedRow>
+      </ViewExtendedValue>
 
       {labels && (
-        <ViewExtendedRow isDisabled={isDisabled} name="name">
+        <ViewExtendedLabels>
           {labels.map((e) => (
             <Tooltip info={e}>
               <div>- {e}</div>
             </Tooltip>
           ))}
-        </ViewExtendedRow>
+        </ViewExtendedLabels>
       )}
-    </table>
+    </div>
   );
 }
 
-function ViewExtendedRow({ isDisabled, name, children }) {
-  return (
-    <tr>
-      <td className="choice_key">{name}</td>
-      <td className={`choice_value ${isDisabled ? "disabled" : ""}`}>{children}</td>
-    </tr>
-  );
+function ViewExtendedName({ isDisabled, children }) {
+  return <div className={`choice_name ${isDisabled ? "disabled" : ""}`}>{children}</div>;
+}
+
+function ViewExtendedValue({ children }) {
+  return <div className="choice_value">{children}</div>;
+}
+
+function ViewExtendedLabels({ children }) {
+  return <div className="choice_labels">{children}</div>;
 }
 
 function Sidebar({ isFolded, isRandom, isAbstract, descriptions }) {
@@ -227,7 +279,7 @@ function SidebarDescriptions({ descriptions }) {
   );
 }
 
-function NestedChoices({ isFolded, nested, clean }) {
+function NestedChoices({ dispatch, isFolded, nested, clean }) {
   if (isFolded || !nested || nested?.length === 0) {
     return null;
   }
@@ -235,14 +287,14 @@ function NestedChoices({ isFolded, nested, clean }) {
   return (
     <div className="nested">
       {nested.map((e) => (
-        <Choice structure={e} handleParentClean={clean} key={e.name} />
+        <Choice structure={e} handleParentClean={clean} dispatchParent={dispatch} key={e.name} />
       ))}
     </div>
   );
 }
 
-function Options({ isFolded, show, handleAdd, handleRemove, handleDisable }) {
-  if (!show || isFolded) {
+function Options({ show, handleAdd, handleRemove, handleDisable }) {
+  if (!show) {
     return null;
   }
 
