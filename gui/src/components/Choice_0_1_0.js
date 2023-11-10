@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from "react";
-import "./Choice_0_1_0.css";
 import Tooltip from "./Tooltip_0_1_0";
+import "./Choice_0_1_0.css";
 
 function getSampleChoice() {
   return {
@@ -17,73 +17,87 @@ const initialState = {
   },
 };
 
+const abstractChoiceAdd = (reference, choice) => {
+  if (!choice.name) {
+    throw new Error("The name of the choice is undefined!");
+  }
+
+  const structure = reference;
+
+  if (!structure.nested) {
+    structure.nested = [choice];
+  } else {
+    if (structure.nested.filter((e) => e.name === choice.name).length > 0) {
+      throw new Error("A choice with the specified name already exists!");
+    } else {
+      structure.nested.push(choice);
+    }
+  }
+
+  return structure;
+};
+
+const abstractChoiceDelete = (reference, choice) => {
+  if (!choice.name) {
+    throw new Error("The name of the choice is undefined!");
+  }
+
+  const structure = reference;
+
+  if (!structure.nested) {
+    throw new Error("The choice is not abstract!");
+  } else {
+    structure.nested = structure.nested.filter((e) => e.name !== choice.name);
+  }
+
+  return structure;
+};
+
+const abstractChoiceUpdate = (reference, choice) => {
+  if (!choice.name) {
+    throw new Error("The name of the choice is undefined!");
+  }
+
+  const structure = reference;
+
+  if (!structure.nested) {
+    throw new Error("The choice is not abstract!");
+  } else {
+    if (structure.nested.filter((e) => e.name === choice.name).length > 0) {
+      structure.nested = structure.nested.map((e) => (e.name === choice.name ? choice : e));
+    } else {
+      throw new Error("A choice with the specified name already exists!");
+    }
+  }
+
+  return structure;
+};
+
+const toggleDisabled = (choice) => {
+  return { ...choice, meta: { ...choice.meta, disabled: !choice.meta?.disabled } };
+};
+
 function reducer(state, action) {
   switch (action.type) {
     case "reload":
       return { ...state, structure: action.payload };
-    case "toggleIsFolded":
-      return { ...state, ui: { ...state.ui, isFolded: !state.ui.isFolded } };
     case "setIsFolded":
       return { ...state, ui: { ...state.ui, isFolded: action.payload } };
     case "setIsControlled":
       return { ...state, ui: { ...state.ui, isControlled: action.payload } };
-    case "mutateChoice":
-      const mutateName = action.payload.name;console.log('tera')
-
-      if (!mutateName) {
-        throw new Error("The name of the choice is undefined!");
-      }
-
-      const mutateStructure = state.structure;
-
-      if (!mutateStructure.nested) {
-        mutateStructure.nested = [action.payload];
-      } else {
-        if (mutateStructure.nested.filter((e) => e.name === mutateName).length > 0) {
-          console.log('indeed')
-          mutateStructure.nested = mutateStructure.nested.map((e) =>
-            e.name === mutateName ? action.payload : e
-          );
-        } else {
-          mutateStructure.nested.push(action.payload);
-        }
-      }
-
-      return { ...state, ui: { ...state.ui, isFolded: false }, structure: mutateStructure };
-    case "deleteChoice":
-      const deleteName = action.payload.name;
-
-      if (!deleteName) {
-        throw new Error("The name of the choice is undefined!");
-      }
-
-      const deleteStructure = state.structure;
-
-      if (!deleteStructure.nested) {
-        throw new Error("The choice is not abstract!");
-      } else {
-        deleteStructure.nested = deleteStructure.nested.filter((e) => e.name !== deleteName);
-      }
-
-      return { ...state, structure: deleteStructure };
-    case "toggleIsDisabled":
-      const disabled = state.structure?.meta?.disabled;
-
-      return {
-        ...state,
-        structure: { ...state.structure, meta: { ...state.structure.meta, disabled: !disabled } },
-      };
+    case "toggleIsFolded":
+      return { ...state, ui: { ...state.ui, isFolded: !state.ui.isFolded } };
 
     default:
-      throw new Error("not working");
+      throw new Error("Unknown action!");
   }
 }
 
 export default function Choice({
   structure,
-  handleParentClean,
-  handleParentUpdate,
-  dispatchParent,
+  parentUpdate,
+  parentCancelView,
+  parentAbstractChoiceRemove,
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -97,38 +111,58 @@ export default function Choice({
 
   useEffect(() => {
     dispatch({ type: "reload", payload: structure });
-  }, [structure])
-
-  // useEffect(() => {
-  //   if (dispatchParent && Object.keys(state.structure).length > 0) {
-  //     dispatchParent({ type: "mutateChoice", payload: state.structure });
-  //   }
-  // }, [dispatchParent, state.structure, state.nested]);
+  }, [structure]);
 
   const handleOnClickFold = () => {
     dispatch({ type: "toggleIsFolded" });
   };
 
-  const handleOnClickAdd = () => {
-      dispatch({ type: "mutateChoice", payload: getSampleChoice() });
-  };
+  const handleOnClickDisable = () => {
+    let candidate = toggleDisabled(state.structure);
 
-  const handleOnClickRemove = () => {
-    if (dispatchParent) {
-      dispatchParent({ type: "deleteChoice", payload: state.structure });
+    if (parentUpdate) {
+      parentUpdate(candidate);
     } else {
-      alert("The top-level component cannot be removed!");
+      dispatch({ type: "reload", payload: candidate });
     }
   };
 
-  const handleOnClickDisable = () => {console.log('A')
-    dispatch({ type: "toggleIsDisabled" });
+  const handleAbstractChoiceAdd = () => {
+    let candidate = abstractChoiceAdd(state.structure, getSampleChoice());
+
+    dispatch({ type: "reload", payload: candidate });
+    dispatch({ type: "setIsFolded", payload: false });
+  };
+
+  const handleAbstractChoiceRemove = (choice) => {
+    let candidate = choice ? abstractChoiceDelete(state.structure, choice) : state.structure;
+
+    if (parentUpdate) {
+      if (choice === null) {
+        parentAbstractChoiceRemove(candidate);
+      } else {
+        parentUpdate(candidate);
+      }
+    } else {
+      dispatch({ type: "reload", payload: candidate });
+    }
+  };
+
+  const handleAbstractChoiceUpdate = (choice) => {
+    let candidate = abstractChoiceUpdate(state.structure, choice);
+
+    if (parentUpdate) {
+      parentUpdate(state.structure);
+    } else {
+      dispatch({ type: "reload", payload: candidate });
+    }
   };
 
   const handleMouseEnter = () => {
-    if (handleParentClean) {
-      handleParentClean();
+    if (parentCancelView) {
+      parentCancelView();
     }
+
     dispatch({ type: "setIsControlled", payload: true });
   };
 
@@ -162,15 +196,16 @@ export default function Choice({
       <div className="">
         <Options
           show={isControlled}
-          handleAdd={handleOnClickAdd}
-          handleRemove={handleOnClickRemove}
+          handleAdd={handleAbstractChoiceAdd}
           handleDisable={handleOnClickDisable}
+          handleRemove={() => handleAbstractChoiceRemove(null)}
         />
         <NestedChoices
-          dispatch={dispatch}
-          isFolded={isFolded}
           nested={nested}
+          isFolded={isFolded}
           clean={handleCancelView}
+          parentUpdate={handleAbstractChoiceUpdate}
+          parentAbstractChoiceRemove={handleAbstractChoiceRemove}
         />
       </div>
     </div>
@@ -279,7 +314,13 @@ function SidebarDescriptions({ descriptions }) {
   );
 }
 
-function NestedChoices({ dispatch, isFolded, nested, clean }) {
+function NestedChoices({
+  parentAbstractChoiceRemove,
+  parentUpdate,
+  isFolded,
+  nested,
+  clean,
+}) {
   if (isFolded || !nested || nested?.length === 0) {
     return null;
   }
@@ -287,7 +328,13 @@ function NestedChoices({ dispatch, isFolded, nested, clean }) {
   return (
     <div className="nested">
       {nested.map((e) => (
-        <Choice structure={e} handleParentClean={clean} dispatchParent={dispatch} key={e.name} />
+        <Choice
+          structure={e}
+          parentCancelView={clean}
+          parentAbstractChoiceRemove={parentAbstractChoiceRemove}
+          parentUpdate={parentUpdate}
+          key={e.name}
+        />
       ))}
     </div>
   );
