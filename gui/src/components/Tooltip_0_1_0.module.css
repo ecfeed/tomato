@@ -4,6 +4,7 @@
 }
 
 .info {
+  z-index: 999;
   position: absolute;
   padding: 5px;
   margin-left: 10px;

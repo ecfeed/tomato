@@ -13,6 +13,7 @@ const initialState = {
   structure: {},
   ui: {
     isFolded: true,
+    isOnRightSidebar: false,
     isControlled: false,
   },
 };
@@ -85,6 +86,10 @@ function reducer(state, action) {
       return { ...state, ui: { ...state.ui, isFolded: action.payload } };
     case "setIsControlled":
       return { ...state, ui: { ...state.ui, isControlled: action.payload } };
+    case "setIsOnRightSidebar":
+      return { ...state, ui: { ...state.ui, isOnRightSidebar: action.payload } };
+    case "setIsOnLeftSidebar":
+      return { ...state, ui: { ...state.ui, isOnLeftSidebar: action.payload } };
     case "toggleIsFolded":
       return { ...state, ui: { ...state.ui, isFolded: !state.ui.isFolded } };
 
@@ -103,7 +108,7 @@ export default function Choice({
 
   const { name, value, meta, nested } = state.structure;
   const { descriptions, labels } = state.structure.meta || {};
-  const { isFolded, isControlled } = state.ui;
+  const { isFolded, isControlled, isOnRightSidebar, isOnLeftSidebar } = state.ui;
 
   const isRandomized = meta?.randomized;
   const isDisabled = meta?.disabled;
@@ -134,15 +139,19 @@ export default function Choice({
     dispatch({ type: "setIsFolded", payload: false });
   };
 
+  const handleAbstractChoiceRemoveInitial = () => {
+    if (parentUpdate) {
+      parentAbstractChoiceRemove(state.structure);
+    } else {
+      alert("Cannot remove the top-level element!");
+    }
+  };
+
   const handleAbstractChoiceRemove = (choice) => {
-    let candidate = choice ? abstractChoiceDelete(state.structure, choice) : state.structure;
+    let candidate = abstractChoiceDelete(state.structure, choice);
 
     if (parentUpdate) {
-      if (choice === null) {
-        parentAbstractChoiceRemove(candidate);
-      } else {
-        parentUpdate(candidate);
-      }
+      parentUpdate(candidate);
     } else {
       dispatch({ type: "reload", payload: candidate });
     }
@@ -158,7 +167,7 @@ export default function Choice({
     }
   };
 
-  const handleMouseEnter = () => {
+  const handleOptionsMouseEnter = () => {
     if (parentCancelView) {
       parentCancelView();
     }
@@ -166,8 +175,26 @@ export default function Choice({
     dispatch({ type: "setIsControlled", payload: true });
   };
 
-  const handleMouseLeave = () => {
+  const handleOptionsMouseLeave = () => {
     dispatch({ type: "setIsControlled", payload: false });
+  };
+
+  const handleRightSidebarMouseEnter = () => {
+    dispatch({ type: "setIsOnRightSidebar", payload: true });
+  };
+
+  const handleRightSidebarMouseLeave = () => {
+    dispatch({ type: "setIsOnRightSidebar", payload: false });
+  };
+
+  const handleLeftSidebarMouseEnter = () => {
+    console.log("in");
+    dispatch({ type: "setIsOnLeftSidebar", payload: true });
+  };
+
+  const handleLeftSidebarMouseLeave = () => {
+    console.log("out");
+    dispatch({ type: "setIsOnLeftSidebar", payload: false });
   };
 
   const handleCancelView = () => {
@@ -175,22 +202,25 @@ export default function Choice({
   };
 
   return (
-    <div className="choice" onMouseLeave={handleMouseLeave}>
-      <div className="main" onMouseOver={handleMouseEnter} onClick={handleOnClickFold}>
-        <Sidebar
+    <div
+      className={`choice ${isDisabled ? "disabled" : "enabled"}`}
+      onMouseLeave={handleOptionsMouseLeave}>
+      <div className="main" onMouseOver={handleOptionsMouseEnter} onClick={handleOnClickFold}>
+        <SidebarLeft
           isFolded={isFolded}
           isRandom={isRandomized}
           isAbstract={isAbstract}
           isDisabled={isDisabled}
           descriptions={descriptions}
+          handleMouseEnter={handleLeftSidebarMouseEnter}
+          handleMouseLeave={handleLeftSidebarMouseLeave}
         />
-        <View
+        <View isFolded={isFolded} isAbstract={isAbstract} name={name} value={value} />
+        <SidebarRight
           isFolded={isFolded}
-          isAbstract={isAbstract}
-          isDisabled={isDisabled}
-          name={name}
-          value={value}
           labels={labels}
+          handleMouseEnter={handleRightSidebarMouseEnter}
+          handleMouseLeave={handleRightSidebarMouseLeave}
         />
       </div>
       <div className="">
@@ -198,7 +228,14 @@ export default function Choice({
           show={isControlled}
           handleAdd={handleAbstractChoiceAdd}
           handleDisable={handleOnClickDisable}
-          handleRemove={() => handleAbstractChoiceRemove(null)}
+          handleRemove={handleAbstractChoiceRemoveInitial}
+          isOnRightSidebar={isOnRightSidebar}
+          isOnLeftSidebar={isOnLeftSidebar}
+        />
+        <Labels
+          labels={labels}
+          isOnRightSidebar={isOnRightSidebar}
+          isOnLeftSidebar={isOnLeftSidebar}
         />
         <NestedChoices
           nested={nested}
@@ -212,68 +249,80 @@ export default function Choice({
   );
 }
 
-function View({ isDisabled, isFolded, isAbstract, name, value, labels }) {
+function View({ isFolded, isAbstract, name, value }) {
   if (isFolded || isAbstract) {
-    return <ViewSimple isDisabled={isDisabled} name={name} />;
+    return <ViewSimple name={name} />;
   }
 
-  return <ViewExtended isDisabled={isDisabled} name={name} value={value} labels={labels} />;
+  return <ViewExtended name={name} value={value} />;
 }
 
-function ViewSimple({ isDisabled, name }) {
+function ViewSimple({ name }) {
   return (
-    <div className={`folded ${isDisabled ? "disabled" : ""}`}>
+    <div className="folded">
       <Tooltip info={name}>{name}</Tooltip>
     </div>
   );
 }
 
-function ViewExtended({ isDisabled, name, value, labels }) {
+function ViewExtended({ name, value }) {
   return (
     <div className="expanded">
-      <ViewExtendedName isDisabled={isDisabled}>
+      <ViewExtendedName>
         <Tooltip info={name}>{name}</Tooltip>
       </ViewExtendedName>
 
       <ViewExtendedValue>
         <Tooltip info={value}>{value}</Tooltip>
       </ViewExtendedValue>
-
-      {labels && (
-        <ViewExtendedLabels>
-          {labels.map((e) => (
-            <Tooltip info={e}>
-              <div>- {e}</div>
-            </Tooltip>
-          ))}
-        </ViewExtendedLabels>
-      )}
     </div>
   );
 }
 
-function ViewExtendedName({ isDisabled, children }) {
-  return <div className={`choice_name ${isDisabled ? "disabled" : ""}`}>{children}</div>;
+function ViewExtendedName({ children }) {
+  return <div className="choice_name">{children}</div>;
 }
 
 function ViewExtendedValue({ children }) {
   return <div className="choice_value">{children}</div>;
 }
 
-function ViewExtendedLabels({ children }) {
-  return <div className="choice_labels">{children}</div>;
-}
-
-function Sidebar({ isFolded, isRandom, isAbstract, descriptions }) {
+function SidebarLeft({
+  isFolded,
+  isRandom,
+  isAbstract,
+  descriptions,
+  handleMouseEnter,
+  handleMouseLeave,
+}) {
   if (!(isAbstract || isRandom || descriptions || descriptions?.length === 0)) {
     return null;
   }
 
   return (
-    <div className={`markers markers_${isFolded ? "horizontal" : "vertical"}`}>
+    <div
+      className={`markers markers_left markers_${isFolded ? "horizontal" : "vertical"}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}>
       <SidebarRandomized isRandom={isRandom} isAbstract={isAbstract} />
       <SidebarAbstract isAbstract={isAbstract} />
       <SidebarDescriptions descriptions={descriptions} />
+    </div>
+  );
+}
+
+function SidebarRight({ isFolded, labels, handleMouseEnter, handleMouseLeave }) {
+  if (!labels || labels?.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={`markers markers_right markers_${isFolded ? "horizontal" : "vertical"}`}>
+      <SidebarLabels
+        labels={labels}
+        handleMouseEnter={handleMouseEnter}
+        handleMouseLeave={handleMouseLeave}
+      />
     </div>
   );
 }
@@ -314,13 +363,19 @@ function SidebarDescriptions({ descriptions }) {
   );
 }
 
-function NestedChoices({
-  parentAbstractChoiceRemove,
-  parentUpdate,
-  isFolded,
-  nested,
-  clean,
-}) {
+function SidebarLabels({ labels, handleMouseEnter, handleMouseLeave }) {
+  if (!labels || labels?.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="marker" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      L
+    </div>
+  );
+}
+
+function NestedChoices({ parentAbstractChoiceRemove, parentUpdate, isFolded, nested, clean }) {
   if (isFolded || !nested || nested?.length === 0) {
     return null;
   }
@@ -340,22 +395,57 @@ function NestedChoices({
   );
 }
 
-function Options({ show, handleAdd, handleRemove, handleDisable }) {
-  if (!show) {
+function Options({
+  show,
+  handleAdd,
+  handleRemove,
+  handleDisable,
+  isOnRightSidebar,
+  isOnLeftSidebar,
+}) {
+  if (!show || isOnLeftSidebar || isOnRightSidebar) {
     return null;
   }
 
   return (
     <div className="options">
-      <div role="button" onClick={handleAdd} className="option left">
+      <ViewOptions handler={handleAdd} className="left">
         A
-      </div>
-      <div role="button" onClick={handleRemove} className="option">
+      </ViewOptions>
+      <ViewOptions handler={handleRemove} className="">
         R
-      </div>
-      <div role="button" onClick={handleDisable} className="option right">
+      </ViewOptions>
+      <ViewOptions handler={handleDisable} className="right">
         D
-      </div>
+      </ViewOptions>
     </div>
   );
+}
+
+function ViewOptions({ children, handler, className }) {
+  return (
+    <div role="button" onClick={handler} className={`option ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+function Labels({ labels, isOnRightSidebar }) {
+  return (
+    <>
+      {labels && isOnRightSidebar && (
+        <ViewLabels>
+          {labels.map((e) => (
+            <Tooltip info={e}>
+              <div>- {e}</div>
+            </Tooltip>
+          ))}
+        </ViewLabels>
+      )}
+    </>
+  );
+}
+
+function ViewLabels({ children }) {
+  return <div className="labels">{children}</div>;
 }

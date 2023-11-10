@@ -12,20 +12,48 @@
   }
 }
 
+.disabled {
+  color: white;
+  background-color: black;
+  border-color: white;
+}
+
+.enabled {
+  color: black;
+  background-color: white;
+  border-color: black;
+}
+
 .choice {
-  border: 1px solid black;
+  border-width: 1px;
+  border-style: solid;
   border-radius: 10px;
   margin: 0.1em;
   cursor: default;
 
   .main {
     display: flex;
+    /* There's no default value for border color, it must be inherited. */
+    border-color: inherit;
 
     .markers {
-      border-right: 1px solid black;
+      border-color: inherit;
+      border-width: inherit;
       display: absolute;
-      text-align: center;
       padding: 0px 5px;
+      text-align: center;
+    }
+
+    .markers_left {
+      border-right-width: 1px;
+      border-right-style: solid;
+      border-right-color: inherit;
+    }
+
+    .markers_right {
+      border-left-width: 1px;
+      border-left-style: solid;
+      border-left-color: inherit;
     }
 
     .markers_horizontal {
@@ -44,10 +72,6 @@
       justify-content: center;
     }
 
-    .disabled {
-      text-decoration: line-through;
-    }
-
     .folded {
       padding: 0 5px;
       margin: auto;
@@ -59,7 +83,7 @@
 
     .expanded {
       padding: 0px 5px;
-      margin:auto;
+      margin: auto;
       min-width: 0;
 
       .choice_name {
@@ -86,40 +110,25 @@
         font-style: italic;
         font-size: 0.8em;
       }
-
-      .choice_labels {
-        border: 1px solid black;
-        border-radius: 10px;
-        background-color: white;
-        opacity: 0.8;
-
-        position:absolute;
-        width: 100px;
-
-        padding: 5px;
-        text-align: left;
-        font-size: 0.8em;
-
-        animation: 1s choiceActionFadeIn;
-        animation-fill-mode: forwards;
-        visibility: hidden;
-      }
     }
   }
 
   .nested {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: inherit;
+
     display: flex;
     flex-direction: column;
     padding: 5px;
-    border-top: 1px solid black;
     min-width: 0;
   }
 
   .options {
     border: 1px solid black;
     border-radius: 10px;
+    color: black;
     background-color: white;
-    opacity: 0.8;
 
     position: absolute;
     width: 75px;
@@ -144,5 +153,23 @@
     .right {
       border-left: 1px solid black;
     }
+  }
+
+  .labels {
+    border: 1px solid black;
+    border-radius: 10px;
+    color: black;
+    background-color: white;
+
+    position: absolute;
+    width: 100px;
+
+    padding: 5px;
+    text-align: left;
+    font-size: 0.8em;
+
+    animation: 1s choiceActionFadeIn;
+    animation-fill-mode: forwards;
+    visibility: hidden;
   }
 }
