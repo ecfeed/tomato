@@ -1,0 +1,24 @@
+.disabled {
+  color: white;
+  background-color: black;
+  border-color: white;
+}
+
+.enabled {
+  color: black;
+  background-color: white;
+  border-color: black;
+}
+
+.choice {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  margin: 0.1em;
+  cursor: default;
+}
+.main {
+  display: flex;
+  /* There's no default value for border color, it must be inherited. */
+  border-color: inherit;
+}

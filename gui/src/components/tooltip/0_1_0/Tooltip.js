@@ -1,4 +1,4 @@
-import styles from './Tooltip_0_1_0.module.css';
+import styles from './Tooltip.module.css';
 import { useState } from "react";
 
 export default function Tooltip({ children, info }) {

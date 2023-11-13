@@ -1,4 +1,4 @@
-import Tooltip from "../components/Tooltip_0_1_0";
+import Tooltip from "../components/tooltip/0_1_0/Tooltip"
 
 const infoDefault = "This is a tooltip text";
 const infoLong =

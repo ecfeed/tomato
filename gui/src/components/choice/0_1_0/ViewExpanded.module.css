@@ -1,0 +1,30 @@
+.expanded {
+  padding: 0px 5px;
+  margin: auto;
+  min-width: 0;
+}
+
+.name {
+  text-align: center;
+  /* Forces text into a straight line and does not wrap to the next line. */
+  white-space: nowrap;
+  /* Causes text to be contained within the parent container. */
+  overflow: hidden;
+  /* How hidden overflow content is signaled to users. */
+  text-overflow: ellipsis;
+  /* Other */
+  vertical-align: top;
+  /* font-weight: bold; */
+  /* font-size: 1em; */
+  /* width:50%; */
+}
+
+.value {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+  font-style: italic;
+  font-size: 0.8em;
+}

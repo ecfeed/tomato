@@ -1,0 +1,10 @@
+.nested {
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: inherit;
+
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  min-width: 0;
+}

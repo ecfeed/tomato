@@ -1,0 +1,40 @@
+@keyframes optionActionFadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+.options {
+  border: 1px solid black;
+  border-radius: 10px;
+  color: black;
+  background-color: white;
+
+  position: absolute;
+  width: 75px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  animation: 1s optionActionFadeIn;
+  animation-fill-mode: forwards;
+  visibility: hidden;
+
+  .option {
+    width: 100%;
+    text-align: center;
+  }
+
+  .left {
+    border-right: 1px solid black;
+  }
+
+  .right {
+    border-left: 1px solid black;
+  }
+}
