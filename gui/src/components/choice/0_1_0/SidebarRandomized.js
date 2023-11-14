@@ -1,7 +1,7 @@
 import Tooltip from "../../tooltip/0_1_0/Tooltip";
 
-export function SidebarRandomized({ isRandom, isAbstract, className }) {
-  if (!isRandom || isAbstract) {
+export function SidebarRandomized({ isRandomized, isAbstract, className }) {
+  if (!isRandomized || isAbstract) {
     return null;
   }
 

@@ -1,27 +1,27 @@
+import { faker } from "@faker-js/faker";
 import Choice from "../components/choice/0_1_0/Choice";
 
 const choiceSimple = {
-  name: "default",
-  value: "John",
+  name: "name",
+  value: faker.internet.userName(),
 };
 
 const choiceLongValue = {
-  name: "long value",
-  value:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed varius lectus. Nam non sollicitudin tortor. Nullam sem turpis, fringilla non aliquet tempor, convallis ut arcu. Morbi vitae luctus lectus. Pellentesque finibus aliquet pulvinar. Fusce non molestie turpis. Curabitur urna risus, aliquet ac tellus et, hendrerit malesuada nisl. Donec nec elementum orci. Praesent cursus sodales dolor, sit amet malesuada neque suscipit ut. Donec quam leo, auctor imperdiet diam eget, scelerisque sollicitudin arcu. Aliquam bibendum egestas turpis, eget tincidunt nisl fringilla lobortis. Donec porttitor mauris sit amet eros volutpat volutpat. ",
+  name: "long phrase",
+  value: faker.hacker.phrase()
 };
 
 const choiceLabels = {
   name: "labelled",
-  value: "John",
+  value: faker.internet.userName(),
   meta: {
-    labels: ["label A", "label B"],
+    labels: [faker.hacker.adjective(), faker.hacker.adjective()],
   },
 };
 
 const choiceRandom = {
   name: "randomized",
-  value: "John",
+  value: faker.internet.userName(),
   meta: {
     randomized: true,
   },
@@ -29,17 +29,15 @@ const choiceRandom = {
 
 const choiceDescription = {
   name: "described",
-  value: "John",
+  value: faker.internet.userName(),
   meta: {
-    descriptions: [
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed varius lectus. Nam non sollicitudin tortor. Nullam sem turpis, fringilla non aliquet tempor, convallis ut arcu. Morbi vitae luctus lectus. Pellentesque finibus aliquet pulvinar. Fusce non molestie turpis. Curabitur urna risus, aliquet ac tellus et, hendrerit malesuada nisl. Donec nec elementum orci. Praesent cursus sodales dolor, sit amet malesuada neque suscipit ut. Donec quam leo, auctor imperdiet diam eget, scelerisque sollicitudin arcu. Aliquam bibendum egestas turpis, eget tincidunt nisl fringilla lobortis. Donec porttitor mauris sit amet eros volutpat volutpat.",
-    ],
+    descriptions: faker.hacker.phrase()
   },
 };
 
 const choiceDisabled = {
   name: "disabled",
-  value: "John",
+  value: faker.internet.userName(),
   meta: {
     disabled: true,
   },
@@ -47,39 +45,37 @@ const choiceDisabled = {
 
 const choiceMultiple = {
   name: "meta",
-  value: "John",
+  value: faker.internet.userName(),
   meta: {
     randomized: true,
-    descriptions: [
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed varius lectus. Nam non sollicitudin tortor. Nullam sem turpis, fringilla non aliquet tempor, convallis ut arcu. Morbi vitae luctus lectus. Pellentesque finibus aliquet pulvinar. Fusce non molestie turpis. Curabitur urna risus, aliquet ac tellus et, hendrerit malesuada nisl. Donec nec elementum orci. Praesent cursus sodales dolor, sit amet malesuada neque suscipit ut. Donec quam leo, auctor imperdiet diam eget, scelerisque sollicitudin arcu. Aliquam bibendum egestas turpis, eget tincidunt nisl fringilla lobortis. Donec porttitor mauris sit amet eros volutpat volutpat. ",
-    ],
-    labels: ["label A", "label B"],
+    descriptions: faker.hacker.phrase(),
+    labels: [faker.hacker.adjective(), faker.hacker.adjective()],
   },
 };
 
 const choiceAbstract = {
-  name: "abstract",
-  value: "John",
+  name: "parent",
+  value: faker.string.uuid(),
   nested: [
     {
-      name: "choice A",
-      value: "Marek",
+      name: "email A",
+      value: faker.internet.email(),
     },
     {
-      name: "choice B",
-      value: "Patryk",
+      name: "email B",
+      value: faker.internet.email(),
     },
     {
-      name: "choice C",
-      value: "Krzysztof",
+      name: "email C",
+      value: faker.internet.email(),
     },
     {
-      name: "other",
-      value: "abstract",
+      name: "child",
+      value: faker.string.uuid(),
       nested: [
         {
-          name: "other A",
-          value: "Hager",
+          name: "address A",
+          value: faker.location.streetAddress(),
           meta: {
             randomized: true,
           },

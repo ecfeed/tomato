@@ -1,5 +1,5 @@
-import { useEffect, useReducer } from "react";
-import * as driver from "./logic";
+import { createContext, useEffect, useState } from "react";
+import * as driver from "./logic/driver";
 import { Labels } from "./Labels";
 import { Options } from "./Options";
 import { NestedChoices } from "./NestedChoices";
@@ -8,72 +8,71 @@ import { SidebarLeft } from "./SidebarLeft";
 import { View } from "./View";
 import styles from "./Choice.module.css";
 
-const initialState = {
-  structure: {},
-  ui: {
-    isFolded: true,
-    isOnRightSidebar: false,
-    isControlled: false,
-  },
-};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "reload":
-      return { ...state, structure: action.payload };
-    case "setIsFolded":
-      return { ...state, ui: { ...state.ui, isFolded: action.payload } };
-    case "setIsControlled":
-      return { ...state, ui: { ...state.ui, isControlled: action.payload } };
-    case "setIsOnRightSidebar":
-      return { ...state, ui: { ...state.ui, isOnRightSidebar: action.payload } };
-    case "setIsOnLeftSidebar":
-      return { ...state, ui: { ...state.ui, isOnLeftSidebar: action.payload } };
-    case "toggleIsFolded":
-      return { ...state, ui: { ...state.ui, isFolded: !state.ui.isFolded } };
-
-    default:
-      throw new Error("Unknown action!");
-  }
-}
-
 export default function Choice({ structure, parentUpdate, parentCancelView, parentChoiceRemove }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [data, setData] = useState({});
+  const [isFolded, setIsFolded] = useState(true);
+  const [isControlled, setIsControlled] = useState(false);
+  const [isOnLeftSidebar, setIsOnLeftSidebar] = useState(false);
+  const [isOnRightSidebar, setIsOnRightSidebar] = useState(false);
 
-  const { name, value, meta, nested } = state.structure;
-  const { descriptions, labels } = state.structure.meta || {};
-  const { isFolded, isControlled, isOnRightSidebar, isOnLeftSidebar } = state.ui;
+  const { name, value, meta, nested } = data;
+  const { descriptions, labels } = data.meta || {};
 
   const isRandomized = meta?.randomized;
   const isDisabled = meta?.disabled;
   const isAbstract = nested?.length > 0;
 
   useEffect(() => {
-    dispatch({ type: "reload", payload: structure });
+    setData(structure);
   }, [structure]);
 
   const handleFold = () => {
-    dispatch({ type: "toggleIsFolded" });
+    setIsFolded(e => !e);
   };
 
   const handleDisable = () => {
-    driver.handleDisable(state.structure, dispatch, parentUpdate);
+    let candidate = driver.toggleDisabled(data);
+
+    if (parentUpdate) {
+      parentUpdate(candidate);
+    } else {
+      setData(candidate)
+    }
   };
 
   const handleChoiceAdd = () => {
-    driver.handleChoiceAdd(state.structure, dispatch);
+    let candidate = driver.abstractChoiceAdd(data, driver.getSampleChoice());
+
+    setData(candidate)
+    setIsFolded(false);
   };
 
   const handleChoiceRemoveInitial = () => {
-    driver.handleChoiceRemoveInitial(state.structure, parentUpdate, parentChoiceRemove);
+    if (parentUpdate) {
+      parentChoiceRemove(data);
+    } else {
+      alert("Cannot remove the top-level element!");
+    }
   };
 
   const handleChoiceRemove = (choice) => {
-    driver.handleChoiceRemove(state.structure, choice, dispatch, parentUpdate);
+    let candidate = driver.abstractChoiceDelete(data, choice);
+
+    if (parentUpdate) {
+      parentUpdate(candidate);
+    } else {
+      setData(candidate)
+    }
   };
 
   const handleChoiceUpdate = (choice) => {
-    driver.handleChoiceUpdate(state.structure, choice, dispatch, parentUpdate);
+    let candidate = driver.abstractChoiceUpdate(data, choice);
+
+    if (parentUpdate) {
+      parentUpdate(candidate);
+    } else {
+      setData(candidate)
+    }
   };
 
   const handleOptionsMouseEnter = () => {
@@ -81,71 +80,73 @@ export default function Choice({ structure, parentUpdate, parentCancelView, pare
       parentCancelView();
     }
 
-    dispatch({ type: "setIsControlled", payload: true });
+    setIsControlled(true);
   };
 
   const handleOptionsMouseLeave = () => {
-    dispatch({ type: "setIsControlled", payload: false });
+    setIsControlled(false);
   };
 
   const handleRightSidebarMouseEnter = () => {
-    dispatch({ type: "setIsOnRightSidebar", payload: true });
+    setIsOnRightSidebar(true);
   };
 
   const handleRightSidebarMouseLeave = () => {
-    dispatch({ type: "setIsOnRightSidebar", payload: false });
+    setIsOnRightSidebar(false);
   };
 
   const handleLeftSidebarMouseEnter = () => {
-    dispatch({ type: "setIsOnLeftSidebar", payload: true });
+    setIsOnLeftSidebar(true);
   };
 
   const handleLeftSidebarMouseLeave = () => {
-    dispatch({ type: "setIsOnLeftSidebar", payload: false });
+    setIsOnLeftSidebar(false);
   };
 
   const handleCancelView = () => {
-    dispatch({ type: "setIsControlled", payload: false });
+    setIsControlled(false);
   };
 
   return (
-    <div
-      className={`${styles.choice} ${isDisabled ? styles.disabled : styles.enabled}`}
-      onMouseLeave={handleOptionsMouseLeave}>
-      <div className={styles.main} onMouseOver={handleOptionsMouseEnter} onClick={handleFold}>
-        <SidebarLeft
-          isFolded={isFolded}
-          isRandom={isRandomized}
-          isAbstract={isAbstract}
-          isDisabled={isDisabled}
-          descriptions={descriptions}
-          handleMouseEnter={handleLeftSidebarMouseEnter}
-          handleMouseLeave={handleLeftSidebarMouseLeave}
-        />
-        <View isFolded={isFolded} isAbstract={isAbstract} name={name} value={value} />
-        <SidebarRight
-          isFolded={isFolded}
-          labels={labels}
-          handleMouseEnter={handleRightSidebarMouseEnter}
-          handleMouseLeave={handleRightSidebarMouseLeave}
-        />
+    // <ChoiceContext.Provider>
+      <div
+        className={`${styles.choice} ${isDisabled ? styles.disabled : styles.enabled}`}
+        onMouseLeave={handleOptionsMouseLeave}>
+        <div className={styles.main} onMouseOver={handleOptionsMouseEnter} onClick={handleFold}>
+          <SidebarLeft
+            isFolded={isFolded}
+            isRandomized={isRandomized}
+            isDisabled={isDisabled}
+            isAbstract={isAbstract}
+            descriptions={descriptions}
+            handleMouseEnter={handleLeftSidebarMouseEnter}
+            handleMouseLeave={handleLeftSidebarMouseLeave}
+          />
+          <View isFolded={isFolded} isAbstract={isAbstract} name={name} value={value} />
+          <SidebarRight
+            isFolded={isFolded}
+            labels={labels}
+            handleMouseEnter={handleRightSidebarMouseEnter}
+            handleMouseLeave={handleRightSidebarMouseLeave}
+          />
+        </div>
+        <div className="">
+          <Options
+            show={isControlled && !isOnLeftSidebar && !isOnRightSidebar}
+            handleDisable={handleDisable}
+            handleAdd={handleChoiceAdd}
+            handleRemove={handleChoiceRemoveInitial}
+          />
+          <Labels show={isOnRightSidebar} labels={labels} />
+          <NestedChoices
+            show={!isFolded}
+            nested={nested}
+            clean={handleCancelView}
+            parentUpdate={handleChoiceUpdate}
+            parentChoiceRemove={handleChoiceRemove}
+          />
+        </div>
       </div>
-      <div className="">
-        <Options
-          show={isControlled && !isOnLeftSidebar && !isOnRightSidebar}
-          handleDisable={handleDisable}
-          handleAdd={handleChoiceAdd}
-          handleRemove={handleChoiceRemoveInitial}
-        />
-        <Labels show={isOnRightSidebar} labels={labels} />
-        <NestedChoices
-          show={!isFolded}
-          nested={nested}
-          clean={handleCancelView}
-          parentUpdate={handleChoiceUpdate}
-          parentChoiceRemove={handleChoiceRemove}
-        />
-      </div>
-    </div>
+    // </ChoiceContext.Provider>
   );
 }

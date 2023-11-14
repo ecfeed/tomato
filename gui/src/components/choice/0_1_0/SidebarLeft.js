@@ -2,16 +2,18 @@ import { SidebarDescriptions } from "./SidebarDescriptions";
 import { SidebarAbstract } from "./SidebarAbstract";
 import { SidebarRandomized } from "./SidebarRandomized";
 import styles from "./SidebarLeft.module.css";
+import { useContext } from "react";
 
 export function SidebarLeft({
   isFolded,
-  isRandom,
+  isRandomized,
   isAbstract,
   descriptions,
   handleMouseEnter,
   handleMouseLeave,
 }) {
-  if (!(isAbstract || isRandom || descriptions || descriptions?.length === 0)) {
+
+  if (!(isAbstract || isRandomized || descriptions || descriptions?.length === 0)) {
     return null;
   }
 
@@ -22,7 +24,7 @@ export function SidebarLeft({
       }`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}>
-      <SidebarRandomized className={styles.marker} isRandom={isRandom} isAbstract={isAbstract} />
+      <SidebarRandomized className={styles.marker} isRandomized={isRandomized} isAbstract={isAbstract} />
       <SidebarAbstract className={styles.marker} isAbstract={isAbstract} />
       <SidebarDescriptions className={styles.marker} descriptions={descriptions} />
     </div>
