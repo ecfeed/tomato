@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as driver from "./logic/driver";
 import { Labels } from "./Labels";
 import { Options } from "./Options";
@@ -6,7 +6,8 @@ import { NestedChoices } from "./NestedChoices";
 import { SidebarRight } from "./SidebarRight";
 import { SidebarLeft } from "./SidebarLeft";
 import { View } from "./View";
-import styles from "./Choice.module.css";
+import { Outline } from "./Outline";
+import { Header } from "./Header";
 
 export default function Choice({ structure, parentUpdate, parentCancelView, parentChoiceRemove }) {
   const [data, setData] = useState({});
@@ -27,7 +28,7 @@ export default function Choice({ structure, parentUpdate, parentCancelView, pare
   }, [structure]);
 
   const handleFold = () => {
-    setIsFolded(e => !e);
+    setIsFolded((e) => !e);
   };
 
   const handleDisable = () => {
@@ -36,14 +37,14 @@ export default function Choice({ structure, parentUpdate, parentCancelView, pare
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
-      setData(candidate)
+      setData(candidate);
     }
   };
 
   const handleChoiceAdd = () => {
     let candidate = driver.abstractChoiceAdd(data, driver.getSampleChoice());
 
-    setData(candidate)
+    setData(candidate);
     setIsFolded(false);
   };
 
@@ -61,7 +62,7 @@ export default function Choice({ structure, parentUpdate, parentCancelView, pare
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
-      setData(candidate)
+      setData(candidate);
     }
   };
 
@@ -71,7 +72,7 @@ export default function Choice({ structure, parentUpdate, parentCancelView, pare
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
-      setData(candidate)
+      setData(candidate);
     }
   };
 
@@ -109,44 +110,40 @@ export default function Choice({ structure, parentUpdate, parentCancelView, pare
 
   return (
     // <ChoiceContext.Provider>
-      <div
-        className={`${styles.choice} ${isDisabled ? styles.disabled : styles.enabled}`}
-        onMouseLeave={handleOptionsMouseLeave}>
-        <div className={styles.main} onMouseOver={handleOptionsMouseEnter} onClick={handleFold}>
-          <SidebarLeft
-            isFolded={isFolded}
-            isRandomized={isRandomized}
-            isDisabled={isDisabled}
-            isAbstract={isAbstract}
-            descriptions={descriptions}
-            handleMouseEnter={handleLeftSidebarMouseEnter}
-            handleMouseLeave={handleLeftSidebarMouseLeave}
-          />
-          <View isFolded={isFolded} isAbstract={isAbstract} name={name} value={value} />
-          <SidebarRight
-            isFolded={isFolded}
-            labels={labels}
-            handleMouseEnter={handleRightSidebarMouseEnter}
-            handleMouseLeave={handleRightSidebarMouseLeave}
-          />
-        </div>
-        <div className="">
-          <Options
-            show={isControlled && !isOnLeftSidebar && !isOnRightSidebar}
-            handleDisable={handleDisable}
-            handleAdd={handleChoiceAdd}
-            handleRemove={handleChoiceRemoveInitial}
-          />
-          <Labels show={isOnRightSidebar} labels={labels} />
-          <NestedChoices
-            show={!isFolded}
-            nested={nested}
-            clean={handleCancelView}
-            parentUpdate={handleChoiceUpdate}
-            parentChoiceRemove={handleChoiceRemove}
-          />
-        </div>
-      </div>
+    <Outline isDisabled={isDisabled} handleOptionsMouseLeave={handleOptionsMouseLeave}>
+      <Header handleOptionsMouseEnter={handleOptionsMouseEnter} handleFold={handleFold}>
+        <SidebarLeft
+          isFolded={isFolded}
+          isRandomized={isRandomized}
+          isDisabled={isDisabled}
+          isAbstract={isAbstract}
+          descriptions={descriptions}
+          handleSidebarLeftMouseEnter={handleLeftSidebarMouseEnter}
+          handleSidebarLeftMouseLeave={handleLeftSidebarMouseLeave}
+        />
+        <View isFolded={isFolded} isAbstract={isAbstract} name={name} value={value} />
+        <SidebarRight
+          isFolded={isFolded}
+          labels={labels}
+          handleSidebarRightMouseEnter={handleRightSidebarMouseEnter}
+          handleSidebarRightMouseLeave={handleRightSidebarMouseLeave}
+        />
+      </Header>
+      <Options
+        show={isControlled && !isOnLeftSidebar && !isOnRightSidebar}
+        handleAdd={handleChoiceAdd}
+        handleRemove={handleChoiceRemoveInitial}
+        handleDisable={handleDisable}
+      />
+      <Labels show={isOnRightSidebar} labels={labels} />
+      <NestedChoices
+        show={!isFolded}
+        nested={nested}
+        clean={handleCancelView}
+        parentUpdate={handleChoiceUpdate}
+        parentChoiceRemove={handleChoiceRemove}
+      />
+    </Outline>
     // </ChoiceContext.Provider>
   );
 }

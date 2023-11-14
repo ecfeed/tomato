@@ -1,7 +1,7 @@
 import { SidebarLabels } from "./SidebarLabels";
 import styles from './SidebarRight.module.css'
 
-export function SidebarRight({ isFolded, labels, handleMouseEnter, handleMouseLeave }) {
+export function SidebarRight({ isFolded, labels, handleSidebarRightMouseEnter, handleSidebarRightMouseLeave }) {
   if (!labels || labels?.length === 0) {
     return null;
   }
@@ -11,8 +11,8 @@ export function SidebarRight({ isFolded, labels, handleMouseEnter, handleMouseLe
       <SidebarLabels
         className={styles.marker}
         labels={labels}
-        handleMouseEnter={handleMouseEnter}
-        handleMouseLeave={handleMouseLeave}
+        handleMouseEnter={handleSidebarRightMouseEnter}
+        handleMouseLeave={handleSidebarRightMouseLeave}
       />
     </div>
   );
