@@ -1,6 +1,9 @@
 import Tooltip from "../../tooltip/0_1_0/Tooltip";
+import { useChoices } from "./context/ChoiceContext";
 
-export function SidebarAbstract({ isAbstract, className }) {
+export function SidebarAbstract({ className }) {
+  const { isAbstract } = useChoices();
+
   if (!isAbstract) {
     return null;
   }

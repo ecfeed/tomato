@@ -1,10 +1,13 @@
 import { ViewExtended } from "./ViewExpanded";
 import { ViewSimple } from "./ViewSimple";
+import { useChoices } from "./context/ChoiceContext";
 
-export function View({ isFolded, isAbstract, name, value }) {
+export function View() {
+  const { isFolded, isAbstract, name, value } = useChoices();
+
   if (isFolded || isAbstract) {
-    return <ViewSimple name={name} />;
+    return <ViewSimple />;
   }
 
-  return <ViewExtended name={name} value={value} />;
+  return <ViewExtended />;
 }

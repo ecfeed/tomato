@@ -2,15 +2,10 @@ import { SidebarDescriptions } from "./SidebarDescriptions";
 import { SidebarAbstract } from "./SidebarAbstract";
 import { SidebarRandomized } from "./SidebarRandomized";
 import styles from "./SidebarLeft.module.css";
+import { useChoices } from "./context/ChoiceContext";
 
-export function SidebarLeft({
-  isFolded,
-  isRandomized,
-  isAbstract,
-  descriptions,
-  handleSidebarLeftMouseEnter,
-  handleSidebarLeftMouseLeave,
-}) {
+export function SidebarLeft() {
+  const { isFolded, isRandomized, isAbstract, descriptions, handleSidebarLeftMouseEnter, handleSidebarLeftMouseLeave} = useChoices();
 
   if (!(isAbstract || isRandomized || descriptions || descriptions?.length === 0)) {
     return null;
@@ -23,9 +18,9 @@ export function SidebarLeft({
       }`}
       onMouseEnter={handleSidebarLeftMouseEnter}
       onMouseLeave={handleSidebarLeftMouseLeave}>
-      <SidebarRandomized className={styles.marker} isRandomized={isRandomized} isAbstract={isAbstract} />
-      <SidebarAbstract className={styles.marker} isAbstract={isAbstract} />
-      <SidebarDescriptions className={styles.marker} descriptions={descriptions} />
+      <SidebarRandomized className={styles.marker} />
+      <SidebarAbstract className={styles.marker} />
+      <SidebarDescriptions className={styles.marker} />
     </div>
   );
 }

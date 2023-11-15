@@ -1,19 +1,20 @@
 import { SidebarLabels } from "./SidebarLabels";
-import styles from './SidebarRight.module.css'
+import styles from "./SidebarRight.module.css";
+import { useChoices } from "./context/ChoiceContext";
 
-export function SidebarRight({ isFolded, labels, handleSidebarRightMouseEnter, handleSidebarRightMouseLeave }) {
+export function SidebarRight() {
+  const { isFolded, labels } = useChoices();
+
   if (!labels || labels?.length === 0) {
     return null;
   }
 
   return (
-    <div className={`${styles.markers} ${styles.right} ${isFolded ? styles.horizontal : styles.vertical}`}>
-      <SidebarLabels
-        className={styles.marker}
-        labels={labels}
-        handleMouseEnter={handleSidebarRightMouseEnter}
-        handleMouseLeave={handleSidebarRightMouseLeave}
-      />
+    <div
+      className={`${styles.markers} ${styles.right} ${
+        isFolded ? styles.horizontal : styles.vertical
+      }`}>
+      <SidebarLabels className={styles.marker} />
     </div>
   );
 }

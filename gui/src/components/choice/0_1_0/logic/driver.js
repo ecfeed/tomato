@@ -1,9 +1,9 @@
-import { v4 } from "uuid";
+import { faker } from "@faker-js/faker";
 
 export const getSampleChoice = () => {
   return {
-    name: v4(),
-    value: v4(),
+    name: faker.person.firstName(),
+    value: faker.person.lastName(),
   };
 };
 

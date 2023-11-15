@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import * as driver from "../logic/driver";
 
 const ChoiceContext = createContext();
@@ -32,7 +32,7 @@ export function ChoiceProvider({
   };
 
   const handleDisable = () => {
-    let candidate = driver.toggleDisabled(data);
+    const candidate = driver.toggleDisabled(data);
 
     if (parentUpdate) {
       parentUpdate(candidate);
@@ -42,7 +42,7 @@ export function ChoiceProvider({
   };
 
   const handleChoiceAdd = () => {
-    let candidate = driver.abstractChoiceAdd(data, driver.getSampleChoice());
+    const candidate = driver.abstractChoiceAdd(data, driver.getSampleChoice());
 
     setData(candidate);
     setIsFolded(false);
@@ -57,7 +57,7 @@ export function ChoiceProvider({
   };
 
   const handleChoiceRemove = (choice) => {
-    let candidate = driver.abstractChoiceDelete(data, choice);
+    const candidate = driver.abstractChoiceDelete(data, choice);
 
     if (parentUpdate) {
       parentUpdate(candidate);
@@ -67,7 +67,7 @@ export function ChoiceProvider({
   };
 
   const handleChoiceUpdate = (choice) => {
-    let candidate = driver.abstractChoiceUpdate(data, choice);
+    const candidate = driver.abstractChoiceUpdate(data, choice);
 
     if (parentUpdate) {
       parentUpdate(candidate);
@@ -140,4 +140,14 @@ export function ChoiceProvider({
       {children}
     </ChoiceContext.Provider>
   );
+}
+
+export function useChoices() {
+  const context = useContext(ChoiceContext);
+
+  if (context === undefined) {
+    throw new Error("ChoiceContext cannot be used outside of the ChoiceProvider.");
+  }
+
+  return context;
 }

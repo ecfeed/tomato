@@ -1,8 +1,12 @@
 import Choice from "./Choice";
-import styles from './NestedChoices.module.css'
+import styles from "./NestedChoices.module.css";
+import { useChoices } from "./context/ChoiceContext";
 
-export function NestedChoices({ show, parentChoiceRemove, parentUpdate, nested, clean }) {
-  if (!show || !nested || nested?.length === 0) {
+export function NestedChoices() {
+  const { isFolded, nested, handleCancelView, handleChoiceRemove, handleChoiceUpdate } =
+    useChoices();
+
+  if (isFolded || !nested || nested?.length === 0) {
     return null;
   }
 
@@ -11,9 +15,9 @@ export function NestedChoices({ show, parentChoiceRemove, parentUpdate, nested, 
       {nested.map((e) => (
         <Choice
           structure={e}
-          parentCancelView={clean}
-          parentChoiceRemove={parentChoiceRemove}
-          parentUpdate={parentUpdate}
+          parentCancelView={handleCancelView}
+          parentChoiceRemove={handleChoiceRemove}
+          parentUpdate={handleChoiceUpdate}
           key={e.name}
         />
       ))}
