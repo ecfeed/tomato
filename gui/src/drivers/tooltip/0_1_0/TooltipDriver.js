@@ -1,4 +1,5 @@
-import Tooltip from "../components/tooltip/0_1_0/Tooltip"
+import styles from './TooltipDriver.module.css';
+import Tooltip from "../../../components/tooltip/0_1_0/Tooltip"
 
 const infoDefault = "This is a tooltip text";
 const infoLong =
@@ -6,7 +7,7 @@ const infoLong =
 
 export default function TooltipDriver() {
   return (
-    <>
+    <div className={styles.driver}>
       <h1>Tooltip text</h1>
       <h2>Default</h2>
       <Tooltip info={infoDefault}>
@@ -16,6 +17,6 @@ export default function TooltipDriver() {
       <Tooltip info={infoLong}>
         <div>TEST</div>
       </Tooltip>
-    </>
+    </div>
   );
 }

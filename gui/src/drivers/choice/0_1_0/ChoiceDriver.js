@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
-import Choice from "../components/choice/0_1_0/Choice";
+import Choice from "../../../components/choice/0_1_0/Choice";
+import styles from "./ChoiceDriver.module.css";
 
 const choiceSimple = {
   name: "name",
@@ -8,7 +9,7 @@ const choiceSimple = {
 
 const choiceLongValue = {
   name: "long phrase",
-  value: faker.hacker.phrase()
+  value: faker.hacker.phrase(),
 };
 
 const choiceLabels = {
@@ -31,7 +32,7 @@ const choiceDescription = {
   name: "described",
   value: faker.internet.userName(),
   meta: {
-    descriptions: faker.hacker.phrase()
+    descriptions: faker.hacker.phrase(),
   },
 };
 
@@ -87,7 +88,7 @@ const choiceAbstract = {
 
 export default function ChoiceDriver() {
   return (
-    <>
+    <div className={styles.driver}>
       <h1>Choices</h1>
       <h2>Default</h2>
       <p>
@@ -154,12 +155,6 @@ export default function ChoiceDriver() {
       <div style={{ width: "250px" }}>
         <Choice structure={choiceMultiple} />
       </div>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-    </>
+    </div>
   );
 }

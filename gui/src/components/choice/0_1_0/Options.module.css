@@ -1,12 +1,12 @@
 @keyframes optionActionFadeIn {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      visibility: visible;
-      opacity: 1;
-    }
+  0% {
+    opacity: 0;
   }
+  100% {
+    visibility: visible;
+    opacity: 1;
+  }
+}
 
 .options {
   border: 1px solid black;
@@ -24,6 +24,8 @@
   animation: 1s optionActionFadeIn;
   animation-fill-mode: forwards;
   visibility: hidden;
+
+  z-index: 999;
 
   .option {
     width: 100%;

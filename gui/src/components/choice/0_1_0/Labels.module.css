@@ -24,4 +24,6 @@
   animation: 1s labelActionFadeIn;
   animation-fill-mode: forwards;
   visibility: hidden;
+
+  z-index: 999;
 }
