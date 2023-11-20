@@ -11,6 +11,9 @@ export function PageNav() {
             <ul>
                 <NavLink to="choice">Choice</NavLink>
             </ul>
+            <ul>
+                <NavLink to="canvas">Canvas</NavLink>
+            </ul>
             {/* <ul>
                 <NavLink to="art">Art</NavLink>
             </ul> */}

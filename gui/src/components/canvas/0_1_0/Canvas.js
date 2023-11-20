@@ -57,8 +57,8 @@ export function Canvas() {
   return (
     <div className={styles.canvas}>
       {data.parameters.map((e, index) => (
-        <div style={{ width: "300px" }}>
-          <MockParameter key={`${index} ${e.name}`} parameter={e} />
+        <div style={{ width: "300px", position: 'relative' }} key={`${index} ${e.name}`}>
+          <MockParameter parameter={e} />
         </div>
       ))}
     </div>

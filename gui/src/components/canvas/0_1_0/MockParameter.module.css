@@ -1,18 +1,39 @@
 .parameter {
-    border: 1px solid black;
-    /* width: 200px; */
-    /* width: 100%; */
-    margin: 5px;
-    padding: 5px;
+  padding: 5px;
+  margin: 5px;
+}
+
+.main {
+  border: 1px solid black;
+  padding: 5px;
 }
 
 .header {
-    border-color: inherit;
-    border-bottom: 1px solid;
-    text-align: center;
-    text-transform: uppercase;
+  border-color: inherit;
+  border-bottom: 1px solid;
+  text-align: center;
+  text-transform: uppercase;
 }
 
-.elements {
-    
+.options_bottom {
+  border: 1px solid black;
+  border-radius: 10px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+
+}
+
+.option_left {
+  border-right: 1px solid black;
+  text-align: center;
+  text-transform: uppercase;
+  width: 50%;
+}
+
+.option_right {
+  text-align: center;
+  text-transform: uppercase;
+  width: 50%;
 }
