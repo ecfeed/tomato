@@ -43,7 +43,7 @@ export function MockParameter({
 
   const handleParameterUpdate = (parameter) => {
     const candidate = parameterUpdate(structure, parameter);
-
+    console.log('dupa')
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
@@ -55,42 +55,44 @@ export function MockParameter({
     let candidate = structure;
     let name = "";
 
-    do {
-      name = prompt("Enter the parameter name.\nTo exit, click on 'cancel' or press 'esc'.", faker.person.firstName());
+    name = prompt(
+      "Enter the parameter name.\nTo exit, click on 'cancel' or press 'esc'.",
+      faker.person.firstName()
+    );
 
-      if (!name) {
-        return;
-      }
+    if (!name) {
+      return;
+    }
 
-      candidate = parameterAdd(candidate, getParameter(name));
+    candidate = parameterAdd(candidate, getParameter(name));
 
-      if (parentUpdate) {
-        parentUpdate(candidate);
-      } else {
-        setStructure(candidate);
-      }
-    } while (name);
+    if (parentUpdate) {
+      parentUpdate(candidate);
+    } else {
+      setStructure(candidate);
+    }
   };
 
   const handleAddChoice = () => {
     let candidate = structure;
     let name = "";
 
-    do {
-      name = prompt("Enter the choice name.\nTo exit, click on 'cancel' or press 'esc'.", faker.person.firstName());
+    name = prompt(
+      "Enter the choice name.\nTo exit, click on 'cancel' or press 'esc'.",
+      faker.person.firstName()
+    );
 
-      if (!name) {
-        return;
-      }
+    if (!name) {
+      return;
+    }
 
-      candidate = choiceAdd(candidate, getChoice(name));
+    candidate = choiceAdd(candidate, getChoice(name));
 
-      if (parentUpdate) {
-        parentUpdate(candidate);
-      } else {
-        setStructure(candidate);
-      }
-    } while (name);
+    if (parentUpdate) {
+      parentUpdate(candidate);
+    } else {
+      setStructure(candidate);
+    }
   };
 
   return (
@@ -111,6 +113,8 @@ export function MockParameter({
         <AddOptionsBottom
           handleAddParameter={handleAddParameter}
           handleAddChoice={handleAddChoice}
+          parameters={parameters}
+          choices={choices}
         />
       )}
     </div>
@@ -121,7 +125,8 @@ function Header({ name = "prototype" }) {
   return <div className={styles.header}>{name}</div>;
 }
 
-function BodyParameters({ parameters, parentMouseEvent, handleParameterUpdate: parentUpdate }) {
+function BodyParameters({ parameters, parentMouseEvent, parentUpdate }) {
+
   return (
     <div className={styles.elements}>
       {parameters.map((e, index) => (
@@ -149,15 +154,39 @@ function BodyChoices({ choices }) {
   );
 }
 
-function AddOptionsBottom({ handleAddParameter, handleAddChoice }) {
-  return (
-    <div className={styles.options_bottom}>
-      <div className={styles.option_left} role="button" onClick={handleAddParameter}>
-        parameter
+function AddOptionsBottom({ parameters, choices, handleAddParameter, handleAddChoice }) {
+  if (parameters?.length > 0 && choices?.length === 0) {
+    return (
+      <div className={styles.options_bottom}>
+        <div className={styles.option_center} role="button" onClick={handleAddParameter}>
+          + parameter
+        </div>
       </div>
-      <div className={styles.option_right} role="button" onClick={handleAddChoice}>
-        choice
+    );
+  }
+
+  if (parameters?.length === 0 && choices?.length > 0) {
+    return (
+      <div className={styles.options_bottom}>
+        <div className={styles.option_center} role="button" onClick={handleAddChoice}>
+          + choice
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (parameters?.length === 0 && choices?.length === 0) {
+    return (
+      <div className={styles.options_bottom}>
+        <div className={styles.option_left} role="button" onClick={handleAddParameter}>
+          + parameter
+        </div>
+        <div className={styles.option_right} role="button" onClick={handleAddChoice}>
+          + choice
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 }

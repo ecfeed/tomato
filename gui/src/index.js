@@ -6,6 +6,7 @@ import CanvasDriver from "./drivers/canvas/CanvasDriver";
 import PoC from "./pages/PoC";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./global.css";
+import PromptDriver from "./drivers/prompt/PromptDriver";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -18,6 +19,7 @@ root.render(
           <Route path="choice" element={<ChoiceDriver />} />
           <Route path="tooltip" element={<TooltipDriver />} />
           <Route path="canvas" element={<CanvasDriver />} />
+          <Route path="prompt" element={<PromptDriver />} />
           <Route path="art" element={<p>Working on it</p>} />
         </Route>
       </Routes>

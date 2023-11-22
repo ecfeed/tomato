@@ -1,7 +1,10 @@
+import { useState } from "react";
 import styles from "./Canvas.module.css";
 import { MockParameter } from "./MockParameter";
+import { parameterUpdate } from "./logic/driver";
 
 const data = {
+  name: 'canvas',
   parameters: [
     {
       name: "parameter 1",
@@ -10,20 +13,17 @@ const data = {
           name: "parameter 11",
           choices: [
             {
-              name: "choice 11",
-              value: "value 11",
+              name: "choice 1a",
+              value: "value 1a",
+            },
+            {
+              name: "choice 1b",
+              value: "value 1b",
             },
           ],
         },
-      ],
-      choices: [
         {
-          name: "choice 1a",
-          value: "value 1a",
-        },
-        {
-          name: "choice 1b",
-          value: "value 1b",
+          name: "parameter 12",
         },
       ],
     },
@@ -54,13 +54,44 @@ const data = {
 };
 
 export function Canvas() {
+  const [structure, setStructure] = useState(data);
+  
+  const handleParameterUpdate = (parameter) => {
+    const candidate = parameterUpdate(structure, parameter);
+    setStructure(candidate);
+  };
+
+  const handleAddParameter = () => {
+    
+  };
+
+  const handleSave = () => {
+    localStorage.setItem("canvas", JSON.stringify(structure));
+  }
+
+  const handleLoad = () => {
+    const data = localStorage.getItem("canvas");
+
+    if (!data) {
+      return;
+    }
+
+    setStructure(JSON.parse(data));
+  }
+
   return (
     <div className={styles.canvas}>
-      {data.parameters.map((e, index) => (
-        <div style={{ width: "300px", position: 'relative' }} key={`${index} ${e.name}`}>
-          <MockParameter parameter={e} />
-        </div>
-      ))}
+      <header className={styles.header}>
+        <button onClick={handleSave}>Save</button>
+        <button onClick={handleLoad}>Load</button>
+      </header>
+      <div className={styles.main}>
+        {structure.parameters.map((e, index) => (
+          <div className={styles.parameter} key={`${index} ${e.name}`}>
+            <MockParameter parameter={e} parentUpdate={handleParameterUpdate}/>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

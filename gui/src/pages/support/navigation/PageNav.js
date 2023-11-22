@@ -9,6 +9,9 @@ export function PageNav() {
                 <NavLink to="tooltip">Tooltip</NavLink>
             </ul>
             <ul>
+                <NavLink to="prompt">Prompt</NavLink>
+            </ul>
+            <ul>
                 <NavLink to="choice">Choice</NavLink>
             </ul>
             <ul>

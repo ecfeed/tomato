@@ -1,16 +1,21 @@
 .parameter {
   padding: 5px;
   margin: 5px;
+  background-color: white;
+  position: relative;
+  z-index: 100;
 }
 
 .main {
   border: 1px solid black;
+  border-radius: 10px;
   padding: 5px;
+  background-color: white;
 }
 
 .header {
-  border-color: inherit;
   border-bottom: 1px solid;
+  border-color: inherit;
   text-align: center;
   text-transform: uppercase;
 }
@@ -18,11 +23,15 @@
 .options_bottom {
   border: 1px solid black;
   border-radius: 10px;
-  margin-top: 5px;
+  margin-top: 2px;
   display: flex;
   align-items: center;
   align-content: center;
-
+  animation: showBottomOptions 0.5s ease-out;
+  background-color: white;
+  position: relative;
+  z-index: -1;
+  font-size: 0.8em;
 }
 
 .option_left {
@@ -36,4 +45,21 @@
   text-align: center;
   text-transform: uppercase;
   width: 50%;
+}
+
+.option_center {
+  text-transform: uppercase;
+  text-align: center;
+  width: 100%;
+}
+
+@keyframes showBottomOptions {
+  0% {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
 }

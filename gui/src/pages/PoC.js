@@ -5,6 +5,7 @@ import { PageSidebar } from "./support/navigation/PageSidebar";
 import { getAllVersions as getChoiceVersions } from "../drivers/choice/ChoiceDriver";
 import { getAllVersions as getTooltipVersions } from "../drivers/tooltip/TooltipDriver";
 import { getAllVersions as getCanvasVersions } from "../drivers/canvas/CanvasDriver";
+import { getAllVersions as getPromptVersions } from "../drivers/prompt/PromptDriver";
 
 function PoC() {
   const location = useLocation();
@@ -17,6 +18,8 @@ function PoC() {
     versions = getTooltipVersions();
   } else if (location.pathname.endsWith("canvas")) {
     versions = getCanvasVersions();
+  } else if (location.pathname.endsWith("prompt")) {
+    versions = getPromptVersions();
   }
 
   return (

@@ -37,7 +37,7 @@ export const parameterUpdate = (reference, parameter) => {
     throw new Error("The parameter does contain any structures!");
   } else {
     if (structure.parameters.filter((e) => e.name === parameter.name).length > 0) {
-      structure.parameters = structure.nested.map((e) =>
+      structure.parameters = structure.parameters.map((e) =>
         e.name === parameter.name ? parameter : e
       );
     } else {

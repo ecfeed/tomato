@@ -1,3 +1,19 @@
 .canvas {
+
+}
+
+.main {
     display: flex;
+}
+
+.parameter {
+    width: 300px;
+    position: relative
+}
+
+.header {
+    button {
+        width: 100px;
+        margin: 10px;
+    }
 }
