@@ -1,45 +1,85 @@
+/* * {
+  border: 1px solid red;
+} */
+
 .prompt {
   border: 1px solid black;
   width: 20vw;
   min-width: 250px;
   border-radius: 5px;
   padding: 0px 5px;
+  animation: fadeIn .25s ease-in;
+  box-shadow: 0 10px 10px rgba(0,0,0,.2);
+  background-color: white;
+  position: relative;
+  z-index: 200;
 }
 
 .header {
+  display: flex;
+  border-bottom: 1px solid black;
+  cursor: default;
+}
+
+.header_text {
   text-align: center;
   display: block;
   font-weight: 400;
   text-transform: uppercase;
-  border-bottom: 1px solid black;
+  width: 100%;
+}
+
+.header_close {
+  color: white;
+  background-color: black;
+  border-left: 1px solid black;
+  text-align: center;
+width: 25px;
 }
 
 .text {
   padding: 10px;
+  cursor: default;
 }
 
 .input {
   width: 100%;
+  padding-left: 5px;
 }
 
 .footer {
   width: 100%;
-  display: block;
+  display: flex;
+  flex-direction: row-reverse;
   margin: 10px 0;
+  cursor: default;
 }
 
-.ok {
+.option {
   width: 100px;
   margin: 5px;
   border: 1px solid black;
+  border-radius: 5px;
   padding: 5px;
   text-align: center;
+
 }
 
-.cancel {
-    width: 100px;
-    margin: 5px;
-    border: 1px solid black;
-    padding: 5px;
-    text-align: center;
+.option:hover {
+  color: white;
+  background-color: black;
+  box-shadow: 0 10px 20px rgba(0,0,0,.2);
+}
+
+.ok {}
+
+.cancel {}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

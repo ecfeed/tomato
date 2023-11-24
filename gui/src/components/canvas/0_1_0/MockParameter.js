@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { faker } from "@faker-js/faker";
 import styles from "./MockParameter.module.css";
 import { choiceAdd, getChoice, getParameter, parameterAdd, parameterUpdate } from "./logic/driver";
+import { Prompt } from "../../prompt/0_1_0/Prompt";
 
 export function MockParameter({
   parameter = { name: "prototype" },
@@ -11,6 +12,9 @@ export function MockParameter({
   const [structure, setStructure] = useState({});
   const [isOnParameter, setIsOnParameter] = useState(false);
   const [isOnParameterChild, setIsOnParameterChild] = useState(false);
+  const [isOnOptionsRight, setIsOnOptionsRight] = useState(false);
+  const [showAddChoice, setShowAddChoice] = useState(false);
+  const [showAddParameter, setShowAddParameter] = useState(false);
 
   const { name, parameters = [], choices = [] } = structure;
   const isStructure = parameters.length > 0;
@@ -43,7 +47,7 @@ export function MockParameter({
 
   const handleParameterUpdate = (parameter) => {
     const candidate = parameterUpdate(structure, parameter);
-    console.log('dupa')
+
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
@@ -52,19 +56,17 @@ export function MockParameter({
   };
 
   const handleAddParameter = () => {
-    let candidate = structure;
-    let name = "";
+    setIsOnParameter(false);
+    setIsOnParameterChild(false);
+    setShowAddParameter(true);
+  };
 
-    name = prompt(
-      "Enter the parameter name.\nTo exit, click on 'cancel' or press 'esc'.",
-      faker.person.firstName()
-    );
-
-    if (!name) {
+  const handleAddParameterLogic = (input) => {
+    if (!input) {
       return;
     }
 
-    candidate = parameterAdd(candidate, getParameter(name));
+    const candidate = parameterAdd(structure, getParameter(input));
 
     if (parentUpdate) {
       parentUpdate(candidate);
@@ -73,50 +75,93 @@ export function MockParameter({
     }
   };
 
+  const handleAddParameterCancel = () => {
+    setShowAddParameter(false);
+    setIsOnParameter(false);
+    setIsOnParameterChild(false);
+  };
+
+  const handleAddParameterPlaceholder = () => {
+    return faker.internet.domainWord();
+  };
+
   const handleAddChoice = () => {
-    let candidate = structure;
-    let name = "";
+    setShowAddParameter(false);
+    setIsOnParameter(false);
+    setShowAddChoice(true);
+  };
 
-    name = prompt(
-      "Enter the choice name.\nTo exit, click on 'cancel' or press 'esc'.",
-      faker.person.firstName()
-    );
-
-    if (!name) {
+  const handleAddChoiceLogic = (input) => {
+    if (!input) {
       return;
     }
 
-    candidate = choiceAdd(candidate, getChoice(name));
+    const candidate = choiceAdd(structure, getChoice(input));
 
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
       setStructure(candidate);
     }
+  };
+
+  const handleAddChoiceCancel = () => {
+    setShowAddChoice(false);
+    setIsOnParameter(false);
+    setIsOnParameterChild(false);
+  };
+
+  const handleAddChoicePlaceholder = () => {
+    return faker.internet.userName();
   };
 
   return (
     <div
-      className={styles.parameter}
+      className={styles.container}
       onMouseEnter={handleMouseParameterEnter}
       onMouseLeave={handleMouseParameterLeave}>
-      <div className={styles.main}>
-        <Header name={name} />
-        <BodyParameters
-          parameters={parameters}
-          parentMouseEvent={handleMouseParameterChild}
-          parentUpdate={handleParameterUpdate}
-        />
-        {!isStructure && <BodyChoices choices={choices} />}
+      <div className={styles.parameter}>
+        <div className={styles.main}>
+          <Header name={name} />
+          <BodyParameters
+            parameters={parameters}
+            parentMouseEvent={handleMouseParameterChild}
+            parentUpdate={handleParameterUpdate}
+          />
+          {!isStructure && <BodyChoices choices={choices} />}
+        </div>
+        {isOnParameter && !isOnParameterChild && !showAddChoice && !showAddParameter && (
+          <AddOptionsBottom
+            handleAddParameter={handleAddParameter}
+            handleAddChoice={handleAddChoice}
+            parameters={parameters}
+            choices={choices}
+          />
+        )}
+        {showAddChoice && (
+          <div className={styles.prompt}>
+            <Prompt
+              header="Add choices"
+              text="To exit, press 'cancel' or 'escape'."
+              placeholder={handleAddChoicePlaceholder}
+              handleCancel={handleAddChoiceCancel}
+              handleConfirm={handleAddChoiceLogic}
+            />
+          </div>
+        )}
+        {showAddParameter && (
+          <div className={styles.prompt}>
+            <Prompt
+              header="Add parameters"
+              text="To exit, press 'cancel' or 'escape'."
+              placeholder={handleAddParameterPlaceholder}
+              handleCancel={handleAddParameterCancel}
+              handleConfirm={handleAddParameterLogic}
+            />
+          </div>
+        )}
       </div>
-      {isOnParameter && !isOnParameterChild && (
-        <AddOptionsBottom
-          handleAddParameter={handleAddParameter}
-          handleAddChoice={handleAddChoice}
-          parameters={parameters}
-          choices={choices}
-        />
-      )}
+      {isOnParameter && <AddOptionsRight />}
     </div>
   );
 }
@@ -126,7 +171,6 @@ function Header({ name = "prototype" }) {
 }
 
 function BodyParameters({ parameters, parentMouseEvent, parentUpdate }) {
-
   return (
     <div className={styles.elements}>
       {parameters.map((e, index) => (
@@ -189,4 +233,8 @@ function AddOptionsBottom({ parameters, choices, handleAddParameter, handleAddCh
   }
 
   return null;
+}
+
+function AddOptionsRight() {
+  return <div className={styles.options_right}>!</div>;
 }
