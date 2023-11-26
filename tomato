@@ -2,7 +2,7 @@
 
 import sys
 import yaml
-from copy import deepcopy
+from copy import deepcopy, copy
 from itertools import combinations, product
 from collections import Counter
 import random
@@ -195,17 +195,23 @@ class Model:
             print(f'Error: unable to open file {file}: {e}')
             sys.exit(1)
 
+def print_csv_line(header, line, output=sys.stderr):
+    cleaned_line = [str(element) if element is not None else ' ' for element in line]
+    # if header is not None:
+    #     output.write('(' + header + ') ')
+    output.write(','.join(cleaned_line) + '\n')
+    # pass
+    
+def clean_line(output=sys.stderr):
+    output.write('\033[1A')
+    output.write('\033[K')
+    # output.write('\n')
+    # pass
+
+
 def nwise(input_list, n, solver, assigner):
     if n > len(input_list):
         raise ValueError("n cannot be greater than the length of the input list")
-
-    def print_csv_line(line, output=sys.stdout):
-        cleaned_line = [str(element) if element is not None else ' ' for element in line]
-        output.write(','.join(cleaned_line) + '\n')
-        
-    def clean_line(output=sys.stdout):
-        output.write('\033[1A')
-        output.write('\033[K')
 
     def tuples_covered(test_case, n):
         if n > len(test_case):
@@ -215,7 +221,7 @@ def nwise(input_list, n, solver, assigner):
         
         combinations_ = combinations(indices, n)
         def uncompress(indices):
-            return [test_case[i] if i in indices else None for i in range(len(test_case))]
+            return tuple([test_case[i] if i in indices else None for i in range(len(test_case))])
         yield from [uncompress(test) for test in combinations_]
         
     def tuples(input_list, n):
@@ -240,49 +246,52 @@ def nwise(input_list, n, solver, assigner):
                 result = [None] * len_input_list
                 for i, index in enumerate(selected_indices):
                     result[index] = combination[i]
-                yield result
+                yield tuple(result) # tuple is hashable, list is not
+                
         if n > len(input_list):
             raise ValueError("n cannot be greater than the length of the input list")
 
         for template in tuple_template(n, len(input_list)):
             yield from tuples_from_template(input_list, template)
 
-    tuples_to_cover = [tuple for tuple in tuples(input_list, n) if solver(tuple)]
+    tuples_to_cover = {t for t in tuples(input_list, n) if solver(t)}
 
     def tuple_score(candidate):
         if not solver(candidate):
             return -1
         else:
             covered_tuples = tuples_covered(candidate, n)
-            score = len([x for x in covered_tuples if x in tuples_to_cover]) 
+            score = len(tuples_to_cover.intersection(covered_tuples))
             return score
-    
+
     while len(tuples_to_cover) > 0:
-        for tuple_to_cover in tuples_to_cover:
-            indices = [i for i, x in enumerate(tuple_to_cover) if x is None]
-            random.shuffle(indices)
-            
-            constructed_test_case = tuple_to_cover.copy()
-            print_csv_line(constructed_test_case)
-            for i in indices:
-                best_candidate, best_score = None, -1
-                choices = input_list[i]
-                random.shuffle(choices)
-                for value in choices:
-                    candidate = constructed_test_case.copy()
-                    candidate[i] = value
-                    clean_line()
-                    print_csv_line(candidate)
-                    score = tuple_score(candidate)                    
-                    if score > best_score:
-                        best_candidate = candidate
-                        best_score = tuple_score(candidate)
-                        
-                constructed_test_case = best_candidate
-                tuples_to_cover[:] = [x for x in tuples_to_cover if x not in tuples_covered(constructed_test_case, n)]
-            assigner(constructed_test_case)
-            clean_line()
-            yield constructed_test_case
+        # for tuple_to_cover in tuples_to_cover:
+        tuple_to_cover = random.choice(list(tuples_to_cover))
+        indices = [i for i, x in enumerate(tuple_to_cover) if x is None]
+        random.shuffle(indices)
+        
+        constructed_test_case = copy(tuple_to_cover)
+        print_csv_line(str(len(tuples_to_cover)) + ' tuples to go', constructed_test_case)
+        for i in indices:
+            best_candidate, best_score = None, -1
+            choices = input_list[i]
+            random.shuffle(choices)
+            for value in choices:
+                candidate = list(copy(constructed_test_case))
+                candidate[i] = value
+                clean_line()
+                print_csv_line(str(len(tuples_to_cover)) + ' tuples to go', candidate)
+                score = tuple_score(candidate)                    
+                if score > best_score:
+                    best_candidate = candidate
+                    best_score = tuple_score(candidate)
+                    
+            constructed_test_case = best_candidate
+            for t in tuples_covered(constructed_test_case, n):
+                tuples_to_cover.discard(t) 
+        assigner(constructed_test_case)
+        clean_line()
+        yield constructed_test_case
 
 if __name__ == '__main__':
     if len(sys.argv) < 2 or len(sys.argv) > 3:
@@ -304,7 +313,7 @@ if __name__ == '__main__':
     params, choices = function.get_generator_input()
 
     print(','.join(params))
-    for test in nwise(choices, 2, lambda x: True, lambda x: None):
+    for test in nwise(choices, 2, lambda x: True, lambda x: None):       
         print(','.join(test))
     
     
