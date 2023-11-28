@@ -1,0 +1,191 @@
+//  * {
+//   border: 1px solid red;
+// }
+
+@mixin overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.container {
+  display: flex;
+  overflow: hidden;
+  justify-content: flex-end;
+}
+
+.container_top {
+  width: 230px;
+}
+
+.container_nested {
+  width: 100%;
+}
+
+.container_folded {
+  width: 40px;
+  height: 300px;
+  justify-content: space-around;
+  flex-flow: column nowrap;
+}
+
+.options_bottom {
+  @include overflow();
+  border: 1px solid black;
+  border-radius: 10px;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  animation: showBottomOptions 0.5s ease-out;
+  background-color: white;
+  position: relative;
+  // z-index: -1;
+  font-size: 0.8em;
+  padding: 5px;
+}
+
+.option_left {
+  @include overflow();
+  border-right: 1px solid black;
+  text-align: center;
+  text-transform: uppercase;
+  width: 50%;
+}
+
+.option_right {
+  @include overflow();
+  text-align: center;
+  text-transform: uppercase;
+  width: 50%;
+}
+
+.option_center {
+  @include overflow();
+  text-transform: uppercase;
+  text-align: center;
+  width: 100%;
+}
+
+.prompt {
+  position: fixed;
+  top: 50vh;
+  left: 50vw;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+@keyframes showBottomOptions {
+  0% {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
+}
+
+// -----------------------------------------------------------------------------------
+
+@mixin optionsLeft($width) {
+  border: 1px solid black;
+  border-radius: 10px;
+  margin-top: 7px;
+  text-align: center;
+  cursor: default;
+  height: 20px;
+  min-width: $width;
+  text-transform: uppercase;
+  animation: showLeftOptions .5s ease-in;
+}
+
+.options_left_short {
+  @include optionsLeft(10px);
+}
+
+.options_left_long {
+  @include optionsLeft(100px);
+}
+
+@keyframes showLeftOptions {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
+}
+
+// -----------------------------------------------------------------------------------
+
+.parameter_default {
+  background-color: white;
+  color: black;
+  border-color: black;
+}
+
+.parameter_negative {
+  background-color: black;
+  color: white;
+}
+
+.parameter_folded {
+  transform: rotate(90deg) translateX(-160px);
+  transform-origin: left bottom;
+  // min-width: 250px;
+}
+
+.parameter_top {
+  width: 100%;
+}
+
+.parameter_nested {
+  width: 100%;
+}
+
+.parameter {
+  @include overflow();
+  
+  padding: 2px 0px;
+  margin: 5px;
+
+  width: 210px;
+
+  // animation: animateParameter 0.25s ease-out;
+  cursor: default;
+}
+
+.parameter_main {
+  @include overflow();
+
+  border: 1px solid;
+  border-radius: 10px;
+
+  padding: 5px;
+}
+
+.parameter_header {
+  @include overflow();
+
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@keyframes animateParameter {
+  0% {
+    opacity: 0;
+    transform: translateX(-25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
+}
+
+// -----------------------------------------------------------------------------------
+
+.underline {
+  border-bottom: 1px solid;
+}

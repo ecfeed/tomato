@@ -13,7 +13,7 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route index element={<Navigate replace to="/poc/choice" />} />
+        <Route index element={<Navigate replace to="/poc/canvas" />} />
         <Route path="poc" element={<PoC />}>
           <Route index element={<Navigate replace to="choice" />} />
           <Route path="choice" element={<ChoiceDriver />} />

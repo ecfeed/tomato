@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styles from "./Canvas.module.css";
 import { MockParameter } from "./MockParameter";
-import { parameterUpdate } from "./logic/driver";
+import { getParameter, parameterAddAtPosition, parameterUpdate } from "./logic/driver";
 
 const data = {
-  name: 'canvas',
+  name: "canvas",
   parameters: [
     {
       name: "parameter 1",
@@ -55,19 +55,21 @@ const data = {
 
 export function Canvas() {
   const [structure, setStructure] = useState(data);
-  
+  const [isLocked, setIsLocked] = useState(false);
+
   const handleParameterUpdate = (parameter) => {
     const candidate = parameterUpdate(structure, parameter);
     setStructure(candidate);
   };
 
-  const handleAddParameter = () => {
-    
+  const handleAddParameter = (input, index) => {
+    const candidate = parameterAddAtPosition(structure, getParameter(input), index);
+    setStructure(candidate);
   };
 
   const handleSave = () => {
     localStorage.setItem("canvas", JSON.stringify(structure));
-  }
+  };
 
   const handleLoad = () => {
     const data = localStorage.getItem("canvas");
@@ -77,7 +79,7 @@ export function Canvas() {
     }
 
     setStructure(JSON.parse(data));
-  }
+  };
 
   return (
     <div className={styles.canvas}>
@@ -85,10 +87,19 @@ export function Canvas() {
         <button onClick={handleSave}>Save</button>
         <button onClick={handleLoad}>Load</button>
       </header>
+      <p className={styles.text}>To fold the top-level parameter click on the header.</p>
+      <p className={styles.text}>To add a parameter hover the mouse pointer over one of the parameters.</p>
       <div className={styles.main}>
         {structure.parameters.map((e, index) => (
           <div className={styles.parameter} key={`${index} ${e.name}`}>
-            <MockParameter parameter={e} parentUpdate={handleParameterUpdate}/>
+            <MockParameter
+              parameter={e}
+              parentUpdate={handleParameterUpdate}
+              parentAdd={handleAddParameter}
+              isLocked={isLocked}
+              setIsLocked={setIsLocked}
+              top={true}
+            />
           </div>
         ))}
       </div>

@@ -3,8 +3,8 @@ export const getParameter = (name) => {
 };
 
 export const getChoice = (name) => {
-    return { name };
-  };
+  return { name };
+};
 
 export const parameterAdd = (reference, parameter) => {
   if (!parameter.name) {
@@ -20,6 +20,31 @@ export const parameterAdd = (reference, parameter) => {
       throw new Error("A parameter with the specified name already exists!");
     } else {
       structure.parameters.push(parameter);
+    }
+  }
+
+  return structure;
+};
+
+export const parameterAddAtPosition = (reference, parameter, index) => {
+  if (!parameter.name) {
+    throw new Error("The name of the parameter is undefined!");
+  }
+
+  const structure = JSON.parse(JSON.stringify(reference));
+
+  if (!structure.parameters) {
+    structure.parameters = [parameter];
+  } else {
+    if (structure.parameters.filter((e) => e.name === parameter.name).length > 0) {
+      throw new Error("A parameter with the specified name already exists!");
+    } else {
+      if (index) {
+        const position = structure.parameters.map((e) => e.name).indexOf(index);
+        structure.parameters.splice(position, 0, parameter);
+      } else {
+        structure.parameters.push(parameter);
+      }
     }
   }
 

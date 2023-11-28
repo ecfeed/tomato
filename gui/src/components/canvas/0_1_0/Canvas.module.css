@@ -1,19 +1,27 @@
 .canvas {
-
+  /* position: relative; */
 }
 
 .main {
-    display: flex;
+  display: flex;
+  /* position: relative; */
 }
 
 .parameter {
-    width: 300px;
-    position: relative;
+  /* width: 300px; */
+  /* min-width: 300px; */
+  /* position: relative; */
 }
 
 .header {
-    button {
-        width: 100px;
-        margin: 10px;
-    }
+  button {
+    width: 100px;
+    margin: 10px;
+  }
+}
+
+.text {
+  font-size: 0.8rem;
+  font-style: italic;
+  line-height: 0;
 }
