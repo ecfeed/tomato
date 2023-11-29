@@ -1,0 +1,35 @@
+@mixin overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// -----------------------------------------------------------
+
+.main {
+  @include overflow();
+
+  border: 0.1rem solid;
+  border-radius: 10px;
+
+  padding: 0.5rem;
+
+  &--top {
+    width: 100%;
+  }
+
+  &--nested {
+    width: 100%;
+  }
+
+  &--negative {
+    background-color: black;
+    color: white;
+  }
+
+  &--default {
+    background-color: white;
+    color: black;
+    border-color: black;
+  }
+}

@@ -1,0 +1,29 @@
+@mixin overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// -----------------------------------------------------------------------------------
+
+.parameter-header {
+  @include overflow();
+
+  text-align: center;
+  text-transform: uppercase;
+
+  &--default {
+    border-color: black;
+    background-color: white;
+    color: black;
+  }
+
+  &--negative {
+    background-color: black;
+    color: white;
+  }
+}
+
+.underline {
+  border-bottom: 0.1rem solid;
+}

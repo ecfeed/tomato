@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { faker } from "@faker-js/faker";
-import styles from "./MockParameter.module.scss";
 import {
   choiceAdd,
   getChoice,
@@ -8,7 +7,17 @@ import {
   parameterAddAtPosition,
   parameterUpdate,
 } from "./logic/driver";
-import { Prompt } from "../../prompt/0_1_0/Prompt";
+import { OptionsLeft } from "./OptionsLeft";
+import { OptionsBottom } from "./OptionsBottom";
+import { PromptAddParentParameter } from "./PromptAddParentParameter";
+import { PromptAddNestedChoices } from "./PromptAddNestedChoices";
+import { PromptAddNestedParameters } from "./PromptAddNestedParameters";
+import { BodyChoices } from "./BodyChoices";
+import { BodyParameters } from "./BodyParameters";
+import { Header } from "./Header";
+import { Main } from "./Main";
+import { Container } from "./Container";
+import { Parameter } from "./Parameter";
 
 export function MockParameter({
   parameter = { name: "prototype" },
@@ -225,200 +234,73 @@ export function MockParameter({
 
   return (
     <>
-      <div
-        className={`${styles.container} ${
-          isFolded ? styles.container_folded : top ? styles.container_top : styles.container_nested
-        }`}
-        onMouseEnter={handleMouseParameterEnter}
-        onMouseLeave={handleMouseParameterLeave}>
-        {isOnParameter && !isOnParameterChild && !isSelected && !isLocked && !isFolded && (
-          <AddOptionsLeft
-            handleAppParameterParent={handleAddParameterParent}
-            handleMouseOptionsLeftEnter={handleMouseOptionsLeftEnter}
-            handleMouseOptionsLeftLeave={handleMouseOptionsLeftLeave}
-            isOnOptionsRight={isOnOptionsLeft}
-          />
-        )}
-        <div className={`${styles.parameter} ${isFolded ? styles.parameter_folded : ""}`}>
-          <div
-            className={`${styles.parameter_main} ${
-              isSelected ? styles.parameter_negative : styles.parameter_default
-            } ${top ? styles.parameter_top : styles.parameter_nested}`}>
-            <div
-              className={`${styles.parameter_header} ${
-                isSelected ? styles.parameter_negative : styles.parameter_default
-              } ${choices?.length > 0 || parameters?.length > 0 ? styles.underline : ""}`}
-              onClick={handleMouseHeaderClick}>
-              <Header name={name} />
-            </div>
-            {!isFolded && (
-              <div className={styles.parameter_children}>
-                <BodyParameters
-                  parameters={parameters}
-                  parentMouseEvent={handleMouseParameterChild}
-                  parentUpdate={handleParameterUpdate}
-                  parentAdd={handleAddParameterParentLogic}
-                  isLocked={isLocked}
-                  setIsLocked={setIsLocked}
-                />
-              </div>
-            )}
-            {!isFolded && !isStructure && (
-              <div className={styles.parameter_choices}>
-                <BodyChoices choices={choices} />
-              </div>
-            )}
-          </div>
-          {isOnParameter && !isOnParameterChild && !isSelected && !isLocked && !isFolded && (
-            <AddOptionsBottom
-              handleAddParameter={handleAddParameter}
-              handleAddChoice={handleAddChoice}
-              parameters={parameters}
-              choices={choices}
-            />
-          )}
-        </div>
-      </div>
-      {showAddChoice && (
-        <div className={styles.prompt}>
-          <Prompt
-            header="Add nested choices"
-            text="To exit, press 'cancel' or 'escape'."
-            placeholder={handleAddChoicePlaceholder}
-            handleCancel={handleAddChoiceCancel}
-            handleConfirm={handleAddChoiceLogic}
-          />
-        </div>
-      )}
-      {showAddParameter && (
-        <div className={styles.prompt}>
-          <Prompt
-            header="Add nested parameters"
-            text="To exit, press 'cancel' or 'escape'."
-            placeholder={handleAddParameterPlaceholder}
-            handleCancel={handleAddParameterCancel}
-            handleConfirm={handleAddParameterLogic}
-          />
-        </div>
-      )}
-      {showAddParameterParent && (
-        <div className={styles.prompt}>
-          <Prompt
-            header="Add parent parameters"
-            text="To exit, press 'cancel' or 'escape'."
-            placeholder={handleAddParameterPlaceholder}
-            handleCancel={handleAddParameterParentCancel}
-            handleConfirm={handleAddParameterParentInitialLogic}
-          />
-        </div>
-      )}
-    </>
-  );
-}
-
-function Header({ name }) {
-  return <div>{name}</div>;
-}
-
-function BodyParameters({
-  parameters,
-  parentMouseEvent,
-  parentUpdate,
-  parentAdd,
-  isLocked,
-  setIsLocked,
-}) {
-  return (
-    <div>
-      {parameters.map((e, index) => (
-        <MockParameter
-          key={`${index} ${e.name}`}
-          parameter={e}
-          parentMouseEvent={parentMouseEvent}
-          parentUpdate={parentUpdate}
-          parentAdd={parentAdd}
+      <Container
+        isFolded={isFolded}
+        top={top}
+        handleMouseParameterEnter={handleMouseParameterEnter}
+        handleMouseParameterLeave={handleMouseParameterLeave}>
+        <OptionsLeft
+          handleAppParameterParent={handleAddParameterParent}
+          handleMouseOptionsLeftEnter={handleMouseOptionsLeftEnter}
+          handleMouseOptionsLeftLeave={handleMouseOptionsLeftLeave}
+          isOnOptionsRight={isOnOptionsLeft}
+          isOnParameter={isOnParameter}
+          isOnParameterChild={isOnParameterChild}
+          isSelected={isSelected}
           isLocked={isLocked}
-          setIsLocked={setIsLocked}>
-          {e}
-        </MockParameter>
-      ))}
-    </div>
-  );
-}
-
-function BodyChoices({ choices }) {
-  return (
-    <div>
-      {choices.map((e, index) => (
-        <div key={`${index} ${e.name}`} className={styles.choice}>
-          {e.name}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function AddOptionsBottom({ parameters, choices, handleAddParameter, handleAddChoice }) {
-  if (parameters?.length > 0 && choices?.length === 0) {
-    return (
-      <div className={styles.options_bottom}>
-        <div className={styles.option_center} role="button" onClick={handleAddParameter}>
-          + parameter
-        </div>
-      </div>
-    );
-  }
-
-  if (parameters?.length === 0 && choices?.length > 0) {
-    return (
-      <div className={styles.options_bottom}>
-        <div className={styles.option_center} role="button" onClick={handleAddChoice}>
-          + choice
-        </div>
-      </div>
-    );
-  }
-
-  if (parameters?.length === 0 && choices?.length === 0) {
-    return (
-      <div className={styles.options_bottom}>
-        <div className={styles.option_left} role="button" onClick={handleAddParameter}>
-          + param
-        </div>
-        <div className={styles.option_right} role="button" onClick={handleAddChoice}>
-          + choice
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-}
-
-function AddOptionsLeft({
-  handleAppParameterParent,
-  isOnOptionsRight,
-  handleMouseOptionsLeftEnter,
-  handleMouseOptionsLeftLeave,
-}) {
-  if (!isOnOptionsRight) {
-    return (
-      <div
-        className={styles.options_left_short}
-        onMouseEnter={handleMouseOptionsLeftEnter}
-        onMouseLeave={handleMouseOptionsLeftLeave}>
-        !
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={styles.options_left_long}
-      onClick={handleAppParameterParent}
-      onMouseEnter={handleMouseOptionsLeftEnter}
-      onMouseLeave={handleMouseOptionsLeftLeave}>
-      Add
-    </div>
+          isFolded={isFolded}
+        />
+        <Parameter isFolded={isFolded}>
+          <Main isSelected={isSelected} top={top}>
+            <Header
+              name={name}
+              isSelected={isSelected}
+              choices={choices}
+              parameters={parameters}
+              handleMouseHeaderClick={handleMouseHeaderClick}
+            />
+            <BodyParameters
+              isFolded={isFolded}
+              parameters={parameters}
+              parentMouseEvent={handleMouseParameterChild}
+              parentUpdate={handleParameterUpdate}
+              parentAdd={handleAddParameterParentLogic}
+              isLocked={isLocked}
+              setIsLocked={setIsLocked}
+            />
+            <BodyChoices choices={choices} isFolded={isFolded} isStructure={isStructure} />
+          </Main>
+          <OptionsBottom
+            isOnParameter={isOnParameter}
+            isOnParameterChild={isOnParameterChild}
+            isSelected={isSelected}
+            isLocked={isLocked}
+            isFolded={isFolded}
+            handleAddParameter={handleAddParameter}
+            handleAddChoice={handleAddChoice}
+            parameters={parameters}
+            choices={choices}
+          />
+        </Parameter>
+      </Container>
+      <PromptAddNestedChoices
+        showAddChoice={showAddChoice}
+        handleAddChoicePlaceholder={handleAddChoicePlaceholder}
+        handleAddChoiceCancel={handleAddChoiceCancel}
+        handleAddChoiceLogic={handleAddChoiceLogic}
+      />
+      <PromptAddNestedParameters
+        showAddParameter={showAddParameter}
+        handleAddParameterPlaceholder={handleAddParameterPlaceholder}
+        handleAddParameterCancel={handleAddParameterCancel}
+        handleAddParameterLogic={handleAddParameterLogic}
+      />
+      <PromptAddParentParameter
+        showAddParameterParent={showAddParameterParent}
+        handleAddParameterPlaceholder={handleAddParameterPlaceholder}
+        handleAddParameterParentCancel={handleAddParameterParentCancel}
+        handleAddParameterParentInitialLogic={handleAddParameterParentInitialLogic}
+      />
+    </>
   );
 }

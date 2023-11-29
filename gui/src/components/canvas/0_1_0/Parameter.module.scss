@@ -1,0 +1,37 @@
+@mixin overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// -----------------------------------------------------------
+
+.parameter {
+  @include overflow();
+  
+  cursor: default;
+
+  margin: 0.5rem;
+  padding: 0.2rem 0;
+  width: 21rem;
+
+  // animation: animateParameter 0.25s ease-out;
+
+  &--folded {
+    transform: rotate(90deg) translateX(-16rem);
+    transform-origin: left bottom;
+  }
+}
+
+// -----------------------------------------------------------
+
+@keyframes animateParameter {
+  0% {
+    opacity: 0;
+    transform: translateX(-2.5rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
+}

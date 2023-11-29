@@ -1,31 +1,32 @@
-/* * {
-    border: 1px solid black;
-} */
-
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.6rem;
+  height: 100%;
+  margin: 0;
+  padding: 0.4rem;
+  overflow: hidden;
 }
 
 h1 {
-    padding: 5px;
-    margin: 5px;
+  padding: 0.5rem;
+  margin: 0.5rem;
 }
 
 h2 {
-    padding: 5px;
-    margin: 5px;
+  padding: 0.5rem;
+  margin: 0.5rem;
 }
 
 p {
-    padding: 5px;
-    margin: 5px;
-}
-
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 5px;
-    overflow: hidden;
+  padding: 0.5rem;
+  margin: 0.5rem;
 }

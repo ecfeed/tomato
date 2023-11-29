@@ -1,0 +1,72 @@
+@mixin overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// -----------------------------------------------------------
+
+.options-bottom {
+  @include overflow();
+
+  border: 0.1rem solid black;
+  border-radius: 1rem;
+
+  margin-top: 0.2rem;
+  padding: 0.5rem;
+
+  display: flex;
+  position: relative;
+  align-items: center;
+  align-content: center;
+
+  font-size: 1.2rem;
+
+  background-color: white;
+
+  animation: animateOptionsBottom 0.5s ease-out;
+}
+
+.option {
+  &--left {
+    @include overflow();
+
+    border-right: 0.1rem solid black;
+
+    width: 50%;
+
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  &--right {
+    @include overflow();
+
+    width: 50%;
+
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  &--center {
+    @include overflow();
+
+    width: 100%;
+
+    text-transform: uppercase;
+    text-align: center;
+  }
+}
+
+// -----------------------------------------------------------
+
+@keyframes animateOptionsBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(-2.5rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0);
+  }
+}

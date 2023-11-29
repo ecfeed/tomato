@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./Canvas.module.css";
+import styles from "./Canvas.module.scss";
 import { MockParameter } from "./MockParameter";
 import { getParameter, parameterAddAtPosition, parameterUpdate } from "./logic/driver";
 
