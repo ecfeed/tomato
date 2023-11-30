@@ -1,6 +1,9 @@
 import styles from "./Main.module.scss";
+import { useParameter } from "./context/ParameterContext";
 
-export function Main({ children, isSelected, top }) {
+export function Main({ children }) {
+  const { isSelected, top } = useParameter();
+
   return (
     <div
       className={`${styles["main"]} ${

@@ -6,7 +6,7 @@ import {
   getParameter,
   parameterAddAtPosition,
   parameterUpdate,
-} from "./logic/driver";
+} from "../logic/driver";
 
 const ParameterContext = createContext();
 
@@ -86,6 +86,7 @@ export function ParameterProvider({
   };
 
   const handleMouseParameterChild = (value) => {
+    console.log(value)
     setIsOnParameterChild(value);
   };
 
@@ -228,6 +229,7 @@ export function ParameterProvider({
     <ParameterContext.Provider
       value={{
           top,
+          name,
           parameters,
           choices,
           handleMouseParameterEnter,
@@ -244,6 +246,7 @@ export function ParameterProvider({
           isLocked,
           isFolded,
           isStructure,
+          setIsLocked,
           showAddChoice,
           handleAddChoicePlaceholder,
           handleAddChoiceCancel,

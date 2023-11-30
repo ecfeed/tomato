@@ -1,6 +1,9 @@
 import styles from "./BodyChoices.module.scss";
+import { useParameter } from "./context/ParameterContext";
 
-export function BodyChoices({ choices, isFolded, isStructure }) {
+export function BodyChoices() {
+  const { choices, isFolded, isStructure } = useParameter();
+
   if (isFolded || isStructure) {
     return null;
   }

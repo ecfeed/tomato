@@ -1,12 +1,15 @@
 import styles from "./Prompt.module.scss";
 import { Prompt } from "../../prompt/0_1_0/Prompt";
+import { useParameter } from "./context/ParameterContext";
 
-export function PromptAddParentParameter({
-  showAddParameterParent,
-  handleAddParameterPlaceholder,
-  handleAddParameterParentCancel,
-  handleAddParameterParentInitialLogic,
-}) {
+export function PromptAddParentParameter() {
+  const {
+    showAddParameterParent,
+    handleAddParameterPlaceholder,
+    handleAddParameterParentCancel,
+    handleAddParameterParentInitialLogic,
+  } = useParameter();
+
   if (!showAddParameterParent) {
     return null;
   }

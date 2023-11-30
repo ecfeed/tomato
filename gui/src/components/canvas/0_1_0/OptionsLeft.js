@@ -1,16 +1,19 @@
 import styles from "./OptionsLeft.module.scss";
+import { useParameter } from "./context/ParameterContext";
 
-export function OptionsLeft({
-  handleAddParameterParent,
-  handleMouseOptionsLeftEnter,
-  handleMouseOptionsLeftLeave,
-  isOnOptionsLeft,
-  isOnParameter,
-  isOnParameterChild,
-  isSelected,
-  isLocked,
-  isFolded,
-}) {
+export function OptionsLeft() {
+  const {
+    handleAddParameterParent,
+    handleMouseOptionsLeftEnter,
+    handleMouseOptionsLeftLeave,
+    isOnOptionsLeft,
+    isOnParameter,
+    isOnParameterChild,
+    isSelected,
+    isLocked,
+    isFolded,
+  } = useParameter();
+
   if (!isOnParameter || isOnParameterChild || isSelected || isLocked || isFolded) {
     return null;
   }

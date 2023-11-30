@@ -1,6 +1,9 @@
 import styles from "./Header.module.scss";
+import { useParameter } from "./context/ParameterContext";
 
-export function Header({ name, isSelected, choices, parameters, handleMouseHeaderClick }) {
+export function Header() {
+  const { name, isSelected, choices, parameters, handleMouseHeaderClick } = useParameter();
+
   return (
     <div
       className={`${styles["parameter-header"]} ${

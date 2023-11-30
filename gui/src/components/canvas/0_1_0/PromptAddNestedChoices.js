@@ -1,12 +1,11 @@
 import styles from "./Prompt.module.scss";
 import { Prompt } from "../../prompt/0_1_0/Prompt";
+import { useParameter } from "./context/ParameterContext";
 
-export function PromptAddNestedChoices({
-  showAddChoice,
-  handleAddChoicePlaceholder,
-  handleAddChoiceCancel,
-  handleAddChoiceLogic,
-}) {
+export function PromptAddNestedChoices() {
+  const { showAddChoice, handleAddChoicePlaceholder, handleAddChoiceCancel, handleAddChoiceLogic } =
+    useParameter();
+
   if (!showAddChoice) {
     return null;
   }
