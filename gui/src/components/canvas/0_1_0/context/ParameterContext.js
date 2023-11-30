@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { faker } from "@faker-js/faker";
 import {
   choiceAdd,
@@ -7,20 +7,12 @@ import {
   parameterAddAtPosition,
   parameterUpdate,
 } from "./logic/driver";
-import { OptionsLeft } from "./OptionsLeft";
-import { OptionsBottom } from "./OptionsBottom";
-import { PromptAddParentParameter } from "./PromptAddParentParameter";
-import { PromptAddNestedChoices } from "./PromptAddNestedChoices";
-import { PromptAddNestedParameters } from "./PromptAddNestedParameters";
-import { BodyChoices } from "./BodyChoices";
-import { BodyParameters } from "./BodyParameters";
-import { Header } from "./Header";
-import { Main } from "./Main";
-import { Container } from "./Container";
-import { Parameter } from "./Parameter";
 
-export function MockParameter({
-  parameter = { name: "prototype" },
+const ParameterContext = createContext();
+
+export function ParameterProvider({
+  children,
+  parameter,
   parentMouseEvent,
   parentUpdate,
   parentAdd,
@@ -233,74 +225,52 @@ export function MockParameter({
   };
 
   return (
-    <>
-      <Container
-        isFolded={isFolded}
-        top={top}
-        handleMouseParameterEnter={handleMouseParameterEnter}
-        handleMouseParameterLeave={handleMouseParameterLeave}>
-        <OptionsLeft
-          handleAddParameterParent={handleAddParameterParent}
-          handleMouseOptionsLeftEnter={handleMouseOptionsLeftEnter}
-          handleMouseOptionsLeftLeave={handleMouseOptionsLeftLeave}
-          isOnOptionsLeft={isOnOptionsLeft}
-          isOnParameter={isOnParameter}
-          isOnParameterChild={isOnParameterChild}
-          isSelected={isSelected}
-          isLocked={isLocked}
-          isFolded={isFolded}
-        />
-        <Parameter isFolded={isFolded}>
-          <Main isSelected={isSelected} top={top}>
-            <Header
-              name={name}
-              isSelected={isSelected}
-              choices={choices}
-              parameters={parameters}
-              handleMouseHeaderClick={handleMouseHeaderClick}
-            />
-            <BodyParameters
-              isFolded={isFolded}
-              parameters={parameters}
-              parentMouseEvent={handleMouseParameterChild}
-              parentUpdate={handleParameterUpdate}
-              parentAdd={handleAddParameterParentLogic}
-              isLocked={isLocked}
-              setIsLocked={setIsLocked}
-            />
-            <BodyChoices choices={choices} isFolded={isFolded} isStructure={isStructure} />
-          </Main>
-          <OptionsBottom
-            isOnParameter={isOnParameter}
-            isOnParameterChild={isOnParameterChild}
-            isSelected={isSelected}
-            isLocked={isLocked}
-            isFolded={isFolded}
-            handleAddParameter={handleAddParameter}
-            handleAddChoice={handleAddChoice}
-            parameters={parameters}
-            choices={choices}
-          />
-        </Parameter>
-      </Container>
-      <PromptAddNestedChoices
-        showAddChoice={showAddChoice}
-        handleAddChoicePlaceholder={handleAddChoicePlaceholder}
-        handleAddChoiceCancel={handleAddChoiceCancel}
-        handleAddChoiceLogic={handleAddChoiceLogic}
-      />
-      <PromptAddNestedParameters
-        showAddParameter={showAddParameter}
-        handleAddParameterPlaceholder={handleAddParameterPlaceholder}
-        handleAddParameterCancel={handleAddParameterCancel}
-        handleAddParameterLogic={handleAddParameterLogic}
-      />
-      <PromptAddParentParameter
-        showAddParameterParent={showAddParameterParent}
-        handleAddParameterPlaceholder={handleAddParameterPlaceholder}
-        handleAddParameterParentCancel={handleAddParameterParentCancel}
-        handleAddParameterParentInitialLogic={handleAddParameterParentInitialLogic}
-      />
-    </>
+    <ParameterContext.Provider
+      value={{
+          top,
+          parameters,
+          choices,
+          handleMouseParameterEnter,
+          handleMouseParameterLeave,
+          handleAddParameterParent,
+          handleMouseOptionsLeftEnter,
+          handleMouseOptionsLeftLeave,
+          handleAddParameter,
+          handleAddChoice,
+          isOnOptionsLeft,
+          isOnParameter,
+          isOnParameterChild,
+          isSelected,
+          isLocked,
+          isFolded,
+          isStructure,
+          showAddChoice,
+          handleAddChoicePlaceholder,
+          handleAddChoiceCancel,
+          handleAddChoiceLogic,
+          showAddParameter,
+          handleAddParameterPlaceholder,
+          handleAddParameterCancel,
+          handleAddParameterLogic,
+          showAddParameterParent,
+          handleAddParameterParentCancel,
+          handleAddParameterParentLogic,
+          handleAddParameterParentInitialLogic,
+          handleMouseHeaderClick,
+          handleMouseParameterChild,
+          handleParameterUpdate
+      }}>
+      {children}
+    </ParameterContext.Provider>
   );
+}
+
+export function useParameter() {
+  const context = useContext(ParameterContext);
+
+  if (context === undefined) {
+    throw new Error("ParameterContext was used outside of the ParameterProvider.");
+  }
+
+  return context;
 }

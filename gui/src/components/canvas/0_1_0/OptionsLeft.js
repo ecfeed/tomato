@@ -1,10 +1,10 @@
 import styles from "./OptionsLeft.module.scss";
 
 export function OptionsLeft({
-  handleAppParameterParent,
+  handleAddParameterParent,
   handleMouseOptionsLeftEnter,
   handleMouseOptionsLeftLeave,
-  isOnOptionsRight,
+  isOnOptionsLeft,
   isOnParameter,
   isOnParameterChild,
   isSelected,
@@ -15,7 +15,7 @@ export function OptionsLeft({
     return null;
   }
 
-  if (!isOnOptionsRight) {
+  if (!isOnOptionsLeft) {
     return (
       <div
         className={styles["options-left--short"]}
@@ -31,7 +31,7 @@ export function OptionsLeft({
       className={styles["options-left--long"]}
       onMouseEnter={handleMouseOptionsLeftEnter}
       onMouseLeave={handleMouseOptionsLeftLeave}
-      onClick={handleAppParameterParent}>
+      onClick={handleAddParameterParent}>
       Add
     </div>
   );
