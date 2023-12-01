@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { faker } from "@faker-js/faker";
 import {
   choiceAdd,
+  choiceRemove,
   getChoice,
   getParameter,
   parameterAddAtPosition,
@@ -102,7 +103,9 @@ export function ParameterProvider({
   };
 
   const handleRemoveParameterParentLogic = (input) => {
-    console.log("lol");
+    if (!input) {
+      return;
+    }
 
     const candidate = parameterRemove(structure, input);
 
@@ -123,6 +126,21 @@ export function ParameterProvider({
     setIsOnParameterChild(false);
     setIsOnOptionsLeft(false);
   };
+
+  const handleRemoveChoiceLogic = (input) => {
+
+    if (!input) {
+      return;
+    }
+
+    const candidate = choiceRemove(structure, input);
+
+    if (parentUpdate) {
+      parentUpdate(candidate);
+    } else {
+      setStructure(candidate);
+    }
+  }
 
   const handleAddParameter = () => {
     setIsOnParameter(false);
@@ -285,6 +303,7 @@ export function ParameterProvider({
         handleAddParameterParentInitialLogic,
         handleRemoveParameterParentLogic,
         handleRemoveParameterParentInitialLogic,
+        handleRemoveChoiceLogic,
         handleMouseHeaderClick,
         handleMouseParameterChild,
         handleParameterUpdate,

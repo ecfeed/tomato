@@ -108,3 +108,19 @@ export const choiceAdd = (reference, choice) => {
 
   return structure;
 };
+
+export const choiceRemove = (reference, name) => {
+  if (!name) {
+    throw new Error("The name of the choice is undefined!");
+  }
+
+  if (!reference.choices) {
+    throw new Error("The choice does not exist!");
+  }
+
+  const structure = JSON.parse(JSON.stringify(reference));
+
+  structure.choices = reference.choices.filter((e) => e.name !== name);
+
+  return structure;
+}

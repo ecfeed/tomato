@@ -17,7 +17,7 @@ export function PromptAddParentParameter() {
   return (
     <div className={styles.prompt}>
       <Prompt
-        header="Add parent parameters"
+        header="Add a parent parameter"
         text="To exit, press 'cancel' or 'escape'."
         placeholder={handleAddParameterPlaceholder}
         handleCancel={handleAddParameterParentCancel}

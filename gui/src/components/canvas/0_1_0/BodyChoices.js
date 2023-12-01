@@ -1,4 +1,5 @@
 import styles from "./BodyChoices.module.scss";
+import { Choice } from "./Choice";
 import { useParameter } from "./context/ParameterContext";
 
 export function BodyChoices() {
@@ -11,9 +12,7 @@ export function BodyChoices() {
     <div className={styles.parameter_choices}>
       <div>
         {choices.map((e, index) => (
-          <div key={`${index} ${e.name}`} className={styles.choice}>
-            {e.name}
-          </div>
+          <Choice key={`${index} ${e.name}`} name={e.name} />
         ))}
       </div>
     </div>

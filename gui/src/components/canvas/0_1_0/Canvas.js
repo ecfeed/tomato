@@ -1,7 +1,14 @@
 import { useState } from "react";
+import { faker } from "@faker-js/faker";
 import styles from "./Canvas.module.scss";
 import { MockParameter } from "./MockParameter";
-import { getParameter, parameterAddAtPosition, parameterRemove, parameterUpdate } from "./logic/driver";
+import {
+  getParameter,
+  parameterAddAtPosition,
+  parameterRemove,
+  parameterUpdate,
+} from "./logic/driver";
+import {  PromptAddMainParameters } from "./PromptAddMainParameters";
 
 const data = {
   name: "canvas",
@@ -56,6 +63,7 @@ const data = {
 export function Canvas() {
   const [structure, setStructure] = useState(data);
   const [isLocked, setIsLocked] = useState(false);
+  const [showAddMainParameter, setShowAddMainParameter] = useState(false);
 
   const handleParameterUpdate = (parameter) => {
     const candidate = parameterUpdate(structure, parameter);
@@ -67,7 +75,7 @@ export function Canvas() {
     setStructure(candidate);
   };
 
-  const handleRemoveParameter = (input) => {console.log(input);
+  const handleRemoveParameter = (input) => {
     const candidate = parameterRemove(structure, input);
     setStructure(candidate);
   };
@@ -86,6 +94,22 @@ export function Canvas() {
     setStructure(JSON.parse(data));
   };
 
+  const handleAddMainParameter = (e) => {
+    e.preventDefault();
+
+    setShowAddMainParameter(true);
+    setIsLocked(true);
+  };
+
+  const handleAddMainParameterPlaceholder = () => {
+    return faker.internet.userName();
+  };
+
+  const handleAddMainParameterCancel = () => {
+    setShowAddMainParameter(false);
+    setIsLocked(false);
+  }
+
   return (
     <div className={styles.canvas}>
       <header className={styles.header}>
@@ -93,7 +117,9 @@ export function Canvas() {
         <button onClick={handleLoad}>Load</button>
       </header>
       <p className={styles.text}>To fold the top-level parameter click on the header.</p>
-      <p className={styles.text}>To add a parameter hover the mouse pointer over one of the parameters.</p>
+      <p className={styles.text}>
+        To add a parameter hover the mouse pointer over one of the parameters.
+      </p>
       <div className={styles.main}>
         {structure.parameters.map((e, index) => (
           <div className={styles.parameter} key={`${index} ${e.name}`}>
@@ -108,6 +134,13 @@ export function Canvas() {
             />
           </div>
         ))}
+        <button className={styles["button--next"]} onClick={handleAddMainParameter}>add</button>
+        <PromptAddMainParameters
+          showAddMainParameter={showAddMainParameter}
+          handleAddParameterPlaceholder={handleAddMainParameterPlaceholder}
+          handleAddParameterCancel={handleAddMainParameterCancel}
+          handleAddParameterLogic={handleAddParameter}
+        />
       </div>
     </div>
   );
