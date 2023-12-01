@@ -4,6 +4,7 @@ import { useParameter } from "./context/ParameterContext";
 export function OptionsLeft() {
   const {
     handleAddParameterParent,
+    handleRemoveParameterParentInitialLogic,
     handleMouseOptionsLeftEnter,
     handleMouseOptionsLeftLeave,
     isOnOptionsLeft,
@@ -33,8 +34,10 @@ export function OptionsLeft() {
       className={styles["options-left--long"]}
       onMouseEnter={handleMouseOptionsLeftEnter}
       onMouseLeave={handleMouseOptionsLeftLeave}
-      onClick={handleAddParameterParent}>
-      Add
+      >
+        <div onClick={handleAddParameterParent}>Add</div>
+        <div onClick={handleRemoveParameterParentInitialLogic}>Remove</div>
+    
     </div>
   );
 }

@@ -16,6 +16,7 @@ export function MockParameter({
   parentMouseEvent,
   parentUpdate,
   parentAdd,
+  parentRemove,
   isLocked,
   setIsLocked,
   top,
@@ -26,6 +27,7 @@ export function MockParameter({
       parentMouseEvent={parentMouseEvent}
       parentUpdate={parentUpdate}
       parentAdd={parentAdd}
+      parentRemove={parentRemove}
       isLocked={isLocked}
       setIsLocked={setIsLocked}
       top={top}>

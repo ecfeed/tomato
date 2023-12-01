@@ -11,6 +11,7 @@ export function BodyParameters() {
     handleMouseParameterChild,
     handleParameterUpdate,
     handleAddParameterParentLogic,
+    handleRemoveParameterParentLogic
   } = useParameter();
 
   if (isFolded) {
@@ -25,6 +26,7 @@ export function BodyParameters() {
           parentMouseEvent={handleMouseParameterChild}
           parentUpdate={handleParameterUpdate}
           parentAdd={handleAddParameterParentLogic}
+          parentRemove={handleRemoveParameterParentLogic}
           isLocked={isLocked}
           setIsLocked={setIsLocked}>
           {e}

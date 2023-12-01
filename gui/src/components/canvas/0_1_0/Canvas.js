@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "./Canvas.module.scss";
 import { MockParameter } from "./MockParameter";
-import { getParameter, parameterAddAtPosition, parameterUpdate } from "./logic/driver";
+import { getParameter, parameterAddAtPosition, parameterRemove, parameterUpdate } from "./logic/driver";
 
 const data = {
   name: "canvas",
@@ -67,6 +67,11 @@ export function Canvas() {
     setStructure(candidate);
   };
 
+  const handleRemoveParameter = (input) => {console.log(input);
+    const candidate = parameterRemove(structure, input);
+    setStructure(candidate);
+  };
+
   const handleSave = () => {
     localStorage.setItem("canvas", JSON.stringify(structure));
   };
@@ -96,6 +101,7 @@ export function Canvas() {
               parameter={e}
               parentUpdate={handleParameterUpdate}
               parentAdd={handleAddParameter}
+              parentRemove={handleRemoveParameter}
               isLocked={isLocked}
               setIsLocked={setIsLocked}
               top={true}

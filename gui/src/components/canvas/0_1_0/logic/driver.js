@@ -26,6 +26,22 @@ export const parameterAdd = (reference, parameter) => {
   return structure;
 };
 
+export const parameterRemove = (reference, name) => {
+  if (!name) {
+    throw new Error("The name of the parameter is undefined!");
+  }
+
+  if (!reference.parameters) {
+    throw new Error("The parameter does not exist!");
+  }
+
+  const structure = JSON.parse(JSON.stringify(reference));
+
+  structure.parameters = reference.parameters.filter((e) => e.name !== name);
+
+  return structure;
+};
+
 export const parameterAddAtPosition = (reference, parameter, index) => {
   if (!parameter.name) {
     throw new Error("The name of the parameter is undefined!");

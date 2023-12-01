@@ -5,6 +5,7 @@ import {
   getChoice,
   getParameter,
   parameterAddAtPosition,
+  parameterRemove,
   parameterUpdate,
 } from "../logic/driver";
 
@@ -16,6 +17,7 @@ export function ParameterProvider({
   parentMouseEvent,
   parentUpdate,
   parentAdd,
+  parentRemove,
   isLocked,
   setIsLocked,
   top,
@@ -97,6 +99,29 @@ export function ParameterProvider({
     } else {
       setStructure(candidate);
     }
+  };
+
+  const handleRemoveParameterParentLogic = (input) => {
+    console.log("lol");
+
+    const candidate = parameterRemove(structure, input);
+
+    if (parentUpdate) {
+      parentUpdate(candidate);
+    } else {
+      setStructure(candidate);
+    }
+  };
+
+  const handleRemoveParameterParentInitialLogic = () => {
+
+    if (parentRemove) {
+      parentRemove(name);
+    }
+
+    setIsOnParameter(false);
+    setIsOnParameterChild(false);
+    setIsOnOptionsLeft(false);
   };
 
   const handleAddParameter = () => {
@@ -227,40 +252,42 @@ export function ParameterProvider({
   return (
     <ParameterContext.Provider
       value={{
-          top,
-          name,
-          parameters,
-          choices,
-          handleMouseParameterEnter,
-          handleMouseParameterLeave,
-          handleAddParameterParent,
-          handleMouseOptionsLeftEnter,
-          handleMouseOptionsLeftLeave,
-          handleAddParameter,
-          handleAddChoice,
-          isOnOptionsLeft,
-          isOnParameter,
-          isOnParameterChild,
-          isSelected,
-          isLocked,
-          isFolded,
-          isStructure,
-          setIsLocked,
-          showAddChoice,
-          handleAddChoicePlaceholder,
-          handleAddChoiceCancel,
-          handleAddChoiceLogic,
-          showAddParameter,
-          handleAddParameterPlaceholder,
-          handleAddParameterCancel,
-          handleAddParameterLogic,
-          showAddParameterParent,
-          handleAddParameterParentCancel,
-          handleAddParameterParentLogic,
-          handleAddParameterParentInitialLogic,
-          handleMouseHeaderClick,
-          handleMouseParameterChild,
-          handleParameterUpdate
+        top,
+        name,
+        parameters,
+        choices,
+        handleMouseParameterEnter,
+        handleMouseParameterLeave,
+        handleAddParameterParent,
+        handleMouseOptionsLeftEnter,
+        handleMouseOptionsLeftLeave,
+        handleAddParameter,
+        handleAddChoice,
+        isOnOptionsLeft,
+        isOnParameter,
+        isOnParameterChild,
+        isSelected,
+        isLocked,
+        isFolded,
+        isStructure,
+        setIsLocked,
+        showAddChoice,
+        handleAddChoicePlaceholder,
+        handleAddChoiceCancel,
+        handleAddChoiceLogic,
+        showAddParameter,
+        handleAddParameterPlaceholder,
+        handleAddParameterCancel,
+        handleAddParameterLogic,
+        showAddParameterParent,
+        handleAddParameterParentCancel,
+        handleAddParameterParentLogic,
+        handleAddParameterParentInitialLogic,
+        handleRemoveParameterParentLogic,
+        handleRemoveParameterParentInitialLogic,
+        handleMouseHeaderClick,
+        handleMouseParameterChild,
+        handleParameterUpdate,
       }}>
       {children}
     </ParameterContext.Provider>
