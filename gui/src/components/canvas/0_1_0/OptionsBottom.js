@@ -22,7 +22,7 @@ export function OptionsBottom() {
     return (
       <div className={styles["options-bottom"]}>
         <div className={styles["option--center"]} role="button" onClick={handleAddParameter}>
-          + parameter
+          + p
         </div>
       </div>
     );
@@ -32,7 +32,7 @@ export function OptionsBottom() {
     return (
       <div className={styles["options-bottom"]}>
         <div className={styles["option--center"]} role="button" onClick={handleAddChoice}>
-          + choice
+          + c
         </div>
       </div>
     );
@@ -42,10 +42,10 @@ export function OptionsBottom() {
     return (
       <div className={styles["options-bottom"]}>
         <div className={styles["option--left"]} role="button" onClick={handleAddParameter}>
-          + param
+          + p
         </div>
         <div className={styles["option--right"]} role="button" onClick={handleAddChoice}>
-          + choice
+          + c
         </div>
       </div>
     );

@@ -11,10 +11,9 @@ export function OptionsLeft() {
     isOnParameterChild,
     isSelected,
     isLocked,
-    isFolded,
   } = useParameter();
 
-  if (!isOnParameter || isOnParameterChild || isSelected || isLocked || isFolded) {
+  if (!isOnParameter || isOnParameterChild || isSelected || isLocked) {
     return null;
   }
 

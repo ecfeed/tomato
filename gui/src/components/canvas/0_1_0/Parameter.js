@@ -5,7 +5,7 @@ export function Parameter({ children }) {
   const { isFolded } = useParameter();
 
   return (
-    <div className={`${styles['parameter']} ${isFolded ? styles['parameter--folded'] : ""}`}>
+    <div className={`${styles['parameter']} ${isFolded ? styles['parameter--folded'] : styles['parameter--default']}`}>
       {children}
     </div>
   );

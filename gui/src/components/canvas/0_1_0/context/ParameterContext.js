@@ -86,7 +86,6 @@ export function ParameterProvider({
   };
 
   const handleMouseParameterChild = (value) => {
-    console.log(value)
     setIsOnParameterChild(value);
   };
 

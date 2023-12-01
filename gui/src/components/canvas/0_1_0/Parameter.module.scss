@@ -1,25 +1,16 @@
-@mixin overflow {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-// -----------------------------------------------------------
-
 .parameter {
-  @include overflow();
-  
   cursor: default;
-
-  margin: 0.5rem;
-  padding: 0.2rem 0;
-  width: 21rem;
-
+  
   // animation: animateParameter 0.25s ease-out;
 
   &--folded {
-    transform: rotate(90deg) translateX(-16rem);
+    width: 22rem;
+    transform: rotate(90deg) translateX(-16.5rem);
     transform-origin: left bottom;
+  }
+
+  &--default {
+    width: 100%;
   }
 }
 
