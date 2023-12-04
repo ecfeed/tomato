@@ -1,0 +1,52 @@
+@mixin mixinOptionsLeft($width) {
+  cursor: default;
+
+  background-color: white;
+  border: 0.1rem solid black;
+  border-radius: 1rem;
+
+  position: absolute;
+  
+  z-index: 200;
+
+  min-width: $width;
+  
+
+  text-align: center;
+  text-transform: uppercase;
+
+  opacity: 0;
+
+  animation: animateOptionsLeft 0.1s ease-out 0.1s forwards;
+}
+
+// -----------------------------------------------------------
+
+.options-left {
+  &--short {
+    top: -.05rem;
+    left: -1.5rem;
+    height: 2rem;
+    @include mixinOptionsLeft(2rem);
+  }
+
+  &--long {
+    left: -9.5rem;
+    top: -1.95rem;
+    height: 6rem;
+    @include mixinOptionsLeft(10rem);
+  }
+}
+
+// -----------------------------------------------------------
+
+@keyframes animateOptionsLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

@@ -9,7 +9,8 @@ import {
   parameterRename,
   parameterUpdate,
 } from "./logic/driver";
-import {  PromptAddMainParameters } from "./PromptAddMainParameters";
+import { PromptAddMainParameters } from "./PromptAddMainParameters";
+import { Console } from "./Console";
 
 const data = {
   name: "canvas",
@@ -63,6 +64,7 @@ const data = {
 
 export function Canvas() {
   const [structure, setStructure] = useState(data);
+  const [text, setText] = useState();
   const [isLocked, setIsLocked] = useState(false);
   const [showAddMainParameter, setShowAddMainParameter] = useState(false);
 
@@ -105,7 +107,12 @@ export function Canvas() {
 
   const handleReload = () => {
     setStructure(data);
-  }
+  };
+
+  const handleExport = () => {
+    console.log(JSON.stringify(structure, null, 4))
+    setText(JSON.stringify(structure, null, 4));
+  };
 
   const handleAddMainParameter = (e) => {
     e.preventDefault();
@@ -121,7 +128,7 @@ export function Canvas() {
   const handleAddMainParameterCancel = () => {
     setShowAddMainParameter(false);
     setIsLocked(false);
-  }
+  };
 
   return (
     <div className={styles.canvas}>
@@ -129,11 +136,16 @@ export function Canvas() {
         <button onClick={handleSave}>Save</button>
         <button onClick={handleLoad}>Load</button>
         <button onClick={handleReload}>Reload</button>
+        <button onClick={handleExport}>Export</button>
       </header>
-      <p className={styles.text}>To fold the top-level parameter click on the header.</p>
-      <p className={styles.text}>
-        To add a parameter hover the mouse pointer over one of the parameters.
-      </p>
+      <ul className={styles.tips}>
+        <li>To fold the top-level parameter click on the header.</li>
+        <li>
+          To see additional parameter/choice options hover the mouse pointer over it and click on
+          the menu.
+        </li>
+        <li>You can store your model between sessions, to do it use the 'save'/'load' buttons.</li>
+      </ul>
       <div className={styles.main}>
         {structure.parameters.map((e, index) => (
           <div className={styles.parameter} key={`${index} ${e.name}`}>
@@ -149,7 +161,9 @@ export function Canvas() {
             />
           </div>
         ))}
-        <button className={styles["button--next"]} onClick={handleAddMainParameter}>add</button>
+        <button className={styles["button--next"]} onClick={handleAddMainParameter}>
+          add
+        </button>
         <PromptAddMainParameters
           showAddMainParameter={showAddMainParameter}
           handleAddParameterPlaceholder={handleAddMainParameterPlaceholder}
@@ -157,6 +171,8 @@ export function Canvas() {
           handleAddParameterLogic={handleAddParameter}
         />
       </div>
+      
+      <Console text={text} />
     </div>
   );
 }

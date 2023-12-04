@@ -1,5 +1,8 @@
 .choice {
-    &:hover {
-        text-decoration: line-through;
+    position: relative;
+    padding-left: 1rem;
+
+    &--active {
+        background-color: lightgray;
     }
 }

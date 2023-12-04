@@ -24,7 +24,7 @@ function PoC() {
 
   return (
     <div className={styles.poc}>
-      <PageNav />
+      {/* <PageNav /> */}
       <div className={styles.main}>
         <PageSidebar versions={versions} />
         <Outlet />

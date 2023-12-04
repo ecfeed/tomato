@@ -26,7 +26,8 @@ export const parameterAdd = (reference, parameter) => {
   return structure;
 };
 
-export const parameterRemove = (reference, name) => {console.log('nie tu')
+export const parameterRemove = (reference, name) => {
+
   if (!name) {
     throw new Error("The name of the parameter is undefined!");
   }
@@ -43,7 +44,6 @@ export const parameterRemove = (reference, name) => {console.log('nie tu')
 };
 
 export const parameterRename = (reference, name, update) => {
- 
   if (!name) {
     throw new Error("The name of the parameter is undefined!");
   }
@@ -58,7 +58,9 @@ export const parameterRename = (reference, name, update) => {
 
   const structure = JSON.parse(JSON.stringify(reference));
 
-  structure.parameters = reference.parameters.map((e) => e.name === name ? {...e, name: update} : e);
+  structure.parameters = reference.parameters.map((e) =>
+    e.name === name ? { ...e, name: update } : e
+  );
 
   return structure;
 };
@@ -130,6 +132,31 @@ export const choiceAdd = (reference, choice) => {
   return structure;
 };
 
+export const choiceAddAtPosition = (reference, choice, index) => {
+  if (!choice.name) {
+    throw new Error("The name of the choice is undefined!");
+  }
+
+  const structure = JSON.parse(JSON.stringify(reference));
+
+  if (!structure.choices) {
+    structure.choices = [choice];
+  } else {
+    if (structure.choices.filter((e) => e.name === choice.name).length > 0) {
+      throw new Error("A choice with the specified name already exists!");
+    } else {
+      if (index) {
+        const position = structure.choices.map((e) => e.name).indexOf(index);
+        structure.choices.splice(position, 0, choice);
+      } else {
+        structure.choices.push(choice);
+      }
+    }
+  }
+
+  return structure;
+};
+
 export const choiceRemove = (reference, name) => {
   if (!name) {
     throw new Error("The name of the choice is undefined!");
@@ -144,4 +171,24 @@ export const choiceRemove = (reference, name) => {
   structure.choices = reference.choices.filter((e) => e.name !== name);
 
   return structure;
-}
+};
+
+export const choiceRename = (reference, name, update) => {
+  if (!name) {
+    throw new Error("The name of the choice is undefined!");
+  }
+
+  if (!update) {
+    throw new Error("The updated name of the choice is undefined!");
+  }
+
+  if (!reference.choices) {
+    throw new Error("The choice does not exist!");
+  }
+
+  const structure = JSON.parse(JSON.stringify(reference));
+
+  structure.choices = reference.choices.map((e) => (e.name === name ? { ...e, name: update } : e));
+
+  return structure;
+};

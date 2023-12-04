@@ -5,6 +5,8 @@ export function OptionsBottom() {
   const {
     parameters,
     choices,
+    handleMouseOptionsBottomEnter,
+    handleMouseOptionsBottomLeave,
     handleAddParameter,
     handleAddChoice,
     isOnParameter,
@@ -20,7 +22,10 @@ export function OptionsBottom() {
 
   if (parameters?.length > 0 && choices?.length === 0) {
     return (
-      <div className={styles["options-bottom"]}>
+      <div
+        className={styles["options-bottom"]}
+        onMouseEnter={handleMouseOptionsBottomEnter}
+        onMouseLeave={handleMouseOptionsBottomLeave}>
         <div className={styles["option--center"]} role="button" onClick={handleAddParameter}>
           + p
         </div>
@@ -30,7 +35,10 @@ export function OptionsBottom() {
 
   if (parameters?.length === 0 && choices?.length > 0) {
     return (
-      <div className={styles["options-bottom"]}>
+      <div
+        className={styles["options-bottom"]}
+        onMouseEnter={handleMouseOptionsBottomEnter}
+        onMouseLeave={handleMouseOptionsBottomLeave}>
         <div className={styles["option--center"]} role="button" onClick={handleAddChoice}>
           + c
         </div>
@@ -40,7 +48,10 @@ export function OptionsBottom() {
 
   if (parameters?.length === 0 && choices?.length === 0) {
     return (
-      <div className={styles["options-bottom"]}>
+      <div
+        className={styles["options-bottom"]}
+        onMouseEnter={handleMouseOptionsBottomEnter}
+        onMouseLeave={handleMouseOptionsBottomLeave}>
         <div className={styles["option--left"]} role="button" onClick={handleAddParameter}>
           + p
         </div>

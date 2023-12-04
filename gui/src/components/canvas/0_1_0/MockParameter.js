@@ -1,4 +1,4 @@
-import { OptionsLeft } from "./OptionsLeft";
+import { OptionsParameterLeft } from "./OptionsParameterLeft";
 import { OptionsBottom } from "./OptionsBottom";
 import { PromptAddParentParameter } from "./PromptAddParentParameter";
 import { PromptAddNestedChoices } from "./PromptAddNestedChoices";
@@ -11,6 +11,7 @@ import { Container } from "./Container";
 import { Parameter } from "./Parameter";
 import { ParameterProvider } from "./context/ParameterContext";
 import { PromptRenameParameter } from "./PromptRenameParameter";
+import { PromptRenameChoice } from "./PromptRenameChoice";
 
 export function MockParameter({
   parameter = { name: "prototype" },
@@ -35,7 +36,7 @@ export function MockParameter({
       setIsLocked={setIsLocked}
       top={top}>
       <Container>
-        <OptionsLeft />
+        <OptionsParameterLeft />
         <Parameter>
           <Main>
             <Header/>
@@ -49,6 +50,7 @@ export function MockParameter({
       <PromptAddNestedParameters/>
       <PromptAddParentParameter/>
       <PromptRenameParameter/>
+      <PromptRenameChoice/>
     </ParameterProvider>
   );
 }
