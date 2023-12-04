@@ -5,7 +5,7 @@ import { useParameter } from "./context/ParameterContext";
 export function PromptAddParentParameter() {
   const {
     showAddParameterParent,
-    handleAddParameterPlaceholder,
+    handleAddParameterParentPlaceholder,
     handleAddParameterParentCancel,
     handleAddParameterParentInitialLogic,
   } = useParameter();
@@ -17,11 +17,14 @@ export function PromptAddParentParameter() {
   return (
     <div className={styles.prompt}>
       <Prompt
-        header="Add a parent parameter"
-        text="To exit, press 'cancel' or 'escape'."
-        placeholder={handleAddParameterPlaceholder}
+        header="Add a parameter"
+        text="
+          The parameter will be added before the selected one.
+        "
+        placeholder={handleAddParameterParentPlaceholder}
         handleCancel={handleAddParameterParentCancel}
         handleConfirm={handleAddParameterParentInitialLogic}
+        buttons={["add", "cancel"]}
       />
     </div>
   );

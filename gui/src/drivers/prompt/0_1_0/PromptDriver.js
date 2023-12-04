@@ -7,8 +7,8 @@ export default function PromptDriver() {
       <h1>Prompt</h1>
       <Prompt
         header={"lorem ipsum"}
-        text={"Lorem ipsum."}
-        placeholder={() => 'placeholder'}
+        text={"Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt."}
+        placeholder={() => 'lorem ipsum'}
         handleConfirm={(input) => console.log(input)}
         handleCancel={() => console.log("cancel")}
       />

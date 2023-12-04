@@ -6,6 +6,7 @@ import {
   getParameter,
   parameterAddAtPosition,
   parameterRemove,
+  parameterRename,
   parameterUpdate,
 } from "./logic/driver";
 import {  PromptAddMainParameters } from "./PromptAddMainParameters";
@@ -73,10 +74,18 @@ export function Canvas() {
   const handleAddParameter = (input, index) => {
     const candidate = parameterAddAtPosition(structure, getParameter(input), index);
     setStructure(candidate);
+
+    setShowAddMainParameter(false);
+    setIsLocked(false);
   };
 
   const handleRemoveParameter = (input) => {
     const candidate = parameterRemove(structure, input);
+    setStructure(candidate);
+  };
+
+  const handleRenameParameter = (name, input) => {
+    const candidate = parameterRename(structure, name, input);
     setStructure(candidate);
   };
 
@@ -128,6 +137,7 @@ export function Canvas() {
               parentUpdate={handleParameterUpdate}
               parentAdd={handleAddParameter}
               parentRemove={handleRemoveParameter}
+              parentRename={handleRenameParameter}
               isLocked={isLocked}
               setIsLocked={setIsLocked}
               top={true}

@@ -13,11 +13,15 @@ export function PromptAddNestedChoices() {
   return (
     <div className={styles.prompt}>
       <Prompt
-        header="Add nested choices"
-        text="To exit, press 'cancel' or 'escape'."
+        header="Add choices"
+        text="
+          You may add as many choices as required.\n
+          To return, press 'escape' or 'exit'.
+        "
         placeholder={handleAddChoicePlaceholder}
         handleCancel={handleAddChoiceCancel}
         handleConfirm={handleAddChoiceLogic}
+        buttons={["add", "exit"]}
       />
     </div>
   );

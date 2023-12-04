@@ -7,6 +7,7 @@ import {
   getParameter,
   parameterAddAtPosition,
   parameterRemove,
+  parameterRename,
   parameterUpdate,
 } from "../logic/driver";
 
@@ -18,6 +19,7 @@ export function ParameterProvider({
   parentMouseEvent,
   parentUpdate,
   parentAdd,
+  parentRename,
   parentRemove,
   isLocked,
   setIsLocked,
@@ -30,16 +32,19 @@ export function ParameterProvider({
   const [showAddChoice, setShowAddChoice] = useState(false);
   const [showAddParameter, setShowAddParameter] = useState(false);
   const [showAddParameterParent, setShowAddParameterParent] = useState(false);
+  const [showRenameParameter, setShowRenameParameter] = useState(false);
   const [isFolded, setIsFolded] = useState(false);
 
   const { name, parameters = [], choices = [] } = structure;
   const isStructure = parameters.length > 0;
 
-  const isSelected = showAddChoice || showAddParameter || showAddParameterParent;
+  const isSelected = showAddChoice || showAddParameter || showAddParameterParent || showRenameParameter;
 
   useEffect(() => {
     setStructure(parameter);
   }, [parameter]);
+
+  //-------------------------------------------------------------------------------------------
 
   const handleMouseParameterEnter = (e) => {
     e.preventDefault();
@@ -70,14 +75,6 @@ export function ParameterProvider({
     }
   };
 
-  const handleMouseHeaderClick = (e) => {
-    e.preventDefault();
-
-    if (top) {
-      setIsFolded((e) => !e);
-    }
-  };
-
   const handleMouseOptionsLeftEnter = (e) => {
     e.preventDefault();
     setIsOnOptionsLeft(true);
@@ -86,6 +83,16 @@ export function ParameterProvider({
   const handleMouseOptionsLeftLeave = (e) => {
     e.preventDefault();
     setIsOnOptionsLeft(false);
+  };
+
+  //-------------------------------------------------------------------------------------------
+
+  const handleMouseHeaderClick = (e) => {
+    e.preventDefault();
+
+    if (top) {
+      setIsFolded((e) => !e);
+    }
   };
 
   const handleMouseParameterChild = (value) => {
@@ -102,45 +109,9 @@ export function ParameterProvider({
     }
   };
 
-  const handleRemoveParameterParentLogic = (input) => {
-    if (!input) {
-      return;
-    }
+ 
 
-    const candidate = parameterRemove(structure, input);
-
-    if (parentUpdate) {
-      parentUpdate(candidate);
-    } else {
-      setStructure(candidate);
-    }
-  };
-
-  const handleRemoveParameterParentInitialLogic = () => {
-
-    if (parentRemove) {
-      parentRemove(name);
-    }
-
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
-  };
-
-  const handleRemoveChoiceLogic = (input) => {
-
-    if (!input) {
-      return;
-    }
-
-    const candidate = choiceRemove(structure, input);
-
-    if (parentUpdate) {
-      parentUpdate(candidate);
-    } else {
-      setStructure(candidate);
-    }
-  }
+  //-------------------------------------------------------------------------------------------
 
   const handleAddParameter = () => {
     setIsOnParameter(false);
@@ -148,16 +119,6 @@ export function ParameterProvider({
     setIsOnOptionsLeft(false);
 
     setShowAddParameter(true);
-
-    setIsLocked(true);
-  };
-
-  const handleAddParameterParent = () => {
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
-
-    setShowAddParameterParent(true);
 
     setIsLocked(true);
   };
@@ -174,6 +135,95 @@ export function ParameterProvider({
     } else {
       setStructure(candidate);
     }
+
+    setShowAddParameter(false);
+
+    setIsOnParameter(false);
+    setIsOnParameterChild(false);
+    setIsOnOptionsLeft(false);
+
+    setIsLocked(false);
+  };
+
+  const handleAddParameterCancel = () => {
+    setShowAddParameter(false);
+
+    setIsOnParameter(false);
+    setIsOnParameterChild(false);
+    setIsOnOptionsLeft(false);
+
+    setIsLocked(false);
+  };
+
+  const handleAddParameterPlaceholder = () => {
+    return faker.internet.domainWord();
+  };
+
+    //-------------------------------------------------------------------------------------------
+
+    const handleRenameParameter = () => {
+      setIsOnParameter(false);
+      setIsOnParameterChild(false);
+      setIsOnOptionsLeft(false);
+  
+      setShowRenameParameter(true);
+  
+      setIsLocked(true);
+    };
+  
+    const handleRenameParameterLogic = (name, input) => {
+      const candidate = parameterRename(structure, name, input);
+  
+      if (parentUpdate) {
+        parentUpdate(candidate);
+      } else {
+        setStructure(candidate);
+      }
+    };
+
+    const handleRenameParameterInitialLogic = (input) => {
+      if (!input) {
+        return;
+      }
+
+      if (parentRename) {
+        parentRename(name, input);
+      }
+
+      setShowRenameParameter(false);
+  
+      setIsOnParameter(false);
+      setIsOnParameterChild(false);
+      setIsOnOptionsLeft(false);
+  
+      setIsLocked(false);
+    }
+  
+    const handleRenameParameterCancel = () => {
+      setShowRenameParameter(false);
+  
+      setIsOnParameter(false);
+      setIsOnParameterChild(false);
+      setIsOnOptionsLeft(false);
+  
+      setIsLocked(false);
+    };
+  
+    const handleRenameParameterPlaceholder = () => {
+      return name;
+    };
+  
+
+  //-------------------------------------------------------------------------------------------
+
+  const handleAddParameterParent = () => {
+    setIsOnParameter(false);
+    setIsOnParameterChild(false);
+    setIsOnOptionsLeft(false);
+
+    setShowAddParameterParent(true);
+
+    setIsLocked(true);
   };
 
   const handleAddParameterParentLogic = (input, index) => {
@@ -204,16 +254,6 @@ export function ParameterProvider({
     setIsLocked(false);
   };
 
-  const handleAddParameterCancel = () => {
-    setShowAddParameter(false);
-
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
-
-    setIsLocked(false);
-  };
-
   const handleAddParameterParentCancel = () => {
     setShowAddParameterParent(false);
 
@@ -224,9 +264,37 @@ export function ParameterProvider({
     setIsLocked(false);
   };
 
-  const handleAddParameterPlaceholder = () => {
+  const handleAddParameterParentPlaceholder = () => {
     return faker.internet.domainWord();
   };
+
+  //-------------------------------------------------------------------------------------------
+  
+  const handleRemoveParameterParentLogic = (input) => {
+    if (!input) {
+      return;
+    }
+
+    const candidate = parameterRemove(structure, input);
+
+    if (parentUpdate) {
+      parentUpdate(candidate);
+    } else {
+      setStructure(candidate);
+    }
+  };
+
+  const handleRemoveParameterParentInitialLogic = () => {
+    if (parentRemove) {
+      parentRemove(name);
+    }
+
+    setIsOnParameter(false);
+    setIsOnParameterChild(false);
+    setIsOnOptionsLeft(false);
+  };
+
+  //-------------------------------------------------------------------------------------------
 
   const handleAddChoice = () => {
     setIsOnParameter(false);
@@ -267,6 +335,24 @@ export function ParameterProvider({
     return faker.internet.userName();
   };
 
+//-------------------------------------------------------------------------------------------
+
+  const handleRemoveChoiceLogic = (input) => {
+    if (!input) {
+      return;
+    }
+
+    const candidate = choiceRemove(structure, input);
+
+    if (parentUpdate) {
+      parentUpdate(candidate);
+    } else {
+      setStructure(candidate);
+    }
+  };
+
+  //-------------------------------------------------------------------------------------------
+
   return (
     <ParameterContext.Provider
       value={{
@@ -276,11 +362,14 @@ export function ParameterProvider({
         choices,
         handleMouseParameterEnter,
         handleMouseParameterLeave,
-        handleAddParameterParent,
         handleMouseOptionsLeftEnter,
         handleMouseOptionsLeftLeave,
-        handleAddParameter,
-        handleAddChoice,
+        
+        handleMouseParameterChild,
+        handleMouseHeaderClick,
+        
+        handleParameterUpdate,
+        
         isOnOptionsLeft,
         isOnParameter,
         isOnParameterChild,
@@ -289,24 +378,38 @@ export function ParameterProvider({
         isFolded,
         isStructure,
         setIsLocked,
+        
         showAddChoice,
-        handleAddChoicePlaceholder,
-        handleAddChoiceCancel,
+        handleAddChoice,
         handleAddChoiceLogic,
+        handleAddChoiceCancel,
+        handleAddChoicePlaceholder,
+
         showAddParameter,
-        handleAddParameterPlaceholder,
-        handleAddParameterCancel,
+        handleAddParameter,
         handleAddParameterLogic,
+        handleAddParameterCancel,
+        handleAddParameterPlaceholder,
+        
+        showRenameParameter,
+        handleRenameParameter,
+        handleRenameParameterLogic,
+        handleRenameParameterInitialLogic,
+        handleRenameParameterCancel,
+        handleRenameParameterPlaceholder,
+
         showAddParameterParent,
-        handleAddParameterParentCancel,
+        handleAddParameterParent,
         handleAddParameterParentLogic,
         handleAddParameterParentInitialLogic,
+        handleAddParameterParentCancel,
+        handleAddParameterParentPlaceholder,
+        
         handleRemoveParameterParentLogic,
         handleRemoveParameterParentInitialLogic,
+        
         handleRemoveChoiceLogic,
-        handleMouseHeaderClick,
-        handleMouseParameterChild,
-        handleParameterUpdate,
+        
       }}>
       {children}
     </ParameterContext.Provider>

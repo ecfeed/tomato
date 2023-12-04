@@ -11,6 +11,7 @@ export function BodyParameters() {
     handleMouseParameterChild,
     handleParameterUpdate,
     handleAddParameterParentLogic,
+    handleRenameParameterLogic,
     handleRemoveParameterParentLogic
   } = useParameter();
 
@@ -27,6 +28,7 @@ export function BodyParameters() {
           parentUpdate={handleParameterUpdate}
           parentAdd={handleAddParameterParentLogic}
           parentRemove={handleRemoveParameterParentLogic}
+          parentRename={handleRenameParameterLogic}
           isLocked={isLocked}
           setIsLocked={setIsLocked}>
           {e}

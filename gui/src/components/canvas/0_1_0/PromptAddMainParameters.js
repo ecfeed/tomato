@@ -14,11 +14,14 @@ export function PromptAddMainParameters({
   return (
     <div className={styles.prompt}>
       <Prompt
-        header="Add main parameters"
-        text="To exit, press 'cancel' or 'escape'."
+        header="Add a parameter"
+        text="
+          The parameter will be added at the end of the container.
+        "
         placeholder={handleAddParameterPlaceholder}
         handleCancel={handleAddParameterCancel}
         handleConfirm={handleAddParameterLogic}
+        buttons={['add', 'cancel']}
       />
     </div>
   );

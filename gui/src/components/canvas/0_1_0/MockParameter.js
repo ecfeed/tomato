@@ -10,6 +10,7 @@ import { Main } from "./Main";
 import { Container } from "./Container";
 import { Parameter } from "./Parameter";
 import { ParameterProvider } from "./context/ParameterContext";
+import { PromptRenameParameter } from "./PromptRenameParameter";
 
 export function MockParameter({
   parameter = { name: "prototype" },
@@ -17,6 +18,7 @@ export function MockParameter({
   parentUpdate,
   parentAdd,
   parentRemove,
+  parentRename,
   isLocked,
   setIsLocked,
   top,
@@ -28,6 +30,7 @@ export function MockParameter({
       parentUpdate={parentUpdate}
       parentAdd={parentAdd}
       parentRemove={parentRemove}
+      parentRename={parentRename}
       isLocked={isLocked}
       setIsLocked={setIsLocked}
       top={top}>
@@ -45,6 +48,7 @@ export function MockParameter({
       <PromptAddNestedChoices/>
       <PromptAddNestedParameters/>
       <PromptAddParentParameter/>
+      <PromptRenameParameter/>
     </ParameterProvider>
   );
 }

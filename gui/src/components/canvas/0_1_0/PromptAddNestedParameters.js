@@ -17,11 +17,14 @@ export function PromptAddNestedParameters() {
   return (
     <div className={styles.prompt}>
       <Prompt
-        header="Add nested parameters"
-        text="To exit, press 'cancel' or 'escape'."
+        header="Add a parameter"
+        text="
+          The parameter will be added as a nested parameter.
+        "
         placeholder={handleAddParameterPlaceholder}
         handleCancel={handleAddParameterCancel}
         handleConfirm={handleAddParameterLogic}
+        buttons={['add', 'cancel']}
       />
     </div>
   );

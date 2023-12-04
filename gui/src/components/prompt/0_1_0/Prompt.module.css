@@ -5,11 +5,11 @@
 .prompt {
   border: 1px solid black;
   width: 20vw;
-  min-width: 250px;
-  border-radius: 5px;
+  min-width: 40rem;
+  border-radius: 0.5rem;
   padding: 0px 5px;
-  animation: fadeIn .25s ease-in;
-  box-shadow: 0 10px 10px rgba(0,0,0,.2);
+  animation: fadeIn 0.25s ease-in;
+  box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.2);
   background-color: white;
   position: relative;
   z-index: 200;
@@ -34,17 +34,17 @@
   background-color: black;
   border-left: 1px solid black;
   text-align: center;
-width: 25px;
+  width: 2.5rem;
 }
 
 .text {
-  padding: 10px;
+  padding: 1rem;
   cursor: default;
 }
 
 .input {
   width: 100%;
-  padding-left: 5px;
+  padding-left: 0.5rem;
 }
 
 .footer {
@@ -56,24 +56,26 @@ width: 25px;
 }
 
 .option {
-  width: 100px;
-  margin: 5px;
+  width: 10rem;
+  margin: 0.5rem;
   border: 1px solid black;
-  border-radius: 5px;
-  padding: 5px;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
   text-align: center;
-
+  text-transform: uppercase;
 }
 
 .option:hover {
   color: white;
   background-color: black;
-  box-shadow: 0 10px 20px rgba(0,0,0,.2);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
 }
 
-.ok {}
+.ok {
+}
 
-.cancel {}
+.cancel {
+}
 
 @keyframes fadeIn {
   0% {

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import styles from "./Prompt.module.css";
 
-export function Prompt({ header, text, placeholder, handleConfirm, handleCancel }) {
+export function Prompt({ header, text, placeholder, handleConfirm, handleCancel, buttons = ['ok', 'cancel'] }) {
   const [valuePlaceholder, setValuePlaceholder] = useState(() =>
     placeholder ? placeholder() : ""
   );
   const [value, setValue] = useState("");
+
+  const parsedText = text?.replaceAll("\r", "").split("\\n");
 
   useEffect(() => {
     const callback = (e) => {
@@ -78,7 +80,9 @@ export function Prompt({ header, text, placeholder, handleConfirm, handleCancel 
           &times;
         </div>
       </div>
-      <div className={styles.text}>{text}</div>
+      <div className={styles.text}>
+        {parsedText.map((e, index) => <div key={index}>{e}</div>)}
+        </div>
       <input
         placeholder={valuePlaceholder}
         value={value}
@@ -90,13 +94,13 @@ export function Prompt({ header, text, placeholder, handleConfirm, handleCancel 
           type="button"
           className={`${styles.cancel} ${styles.option}`}
           onClick={() => handleClickOnCancel(value)}>
-          Cancel
+          {buttons[1]}
         </div>
         <div
           type="button"
           className={`${styles.ok} ${styles.option}`}
           onClick={() => handleClickOnConfirm(value)}>
-          Ok
+          {buttons[0]}
         </div>
       </footer>
     </div>

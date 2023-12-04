@@ -15,7 +15,7 @@ root.render(
       <Routes>
         <Route index element={<Navigate replace to="/poc/canvas" />} />
         <Route path="poc" element={<PoC />}>
-          <Route index element={<Navigate replace to="choice" />} />
+          <Route index element={<Navigate replace to="canvas" />} />
           <Route path="choice" element={<ChoiceDriver />} />
           <Route path="tooltip" element={<TooltipDriver />} />
           <Route path="canvas" element={<CanvasDriver />} />
