@@ -103,6 +103,10 @@ export function Canvas() {
     setStructure(JSON.parse(data));
   };
 
+  const handleReload = () => {
+    setStructure(data);
+  }
+
   const handleAddMainParameter = (e) => {
     e.preventDefault();
 
@@ -124,6 +128,7 @@ export function Canvas() {
       <header className={styles.header}>
         <button onClick={handleSave}>Save</button>
         <button onClick={handleLoad}>Load</button>
+        <button onClick={handleReload}>Reload</button>
       </header>
       <p className={styles.text}>To fold the top-level parameter click on the header.</p>
       <p className={styles.text}>
