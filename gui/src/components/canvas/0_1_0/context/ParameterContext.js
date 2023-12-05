@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useReducer, useRef, useState } from "react";
 import { faker } from "@faker-js/faker";
 import {
   choiceAdd,
@@ -15,6 +15,172 @@ import {
 
 const ParameterContext = createContext();
 
+const initialState = {
+  structure: {},
+
+  isOnParameter: false,
+  isOnParameterChild: false,
+  isOnOptionsLeft: false,
+  isOnOptionsBottom: false,
+
+  showAddParameter: false,
+  showAddParameterParent: false,
+  showRenameParameter: false,
+  showAddChoice: false,
+  showRenameChoice: false,
+
+  isFolded: false,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "structure:update":
+      return { ...state, structure: action.payload };
+    case "mouse:body:enter":
+      return { ...state, isOnParameter: true };
+    case "mouse:body:leave":
+      return {
+        ...state,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "mouse:options-left:enter":
+      return {
+        ...state,
+        isOnParameter: true,
+        isOnParameterChild: false,
+        isOnOptionsLeft: true,
+        isOnOptionsBottom: false,
+      };
+    case "mouse:options-left:leave":
+      return { ...state, isOnOptionsLeft: false };
+    case "mouse:options-bottom:enter":
+      return {
+        ...state,
+        isOnParameter: true,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: true,
+      };
+    case "mouse:options-bottom:leave":
+      return { ...state, isOnOptionsBottom: false };
+    case "mouse:child:enter":
+      return {
+        ...state,
+        isOnParameter: true,
+        isOnParameterChild: true,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "mouse:child:leave":
+      return { ...state, isOnParameterChild: false };
+    case "folded:toggle":
+      return { ...state, isFolded: !state.isFolded };
+    case "prompt:parameter-add:on":
+      return {
+        ...state,
+        showAddParameter: true,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "prompt:parameter-add:off":
+      return {
+        ...state,
+        showAddParameter: false,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "prompt:parameter-parent-add:on":
+      return {
+        ...state,
+        showAddParameterParent: true,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "prompt:parameter-parent-add:off":
+      return {
+        ...state,
+        showAddParameterParent: false,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "prompt:parameter-rename:on":
+      return {
+        ...state,
+        showRenameParameter: true,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "prompt:parameter-rename:off":
+      return {
+        ...state,
+        showRenameParameter: false,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "prompt:parameter-remove":
+      return {
+        ...state,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "prompt:choice-add:on":
+      return {
+        ...state,
+        showAddChoice: true,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "prompt:choice-add:off":
+      return {
+        ...state,
+        showAddChoice: false,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "prompt:choice-rename:on":
+      return {
+        ...state,
+        showRenameChoice: true,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    case "prompt:choice-rename:off":
+      return {
+        ...state,
+        showRenameChoice: false,
+        isOnParameter: false,
+        isOnParameterChild: false,
+        isOnOptionsLeft: false,
+        isOnOptionsBottom: false,
+      };
+    default:
+      throw new Error("Unknown action");
+  }
+};
+
 export function ParameterProvider({
   children,
   parameter,
@@ -27,16 +193,18 @@ export function ParameterProvider({
   setIsLocked,
   top,
 }) {
-  const [structure, setStructure] = useState({});
-  const [isOnParameter, setIsOnParameter] = useState(false);
-  const [isOnParameterChild, setIsOnParameterChild] = useState(false);
-  const [isOnOptionsLeft, setIsOnOptionsLeft] = useState(false);
-  const [showAddChoice, setShowAddChoice] = useState(false);
-  const [showAddParameter, setShowAddParameter] = useState(false);
-  const [showAddParameterParent, setShowAddParameterParent] = useState(false);
-  const [showRenameParameter, setShowRenameParameter] = useState(false);
-  const [showRenameChoice, setShowRenameChoice] = useState(false);
-  const [isFolded, setIsFolded] = useState(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { structure } = state;
+  const { isOnParameter, isOnParameterChild, isOnOptionsLeft } = state;
+  const {
+    showAddParameter,
+    showAddParameterParent,
+    showRenameParameter,
+    showAddChoice,
+    showRenameChoice,
+  } = state;
+  const { isFolded } = state;
+
   const activeChoice = useRef();
 
   const { name, parameters = [], choices = [] } = structure;
@@ -46,7 +214,7 @@ export function ParameterProvider({
     showAddChoice || showAddParameter || showAddParameterParent || showRenameParameter;
 
   useEffect(() => {
-    setStructure(parameter);
+    dispatch({ type: "structure:update", payload: parameter });
   }, [parameter]);
 
   //-------------------------------------------------------------------------------------------
@@ -58,7 +226,7 @@ export function ParameterProvider({
       return;
     }
 
-    setIsOnParameter(true);
+    dispatch({ type: "mouse:body:enter" });
 
     if (parentMouseEvent) {
       parentMouseEvent(true);
@@ -68,12 +236,7 @@ export function ParameterProvider({
   const handleMouseParameterLeave = (e) => {
     e.preventDefault();
 
-    if (isLocked) {
-      return;
-    }
-
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
+    dispatch({ type: "mouse:body:leave" });
 
     if (parentMouseEvent) {
       parentMouseEvent(false);
@@ -82,12 +245,18 @@ export function ParameterProvider({
 
   const handleMouseOptionsLeftEnter = (e) => {
     e.preventDefault();
-    setIsOnOptionsLeft(true);
+
+    if (isLocked) {
+      return;
+    }
+
+    dispatch({ type: "mouse:options-left:enter" });
   };
 
   const handleMouseOptionsLeftLeave = (e) => {
     e.preventDefault();
-    setIsOnOptionsLeft(false);
+
+    dispatch({ type: "mouse:options-left:leave" });
   };
 
   const handleMouseOptionsBottomEnter = (e) => {
@@ -96,25 +265,29 @@ export function ParameterProvider({
     if (!isLocked) {
       activeChoice.current = null;
     }
-  }
+
+    dispatch({ type: "mouse:options-bottom:enter" });
+  };
 
   const handleMouseOptionsBottomLeave = (e) => {
     e.preventDefault();
-  }
 
-  //-------------------------------------------------------------------------------------------
+    dispatch({ type: "mouse:options-bottom:leave" });
+  };
+
+  const handleMouseParameterChild = (value) => {
+    dispatch({ type: "mouse:child:enter" });
+  };
 
   const handleMouseHeaderClick = (e) => {
     e.preventDefault();
 
     if (top) {
-      setIsFolded((e) => !e);
+      dispatch({ type: "folded:toggle" });
     }
   };
 
-  const handleMouseParameterChild = (value) => {
-    setIsOnParameterChild(value);
-  };
+  //-------------------------------------------------------------------------------------------
 
   const handleParameterUpdate = (parameter) => {
     const candidate = parameterUpdate(structure, parameter);
@@ -122,18 +295,14 @@ export function ParameterProvider({
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
-      setStructure(candidate);
+      dispatch({ type: "structure:update", payload: candidate });
     }
   };
 
   //-------------------------------------------------------------------------------------------
 
   const handleAddParameter = () => {
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
-
-    setShowAddParameter(true);
+    dispatch({ type: "prompt:parameter-add:on" });
 
     setIsLocked(true);
   };
@@ -148,24 +317,16 @@ export function ParameterProvider({
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
-      setStructure(candidate);
+      dispatch({ type: "structure:update", payload: candidate });
     }
 
-    setShowAddParameter(false);
-
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
+    dispatch({ type: "prompt:parameter-add:off" });
 
     setIsLocked(false);
   };
 
   const handleAddParameterCancel = () => {
-    setShowAddParameter(false);
-
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
+    dispatch({ type: "prompt:parameter-add:off" });
 
     setIsLocked(false);
   };
@@ -177,11 +338,7 @@ export function ParameterProvider({
   //-------------------------------------------------------------------------------------------
 
   const handleRenameParameter = () => {
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
-
-    setShowRenameParameter(true);
+    dispatch({ type: "prompt:parameter-rename:on" });
 
     setIsLocked(true);
   };
@@ -192,7 +349,7 @@ export function ParameterProvider({
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
-      setStructure(candidate);
+      dispatch({ type: "structure:update", payload: candidate });
     }
   };
 
@@ -205,21 +362,13 @@ export function ParameterProvider({
       parentRename(name, input);
     }
 
-    setShowRenameParameter(false);
-
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
+    dispatch({ type: "prompt:parameter-rename:off" });
 
     setIsLocked(false);
   };
 
   const handleRenameParameterCancel = () => {
-    setShowRenameParameter(false);
-
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
+    dispatch({ type: "prompt:parameter-rename:off" });
 
     setIsLocked(false);
   };
@@ -228,58 +377,42 @@ export function ParameterProvider({
     return name;
   };
 
-    //-------------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------------
 
-    const handleRenameChoice = () => {
-      setIsOnParameter(false);
-      setIsOnParameterChild(false);
-      setIsOnOptionsLeft(false);
-  
-      setShowRenameChoice(true);
-  
-      setIsLocked(true);
-    };
-  
-    const handleRenameChoiceLogic = (input) => {
-      const candidate = choiceRename(structure, activeChoice.current, input);
-  
-      if (parentUpdate) {
-        parentUpdate(candidate);
-      } else {
-        setStructure(candidate);
-      }
+  const handleRenameChoice = () => {
+    dispatch({ type: "prompt:choice-rename:on" });
 
-      setShowRenameChoice(false);
-  
-      setIsOnParameter(false);
-      setIsOnParameterChild(false);
-      setIsOnOptionsLeft(false);
-  
-      setIsLocked(false);
-    };
-  
-    const handleRenameChoiceCancel = () => {
-      setShowRenameChoice(false);
-  
-      setIsOnParameter(false);
-      setIsOnParameterChild(false);
-      setIsOnOptionsLeft(false);
-  
-      setIsLocked(false);
-    };
-  
-    const handleRenameChoicePlaceholder = () => {
-      return activeChoice.current;
-    };
+    setIsLocked(true);
+  };
+
+  const handleRenameChoiceLogic = (input) => {
+    const candidate = choiceRename(structure, activeChoice.current, input);
+
+    if (parentUpdate) {
+      parentUpdate(candidate);
+    } else {
+      dispatch({ type: "structure:update", payload: candidate });
+    }
+
+    dispatch({ type: "prompt:choice-rename:off" });
+
+    setIsLocked(false);
+  };
+
+  const handleRenameChoiceCancel = () => {
+    dispatch({ type: "prompt:choice-rename:off" });
+
+    setIsLocked(false);
+  };
+
+  const handleRenameChoicePlaceholder = () => {
+    return activeChoice.current;
+  };
 
   //-------------------------------------------------------------------------------------------
 
   const handleAddParameterParent = () => {
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
-
-    setShowAddParameterParent(true);
+    dispatch({ type: "prompt:parameter-parent-add:on" });
 
     setIsLocked(true);
   };
@@ -290,7 +423,7 @@ export function ParameterProvider({
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
-      setStructure(candidate);
+      dispatch({ type: "structure:update", payload: candidate });
     }
   };
 
@@ -303,21 +436,15 @@ export function ParameterProvider({
       parentAdd(input, name);
     }
 
-    setShowAddParameterParent(false);
+    dispatch({ type: "prompt:parameter-parent-add:off" });
 
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
 
     setIsLocked(false);
   };
 
   const handleAddParameterParentCancel = () => {
-    setShowAddParameterParent(false);
+    dispatch({ type: "prompt:parameter-parent-add:off" });
 
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
 
     setIsLocked(false);
   };
@@ -338,7 +465,7 @@ export function ParameterProvider({
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
-      setStructure(candidate);
+      dispatch({ type: "structure:update", payload: candidate });
     }
   };
 
@@ -347,20 +474,13 @@ export function ParameterProvider({
       parentRemove(name);
     }
 
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
+    dispatch({ type: "prompt:parameter-remove" });
   };
 
   //-------------------------------------------------------------------------------------------
 
   const handleAddChoice = () => {
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
-    setShowAddParameter(false);
-
-    setShowAddChoice(true);
+    dispatch({ type: "prompt:choice-add:on" });
 
     setIsLocked(true);
   };
@@ -371,7 +491,7 @@ export function ParameterProvider({
     }
 
     let candidate;
-    
+
     if (activeChoice.current) {
       candidate = choiceAddAtPosition(structure, getChoice(input), activeChoice.current);
     } else {
@@ -381,16 +501,12 @@ export function ParameterProvider({
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
-      setStructure(candidate);
+      dispatch({ type: "structure:update", payload: candidate });
     }
   };
 
   const handleAddChoiceCancel = () => {
-    setShowAddChoice(false);
-
-    setIsOnParameter(false);
-    setIsOnParameterChild(false);
-    setIsOnOptionsLeft(false);
+    dispatch({ type: "prompt:choice-add:off" });
 
     setIsLocked(false);
   };
@@ -411,7 +527,7 @@ export function ParameterProvider({
     if (parentUpdate) {
       parentUpdate(candidate);
     } else {
-      setStructure(candidate);
+      dispatch({ type: "structure:update", payload: candidate });
     }
   };
 
@@ -482,7 +598,7 @@ export function ParameterProvider({
 
         handleRemoveChoiceLogic,
 
-        activeChoice
+        activeChoice,
       }}>
       {children}
     </ParameterContext.Provider>
