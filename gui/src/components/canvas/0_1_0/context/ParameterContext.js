@@ -18,6 +18,8 @@ const ParameterContext = createContext();
 const initialState = {
   structure: {},
 
+  isFolded: false,
+
   isOnParameter: false,
   isOnParameterChild: false,
   isOnOptionsLeft: false,
@@ -28,8 +30,19 @@ const initialState = {
   showRenameParameter: false,
   showAddChoice: false,
   showRenameChoice: false,
+};
 
-  isFolded: false,
+const clean = {
+  isOnParameter: false,
+  isOnParameterChild: false,
+  isOnOptionsLeft: false,
+  isOnOptionsBottom: false,
+
+  showAddParameter: false,
+  showAddParameterParent: false,
+  showRenameParameter: false,
+  showAddChoice: false,
+  showRenameChoice: false,
 };
 
 const reducer = (state, action) => {
@@ -39,143 +52,43 @@ const reducer = (state, action) => {
     case "mouse:body:enter":
       return { ...state, isOnParameter: true };
     case "mouse:body:leave":
-      return {
-        ...state,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean };
     case "mouse:options-left:enter":
-      return {
-        ...state,
-        isOnParameter: true,
-        isOnParameterChild: false,
-        isOnOptionsLeft: true,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean, isOnParameter: true, isOnOptionsLeft: true };
     case "mouse:options-left:leave":
       return { ...state, isOnOptionsLeft: false };
     case "mouse:options-bottom:enter":
-      return {
-        ...state,
-        isOnParameter: true,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: true,
-      };
+      return { ...state, ...clean, isOnParameter: true, isOnOptionsBottom: true };
     case "mouse:options-bottom:leave":
       return { ...state, isOnOptionsBottom: false };
     case "mouse:child:enter":
-      return {
-        ...state,
-        isOnParameter: true,
-        isOnParameterChild: true,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean, isOnParameter: true, isOnParameterChild: true };
     case "mouse:child:leave":
       return { ...state, isOnParameterChild: false };
     case "folded:toggle":
       return { ...state, isFolded: !state.isFolded };
     case "prompt:parameter-add:on":
-      return {
-        ...state,
-        showAddParameter: true,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean, showAddParameter: true };
     case "prompt:parameter-add:off":
-      return {
-        ...state,
-        showAddParameter: false,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean };
     case "prompt:parameter-parent-add:on":
-      return {
-        ...state,
-        showAddParameterParent: true,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean, showAddParameterParent: true };
     case "prompt:parameter-parent-add:off":
-      return {
-        ...state,
-        showAddParameterParent: false,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean, showAddParameterParent: false };
     case "prompt:parameter-rename:on":
-      return {
-        ...state,
-        showRenameParameter: true,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean, showRenameParameter: true };
     case "prompt:parameter-rename:off":
-      return {
-        ...state,
-        showRenameParameter: false,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean };
     case "prompt:parameter-remove":
-      return {
-        ...state,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean };
     case "prompt:choice-add:on":
-      return {
-        ...state,
-        showAddChoice: true,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean, showAddChoice: true };
     case "prompt:choice-add:off":
-      return {
-        ...state,
-        showAddChoice: false,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean };
     case "prompt:choice-rename:on":
-      return {
-        ...state,
-        showRenameChoice: true,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean, showRenameChoice: true };
     case "prompt:choice-rename:off":
-      return {
-        ...state,
-        showRenameChoice: false,
-        isOnParameter: false,
-        isOnParameterChild: false,
-        isOnOptionsLeft: false,
-        isOnOptionsBottom: false,
-      };
+      return { ...state, ...clean };
     default:
       throw new Error("Unknown action");
   }
@@ -438,13 +351,11 @@ export function ParameterProvider({
 
     dispatch({ type: "prompt:parameter-parent-add:off" });
 
-
     setIsLocked(false);
   };
 
   const handleAddParameterParentCancel = () => {
     dispatch({ type: "prompt:parameter-parent-add:off" });
-
 
     setIsLocked(false);
   };
