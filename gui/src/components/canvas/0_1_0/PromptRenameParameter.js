@@ -7,7 +7,7 @@ export function PromptRenameParameter() {
     showRenameParameter,
     handleRenameParameterPlaceholder,
     handleRenameParameterCancel,
-    handleRenameParameterInitialLogic,
+    handleRenameParameterLogic,
   } = useParameter();
 
   if (!showRenameParameter) {
@@ -23,7 +23,7 @@ export function PromptRenameParameter() {
         "
         placeholder={handleRenameParameterPlaceholder}
         handleCancel={handleRenameParameterCancel}
-        handleConfirm={handleRenameParameterInitialLogic}
+        handleConfirm={handleRenameParameterLogic}
         buttons={["rename", "cancel"]}
       />
     </div>

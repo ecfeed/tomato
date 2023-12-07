@@ -7,7 +7,7 @@ export function PromptAddParentParameter() {
     showAddParameterParent,
     handleAddParameterParentPlaceholder,
     handleAddParameterParentCancel,
-    handleAddParameterParentInitialLogic,
+    handleAddParameterParentLogic,
   } = useParameter();
 
   if (!showAddParameterParent) {
@@ -23,7 +23,7 @@ export function PromptAddParentParameter() {
         "
         placeholder={handleAddParameterParentPlaceholder}
         handleCancel={handleAddParameterParentCancel}
-        handleConfirm={handleAddParameterParentInitialLogic}
+        handleConfirm={handleAddParameterParentLogic}
         buttons={["add", "cancel"]}
       />
     </div>

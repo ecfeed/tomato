@@ -5,7 +5,7 @@ export function OptionsParameterLeft() {
   const {
     handleAddParameterParent,
     handleRenameParameter,
-    handleRemoveParameterParentInitialLogic,
+    handleRemoveParameterParentLogic,
     handleMouseOptionsLeftEnter,
     handleMouseOptionsLeftLeave,
     isOnOptionsLeft,
@@ -26,7 +26,7 @@ export function OptionsParameterLeft() {
   };
 
   const handleInternalRemoveParameter = (input) => {
-    handleRemoveParameterParentInitialLogic(input);
+    handleRemoveParameterParentLogic(input);
   };
 
   if (!isOnParameter || isOnParameterChild || isSelected || isLocked || isFolded) {

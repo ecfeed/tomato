@@ -14,43 +14,39 @@ import { PromptRenameParameter } from "./PromptRenameParameter";
 import { PromptRenameChoice } from "./PromptRenameChoice";
 
 export function MockParameter({
-  parameter = { name: "prototype" },
+  root,
+  setRoot,
+  parameter,
   parentMouseEvent,
-  parentUpdate,
-  parentAdd,
-  parentRemove,
-  parentRename,
   isLocked,
   setIsLocked,
   top,
 }) {
   return (
     <ParameterProvider
-      parameter={parameter}
-      parentMouseEvent={parentMouseEvent}
-      parentUpdate={parentUpdate}
-      parentAdd={parentAdd}
-      parentRemove={parentRemove}
-      parentRename={parentRename}
+      root={root}
+      setRoot={setRoot}
       isLocked={isLocked}
       setIsLocked={setIsLocked}
+      parameter={parameter}
+      parentMouseEvent={parentMouseEvent}
       top={top}>
       <Container>
         <OptionsParameterLeft />
         <Parameter>
           <Main>
-            <Header/>
-            <BodyParameters/>
-            <BodyChoices/>
+            <Header />
+            <BodyParameters />
+            <BodyChoices />
           </Main>
-          <OptionsBottom/>
+          <OptionsBottom />
         </Parameter>
       </Container>
-      <PromptAddNestedChoices/>
-      <PromptAddNestedParameters/>
-      <PromptAddParentParameter/>
-      <PromptRenameParameter/>
-      <PromptRenameChoice/>
+      <PromptAddNestedChoices />
+      <PromptAddNestedParameters />
+      <PromptAddParentParameter />
+      <PromptRenameParameter />
+      <PromptRenameChoice />
     </ParameterProvider>
   );
 }

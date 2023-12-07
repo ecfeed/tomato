@@ -1,17 +1,20 @@
-import { createContext, useContext, useEffect, useReducer, useRef, useState } from "react";
+import { createContext, useContext, useReducer, useRef } from "react";
 import { faker } from "@faker-js/faker";
+import { useDrag } from "react-dnd";
+import { ItemTypes } from "../drag/ItemTypes";
 import {
-  choiceAdd,
-  choiceAddAtPosition,
-  choiceRemove,
-  choiceRename,
-  getChoice,
-  getParameter,
-  parameterAddAtPosition,
-  parameterRemove,
-  parameterRename,
-  parameterUpdate,
-} from "../logic/driver";
+  addChoice,
+  addParameter,
+  createChoice,
+  createParameter,
+  getIndex,
+  getNameFromId,
+  getParentId,
+  removeChoice,
+  removeParameter,
+  renameChoice,
+  renameParameter,
+} from "../logic/model";
 
 const ParameterContext = createContext();
 
@@ -95,19 +98,17 @@ const reducer = (state, action) => {
 };
 
 export function ParameterProvider({
+  root,
+  setRoot,
+  isLocked,
+  setIsLocked,
   children,
   parameter,
   parentMouseEvent,
-  parentUpdate,
-  parentAdd,
-  parentRename,
-  parentRemove,
-  isLocked,
-  setIsLocked,
   top,
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { structure } = state;
+
   const { isOnParameter, isOnParameterChild, isOnOptionsLeft } = state;
   const {
     showAddParameter,
@@ -120,15 +121,19 @@ export function ParameterProvider({
 
   const activeChoice = useRef();
 
-  const { name, parameters = [], choices = [] } = structure;
+  const { id, name, parameters = [], choices = [] } = parameter;
   const isStructure = parameters.length > 0;
 
   const isSelected =
     showAddChoice || showAddParameter || showAddParameterParent || showRenameParameter;
 
-  useEffect(() => {
-    dispatch({ type: "structure:update", payload: parameter });
-  }, [parameter]);
+  // eslint-disable-next-line no-unused-vars
+  const [{ _isDragging }, drag] = useDrag(() => ({
+    type: ItemTypes.PARAMETER,
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
 
   //-------------------------------------------------------------------------------------------
 
@@ -148,6 +153,10 @@ export function ParameterProvider({
 
   const handleMouseParameterLeave = (e) => {
     e.preventDefault();
+
+    if (isLocked) {
+      return;
+    }
 
     dispatch({ type: "mouse:body:leave" });
 
@@ -169,6 +178,10 @@ export function ParameterProvider({
   const handleMouseOptionsLeftLeave = (e) => {
     e.preventDefault();
 
+    if (isLocked) {
+      return;
+    }
+
     dispatch({ type: "mouse:options-left:leave" });
   };
 
@@ -185,15 +198,31 @@ export function ParameterProvider({
   const handleMouseOptionsBottomLeave = (e) => {
     e.preventDefault();
 
+    if (isLocked) {
+      return;
+    }
+
     dispatch({ type: "mouse:options-bottom:leave" });
   };
 
   const handleMouseParameterChild = (value) => {
-    dispatch({ type: "mouse:child:enter" });
+    if (isLocked) {
+      return;
+    }
+
+    if (value) {
+      dispatch({ type: "mouse:child:enter" });
+    } else {
+      dispatch({ type: "mouse:child:leave" });
+    }
   };
 
   const handleMouseHeaderClick = (e) => {
     e.preventDefault();
+
+    if (isLocked) {
+      return;
+    }
 
     if (top) {
       dispatch({ type: "folded:toggle" });
@@ -202,17 +231,11 @@ export function ParameterProvider({
 
   //-------------------------------------------------------------------------------------------
 
-  const handleParameterUpdate = (parameter) => {
-    const candidate = parameterUpdate(structure, parameter);
+  const handleAddParameterCancel = () => {
+    dispatch({ type: "prompt:parameter-add:off" });
 
-    if (parentUpdate) {
-      parentUpdate(candidate);
-    } else {
-      dispatch({ type: "structure:update", payload: candidate });
-    }
+    setIsLocked(false);
   };
-
-  //-------------------------------------------------------------------------------------------
 
   const handleAddParameter = () => {
     dispatch({ type: "prompt:parameter-add:on" });
@@ -225,23 +248,9 @@ export function ParameterProvider({
       return;
     }
 
-    const candidate = parameterAddAtPosition(structure, getParameter(input), index);
+    setRoot(addParameter(root, id, createParameter(input), index));
 
-    if (parentUpdate) {
-      parentUpdate(candidate);
-    } else {
-      dispatch({ type: "structure:update", payload: candidate });
-    }
-
-    dispatch({ type: "prompt:parameter-add:off" });
-
-    setIsLocked(false);
-  };
-
-  const handleAddParameterCancel = () => {
-    dispatch({ type: "prompt:parameter-add:off" });
-
-    setIsLocked(false);
+    handleAddParameterCancel();
   };
 
   const handleAddParameterPlaceholder = () => {
@@ -250,79 +259,11 @@ export function ParameterProvider({
 
   //-------------------------------------------------------------------------------------------
 
-  const handleRenameParameter = () => {
-    dispatch({ type: "prompt:parameter-rename:on" });
-
-    setIsLocked(true);
-  };
-
-  const handleRenameParameterLogic = (name, input) => {
-    const candidate = parameterRename(structure, name, input);
-
-    if (parentUpdate) {
-      parentUpdate(candidate);
-    } else {
-      dispatch({ type: "structure:update", payload: candidate });
-    }
-  };
-
-  const handleRenameParameterInitialLogic = (input) => {
-    if (!input) {
-      return;
-    }
-
-    if (parentRename) {
-      parentRename(name, input);
-    }
-
-    dispatch({ type: "prompt:parameter-rename:off" });
+  const handleAddParameterParentCancel = () => {
+    dispatch({ type: "prompt:parameter-parent-add:off" });
 
     setIsLocked(false);
   };
-
-  const handleRenameParameterCancel = () => {
-    dispatch({ type: "prompt:parameter-rename:off" });
-
-    setIsLocked(false);
-  };
-
-  const handleRenameParameterPlaceholder = () => {
-    return name;
-  };
-
-  //-------------------------------------------------------------------------------------------
-
-  const handleRenameChoice = () => {
-    dispatch({ type: "prompt:choice-rename:on" });
-
-    setIsLocked(true);
-  };
-
-  const handleRenameChoiceLogic = (input) => {
-    const candidate = choiceRename(structure, activeChoice.current, input);
-
-    if (parentUpdate) {
-      parentUpdate(candidate);
-    } else {
-      dispatch({ type: "structure:update", payload: candidate });
-    }
-
-    dispatch({ type: "prompt:choice-rename:off" });
-
-    setIsLocked(false);
-  };
-
-  const handleRenameChoiceCancel = () => {
-    dispatch({ type: "prompt:choice-rename:off" });
-
-    setIsLocked(false);
-  };
-
-  const handleRenameChoicePlaceholder = () => {
-    return activeChoice.current;
-  };
-
-  //-------------------------------------------------------------------------------------------
 
   const handleAddParameterParent = () => {
     dispatch({ type: "prompt:parameter-parent-add:on" });
@@ -330,38 +271,52 @@ export function ParameterProvider({
     setIsLocked(true);
   };
 
-  const handleAddParameterParentLogic = (input, index) => {
-    const candidate = parameterAddAtPosition(structure, getParameter(input), index);
-
-    if (parentUpdate) {
-      parentUpdate(candidate);
-    } else {
-      dispatch({ type: "structure:update", payload: candidate });
-    }
-  };
-
-  const handleAddParameterParentInitialLogic = (input) => {
+  const handleAddParameterParentLogic = (input) => {
     if (!input) {
       return;
     }
 
-    if (parentAdd) {
-      parentAdd(input, name);
-    }
+    const parentId = getParentId(id);
+    const index = getIndex(root, id, parentId);
+    const candidate = addParameter(root, parentId, createParameter(input), index);
 
-    dispatch({ type: "prompt:parameter-parent-add:off" });
+    setRoot(candidate);
 
-    setIsLocked(false);
-  };
-
-  const handleAddParameterParentCancel = () => {
-    dispatch({ type: "prompt:parameter-parent-add:off" });
-
-    setIsLocked(false);
+    handleAddParameterParentCancel();
   };
 
   const handleAddParameterParentPlaceholder = () => {
     return faker.internet.domainWord();
+  };
+
+  //-------------------------------------------------------------------------------------------
+
+  const handleRenameParameterCancel = () => {
+    dispatch({ type: "prompt:parameter-rename:off" });
+
+    setIsLocked(false);
+  };
+
+  const handleRenameParameter = () => {
+    dispatch({ type: "prompt:parameter-rename:on" });
+
+    setIsLocked(true);
+  };
+
+  const handleRenameParameterLogic = (input) => {
+    if (!input) {
+      return;
+    }
+
+    const candidate = renameParameter(root, id, input);
+
+    setRoot(candidate);
+
+    handleRenameParameterCancel();
+  };
+
+  const handleRenameParameterPlaceholder = () => {
+    return name;
   };
 
   //-------------------------------------------------------------------------------------------
@@ -371,24 +326,18 @@ export function ParameterProvider({
       return;
     }
 
-    const candidate = parameterRemove(structure, input);
+    const candidate = removeParameter(root, id);
 
-    if (parentUpdate) {
-      parentUpdate(candidate);
-    } else {
-      dispatch({ type: "structure:update", payload: candidate });
-    }
-  };
-
-  const handleRemoveParameterParentInitialLogic = () => {
-    if (parentRemove) {
-      parentRemove(name);
-    }
-
-    dispatch({ type: "prompt:parameter-remove" });
+    setRoot(candidate);
   };
 
   //-------------------------------------------------------------------------------------------
+
+  const handleAddChoiceCancel = () => {
+    dispatch({ type: "prompt:choice-add:off" });
+
+    setIsLocked(false);
+  };
 
   const handleAddChoice = () => {
     dispatch({ type: "prompt:choice-add:on" });
@@ -401,25 +350,12 @@ export function ParameterProvider({
       return;
     }
 
-    let candidate;
-
     if (activeChoice.current) {
-      candidate = choiceAddAtPosition(structure, getChoice(input), activeChoice.current);
+      const index = getIndex(root, activeChoice.current);
+      setRoot(addChoice(root, id, createChoice(input), index));
     } else {
-      candidate = choiceAdd(structure, getChoice(input));
+      setRoot(addChoice(root, id, createChoice(input)));
     }
-
-    if (parentUpdate) {
-      parentUpdate(candidate);
-    } else {
-      dispatch({ type: "structure:update", payload: candidate });
-    }
-  };
-
-  const handleAddChoiceCancel = () => {
-    dispatch({ type: "prompt:choice-add:off" });
-
-    setIsLocked(false);
   };
 
   const handleAddChoicePlaceholder = () => {
@@ -433,13 +369,33 @@ export function ParameterProvider({
       return;
     }
 
-    const candidate = choiceRemove(structure, activeChoice.current);
+    setRoot(removeChoice(root, activeChoice.current));
+  };
 
-    if (parentUpdate) {
-      parentUpdate(candidate);
-    } else {
-      dispatch({ type: "structure:update", payload: candidate });
-    }
+  //-------------------------------------------------------------------------------------------
+
+  const handleRenameChoiceCancel = () => {
+    dispatch({ type: "prompt:choice-rename:off" });
+
+    setIsLocked(false);
+  };
+
+  const handleRenameChoice = () => {
+    dispatch({ type: "prompt:choice-rename:on" });
+
+    setIsLocked(true);
+  };
+
+  const handleRenameChoiceLogic = (input) => {
+    const candidate = renameChoice(root, activeChoice.current, input);
+
+    setRoot(candidate);
+
+    handleRenameChoiceCancel();
+  };
+
+  const handleRenameChoicePlaceholder = () => {
+    return getNameFromId(activeChoice.current);
   };
 
   //-------------------------------------------------------------------------------------------
@@ -447,10 +403,18 @@ export function ParameterProvider({
   return (
     <ParameterContext.Provider
       value={{
+        root,
+        setRoot,
+
+        drag,
+
         top,
+
+        id,
         name,
-        parameters,
         choices,
+        parameters,
+
         handleMouseParameterEnter,
         handleMouseParameterLeave,
         handleMouseOptionsLeftEnter,
@@ -460,8 +424,6 @@ export function ParameterProvider({
 
         handleMouseParameterChild,
         handleMouseHeaderClick,
-
-        handleParameterUpdate,
 
         isOnOptionsLeft,
         isOnParameter,
@@ -493,19 +455,16 @@ export function ParameterProvider({
         showRenameParameter,
         handleRenameParameter,
         handleRenameParameterLogic,
-        handleRenameParameterInitialLogic,
         handleRenameParameterCancel,
         handleRenameParameterPlaceholder,
 
         showAddParameterParent,
         handleAddParameterParent,
         handleAddParameterParentLogic,
-        handleAddParameterParentInitialLogic,
         handleAddParameterParentCancel,
         handleAddParameterParentPlaceholder,
 
         handleRemoveParameterParentLogic,
-        handleRemoveParameterParentInitialLogic,
 
         handleRemoveChoiceLogic,
 

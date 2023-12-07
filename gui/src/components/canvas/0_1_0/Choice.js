@@ -3,7 +3,7 @@ import styles from "./Choice.module.scss";
 import { useParameter } from "./context/ParameterContext";
 import { OptionsChoiceLeft } from "./OptionsChoiceLeft";
 
-export function Choice({ name }) {
+export function Choice({ name, id }) {
   const { activeChoice, isLocked } = useParameter();
 
   const [isOnChoice, setIsOnChoice] = useState();
@@ -13,7 +13,7 @@ export function Choice({ name }) {
     e.preventDefault();
 
     if (!isLocked) {
-      activeChoice.current = name;
+      activeChoice.current = id;
     }
 
     setIsOnChoice(true);
@@ -35,7 +35,10 @@ export function Choice({ name }) {
   };
 
   return (
-    <div className={`${styles.choice} ${isOnChoice && !isLocked ? styles['choice--active'] : ''}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div
+      className={`${styles.choice} ${isOnChoice && !isLocked ? styles["choice--active"] : ""}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}>
       <OptionsChoiceLeft
         name={name}
         isOnChoice={isOnChoice}

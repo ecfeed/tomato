@@ -4,6 +4,9 @@ import { useParameter } from "./context/ParameterContext";
 
 export function BodyParameters() {
   const {
+    root,
+    setRoot,
+    id,
     isFolded,
     parameters,
     isLocked,
@@ -12,7 +15,7 @@ export function BodyParameters() {
     handleParameterUpdate,
     handleAddParameterParentLogic,
     handleRenameParameterLogic,
-    handleRemoveParameterParentLogic
+    handleRemoveParameterParentLogic,
   } = useParameter();
 
   if (isFolded) {
@@ -22,8 +25,11 @@ export function BodyParameters() {
     <div className={styles["children"]}>
       {parameters.map((e, index) => (
         <MockParameter
+          root={root}
+          setRoot={setRoot}
           key={`${index} ${e.name}`}
           parameter={e}
+          parameterParentId={id}
           parentMouseEvent={handleMouseParameterChild}
           parentUpdate={handleParameterUpdate}
           parentAdd={handleAddParameterParentLogic}

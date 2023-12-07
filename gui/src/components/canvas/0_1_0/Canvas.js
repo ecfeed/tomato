@@ -2,18 +2,14 @@ import { useState } from "react";
 import { faker } from "@faker-js/faker";
 import styles from "./Canvas.module.scss";
 import { MockParameter } from "./MockParameter";
-import {
-  getParameter,
-  parameterAddAtPosition,
-  parameterRemove,
-  parameterRename,
-  parameterUpdate,
-} from "./logic/driver";
 import { PromptAddMainParameters } from "./PromptAddMainParameters";
 import { Console } from "./Console";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { addParameter, createParameter, getIndex, update } from "./logic/model";
 
 const data = {
-  name: "canvas",
+  name: "root",
   parameters: [
     {
       name: "parameter 1",
@@ -50,45 +46,31 @@ const data = {
       ],
     },
   ],
-  choices: [
-    {
-      name: "choice A",
-      value: "value A",
-    },
-    {
-      name: "choice B",
-      value: "value B",
-    },
-  ],
 };
 
 export function Canvas() {
-  const [structure, setStructure] = useState(data);
+  const [structure, setStructure] = useState(update(data));
   const [text, setText] = useState();
   const [isLocked, setIsLocked] = useState(false);
   const [showAddMainParameter, setShowAddMainParameter] = useState(false);
 
-  const handleParameterUpdate = (parameter) => {
-    const candidate = parameterUpdate(structure, parameter);
-    setStructure(candidate);
+  //---------------------------------------------------------------------
+
+  const handleAddMainParameter = (e) => {
+    e.preventDefault();
+
+    setShowAddMainParameter(true);
+    setIsLocked(true);
   };
 
-  const handleAddParameter = (input, index) => {
-    const candidate = parameterAddAtPosition(structure, getParameter(input), index);
+  const handleAddParameter = (input, id) => {
+    const index = getIndex(structure, id);
+    const candidate = addParameter(structure, "root", createParameter(input), index);
+
     setStructure(candidate);
 
     setShowAddMainParameter(false);
     setIsLocked(false);
-  };
-
-  const handleRemoveParameter = (input) => {
-    const candidate = parameterRemove(structure, input);
-    setStructure(candidate);
-  };
-
-  const handleRenameParameter = (name, input) => {
-    const candidate = parameterRename(structure, name, input);
-    setStructure(candidate);
   };
 
   const handleSave = () => {
@@ -110,15 +92,7 @@ export function Canvas() {
   };
 
   const handleExport = () => {
-    console.log(JSON.stringify(structure, null, 4))
     setText(JSON.stringify(structure, null, 4));
-  };
-
-  const handleAddMainParameter = (e) => {
-    e.preventDefault();
-
-    setShowAddMainParameter(true);
-    setIsLocked(true);
   };
 
   const handleAddMainParameterPlaceholder = () => {
@@ -131,48 +105,50 @@ export function Canvas() {
   };
 
   return (
-    <div className={styles.canvas}>
-      <header className={styles.header}>
-        <button onClick={handleSave}>Save</button>
-        <button onClick={handleLoad}>Load</button>
-        <button onClick={handleReload}>Reload</button>
-        <button onClick={handleExport}>Export</button>
-      </header>
-      <ul className={styles.tips}>
-        <li>To fold the top-level parameter click on the header.</li>
-        <li>
-          To see additional parameter/choice options hover the mouse pointer over it and click on
-          the menu.
-        </li>
-        <li>You can store your model between sessions, to do it use the 'save'/'load' buttons.</li>
-      </ul>
-      <div className={styles.main}>
-        {structure.parameters.map((e, index) => (
-          <div className={styles.parameter} key={`${index} ${e.name}`}>
-            <MockParameter
-              parameter={e}
-              parentUpdate={handleParameterUpdate}
-              parentAdd={handleAddParameter}
-              parentRemove={handleRemoveParameter}
-              parentRename={handleRenameParameter}
-              isLocked={isLocked}
-              setIsLocked={setIsLocked}
-              top={true}
-            />
-          </div>
-        ))}
-        <button className={styles["button--next"]} onClick={handleAddMainParameter}>
-          add
-        </button>
-        <PromptAddMainParameters
-          showAddMainParameter={showAddMainParameter}
-          handleAddParameterPlaceholder={handleAddMainParameterPlaceholder}
-          handleAddParameterCancel={handleAddMainParameterCancel}
-          handleAddParameterLogic={handleAddParameter}
-        />
+    <DndProvider backend={HTML5Backend}>
+      <div className={styles.canvas}>
+        <header className={styles.header}>
+          <button onClick={handleSave}>Save</button>
+          <button onClick={handleLoad}>Load</button>
+          <button onClick={handleReload}>Reload</button>
+          <button onClick={handleExport}>Export</button>
+        </header>
+        <ul className={styles.tips}>
+          <li>To fold the top-level parameter click on the header.</li>
+          <li>
+            To see additional parameter/choice options hover the mouse pointer over it and click on
+            the menu.
+          </li>
+          <li>
+            You can store your model between sessions, to do it use the 'save'/'load' buttons.
+          </li>
+        </ul>
+        <div className={styles.main}>
+          {structure.parameters.map((e, index) => (
+            <div className={styles.parameter} key={`${index} ${e.name}`}>
+              <MockParameter
+                root={structure}
+                setRoot={setStructure}
+                parameter={e}
+                isLocked={isLocked}
+                setIsLocked={setIsLocked}
+                top={true}
+              />
+            </div>
+          ))}
+          <button className={styles["button--next"]} onClick={handleAddMainParameter}>
+            add
+          </button>
+          <PromptAddMainParameters
+            showAddMainParameter={showAddMainParameter}
+            handleAddParameterPlaceholder={handleAddMainParameterPlaceholder}
+            handleAddParameterCancel={handleAddMainParameterCancel}
+            handleAddParameterLogic={handleAddParameter}
+          />
+        </div>
+
+        <Console text={text} />
       </div>
-      
-      <Console text={text} />
-    </div>
+    </DndProvider>
   );
 }

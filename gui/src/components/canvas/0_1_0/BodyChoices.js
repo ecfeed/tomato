@@ -12,7 +12,7 @@ export function BodyChoices() {
     <div className={styles.parameter_choices}>
       <div>
         {choices.map((e, index) => (
-          <Choice key={`${index} ${e.name}`} name={e.name} />
+          <Choice key={`${index} ${e.name}`} name={e.name} id={e.id} />
         ))}
       </div>
     </div>
