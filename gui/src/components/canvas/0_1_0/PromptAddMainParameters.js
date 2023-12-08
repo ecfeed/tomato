@@ -14,7 +14,7 @@ export function PromptAddMainParameters({
   return (
     <div className={styles.prompt}>
       <Prompt
-        header="Add a parameter"
+        header="Add"
         text="
           The parameter will be added at the end of the container.
         "

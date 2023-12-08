@@ -4,6 +4,7 @@ import { useParameter } from "./context/ParameterContext";
 
 export function PromptAddParentParameter() {
   const {
+    name,
     showAddParameterParent,
     handleAddParameterParentPlaceholder,
     handleAddParameterParentCancel,
@@ -17,10 +18,10 @@ export function PromptAddParentParameter() {
   return (
     <div className={styles.prompt}>
       <Prompt
-        header="Add a parameter"
-        text="
-          The parameter will be added before the selected one.
-        "
+        header="Add"
+        text={`
+          The parameter will be added before:\\n'${name.toUpperCase()}'
+        `}
         placeholder={handleAddParameterParentPlaceholder}
         handleCancel={handleAddParameterParentCancel}
         handleConfirm={handleAddParameterParentLogic}

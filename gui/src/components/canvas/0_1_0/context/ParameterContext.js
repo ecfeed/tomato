@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer, useRef } from "react";
 import { faker } from "@faker-js/faker";
 import { useDrag } from "react-dnd";
-import { ItemTypes } from "../drag/ItemTypes";
+import { ItemTypes } from "../abstract/ItemTypes";
 import {
   addChoice,
   addParameter,
@@ -15,6 +15,7 @@ import {
   renameChoice,
   renameParameter,
 } from "../logic/model";
+import { FILTER_PATRYK } from "../abstract/Limitations";
 
 const ParameterContext = createContext();
 
@@ -220,7 +221,7 @@ export function ParameterProvider({
   const handleMouseHeaderClick = (e) => {
     e.preventDefault();
 
-    if (isLocked) {
+    if (isLocked || FILTER_PATRYK) {
       return;
     }
 

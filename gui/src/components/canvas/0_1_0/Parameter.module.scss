@@ -1,16 +1,18 @@
 .parameter {
   cursor: default;
-  
-  // animation: animateParameter 0.25s ease-out;
 
   &--folded {
     width: 22rem;
-    transform: rotate(90deg) translateX(-16.5rem);
+    transform: rotate(90deg) translateX(-23.8rem);
     transform-origin: left bottom;
   }
 
-  &--default {
+  &--nested {
     width: 100%;
+  }
+
+  &--animated {
+    animation: animateParameter 0.25s ease-out;
   }
 }
 
@@ -19,7 +21,7 @@
 @keyframes animateParameter {
   0% {
     opacity: 0;
-    transform: translateX(-2.5rem);
+    transform: translateY(-2.5rem);
   }
   100% {
     opacity: 1;

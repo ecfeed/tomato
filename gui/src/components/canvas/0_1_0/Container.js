@@ -2,7 +2,7 @@ import styles from "./Container.module.scss";
 import { useParameter } from "./context/ParameterContext";
 
 export function Container({ children }) {
-  const { isFolded, top, handleMouseParameterEnter, handleMouseParameterLeave } = useParameter();
+  const { top, isFolded, handleMouseParameterEnter, handleMouseParameterLeave } = useParameter();
   
   return (
     <div

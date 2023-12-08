@@ -7,6 +7,8 @@ import { Console } from "./Console";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { addParameter, createParameter, getIndex, update } from "./logic/model";
+import { ButtonAdd } from "./ButtonAdd";
+import { FILTER_PATRYK } from "./abstract/Limitations";
 
 const data = {
   name: "root",
@@ -114,31 +116,29 @@ export function Canvas() {
           <button onClick={handleExport}>Export</button>
         </header>
         <ul className={styles.tips}>
-          <li>To fold the top-level parameter click on the header.</li>
+          <li>To add a new parameter, hover the mouse pointer between two active parameters.</li>
           <li>
-            To see additional parameter/choice options hover the mouse pointer over it and click on
-            the menu.
+            To add a new parameter at the first position, hover the mouse pointer before the first
+            active parameter.
           </li>
-          <li>
-            You can store your model between sessions, to do it use the 'save'/'load' buttons.
-          </li>
+          <li>To store your model between sessions, use the 'save'/'load' buttons.</li>
         </ul>
         <div className={styles.main}>
-          {structure.parameters.map((e, index) => (
-            <div className={styles.parameter} key={`${index} ${e.name}`}>
-              <MockParameter
-                root={structure}
-                setRoot={setStructure}
-                parameter={e}
-                isLocked={isLocked}
-                setIsLocked={setIsLocked}
-                top={true}
-              />
-            </div>
-          ))}
-          <button className={styles["button--next"]} onClick={handleAddMainParameter}>
-            add
-          </button>
+          <div className={styles.parameters}>
+            {structure.parameters.map((e, index) => (
+              <div className={styles.parameter} key={`${index} ${e.name}`}>
+                <MockParameter
+                  root={structure}
+                  setRoot={setStructure}
+                  parameter={e}
+                  isLocked={isLocked}
+                  setIsLocked={setIsLocked}
+                  top={true}
+                />
+              </div>
+            ))}
+          </div>
+          <ButtonAdd handleAddMainParameter={handleAddMainParameter} />
           <PromptAddMainParameters
             showAddMainParameter={showAddMainParameter}
             handleAddParameterPlaceholder={handleAddMainParameterPlaceholder}
@@ -147,7 +147,7 @@ export function Canvas() {
           />
         </div>
 
-        <Console text={text} />
+        {!FILTER_PATRYK && <Console text={text} />}
       </div>
     </DndProvider>
   );

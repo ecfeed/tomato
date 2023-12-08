@@ -23,7 +23,15 @@
   margin-top: 2.5rem;
 }
 
-.parameter {
+.parameters{
+  display: flex;
+  margin-right: 1rem;
+
+
+}
+.parameter{
+
+
 }
 
 .tips {
@@ -31,20 +39,3 @@
   line-height: 1;
 }
 
-.button {
-  &--next {
-    background-color: white;
-    border: 1px solid black;
-    border-radius: 10px;
-    height: 2.2rem;
-    width: 10rem;
-    margin-left: 0.1rem;
-    padding: 0 2rem;
-    text-transform: uppercase;
-
-    &:hover {
-      color: white;
-      background-color: black;
-    }
-  }
-}
