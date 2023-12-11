@@ -53,18 +53,19 @@ functions:
   - output parameter: price
     default value: 0
 
-  constraints:
-  - constraint: "'item type' IS 'vehicle' => 'price' IS 'high'"
-  - constraint: "('item type' IS 'food' OR 'item type' IS 'a goat') => price >= 50 "
+  # constraints:
+  # - constraint 1: "'item type' IS 'vehicle' => 'price' IS 'high'"
+  # - constraint 2: "('item type' IS 'food' OR 'item type' IS 'a goat') => price >= 50 "
   #constraint that says that sending to Asia by drone results in very high price
-  - constraint: "'delivery type' IS 'drone' AND 'country' IS 'Asia' => 'price' IS 'very high'"
-  - constfaint: "'country' IS 'Africa' => 'delivery type' IS NOT 'drone'"
-  - constraint: "'delivery type' IS 'teleport' => 'price' IS 'free'"
-  - constraint: "'item type' IN ['food', 'animal'] => 'delivery type' IS NOT 'courier'"
+  # - constraint 1: "'delivery type' IS 'drone' AND 'country' IS 'Asia' => 'price' IS 'very high'"
+  # - constraint 3: "'country' IS 'Africa::Kenya' OR 'person::name' IS 'Mary' OR 'person::surname' IS 'Jones'"  
+  # - constraint 3: "'country' IS 'Africa' => 'delivery type' IS 'drone'"
+  # - constraint 4: "'delivery type' IS 'teleport' => 'price' IS 'free'"
+  # - constraint: "'item type' IN ['food', 'animal'] => 'delivery type' IS NOT 'courier'"
   # delivery to Mary Jones is done only by drone
-  - constraint: "'person::name' IS 'Mary' AND 'person::surmname' IS 'Jones' => 'delivery type' IS 'drone'"
+  # - constraint: "'person::name' IS 'Mary' AND 'person::surname' IS 'Jones' => 'delivery type' IS 'drone'"
   # if agre is 3 years and 6 months, th price is low
-  - constraint: "'person::age::years' IS 3 AND 'person::age::months' IS 6 => 'price' IS 'low'"
+  # - constraint: "'person::age::years' IS 3 AND 'person::age::months' IS 6 => 'price' IS 'low'"
   assignments:
   - assignment: "'item type' IS 'food' => 'price' = 10"
   
