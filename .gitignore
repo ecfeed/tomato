@@ -1,5 +1,6 @@
 *csv
 temp/*
+.vscode/*
 __pycache__
 
 

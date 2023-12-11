@@ -1,0 +1,41 @@
+global parameters:
+- parameter: Person
+  parameters:
+  - parameter: name
+    choices: [John, Mary, Peter]
+  - parameter: surname
+    choices: [Smith, Jones, Taylor]
+  - parameter: age
+    choices:
+    - young adult: 18
+    - middle aged: 50
+    - very old: 90
+
+functions:
+- function: meeting
+  parameters: 
+  - linked parameter: person_1
+    linked to: Person
+  - linked parameter: person_2
+    linked to: Person
+  - parameter: address
+    parameters:
+    - parameter: country
+      choices: [Poland, Norway]
+    - parameter: city
+      choices: [Warsaw, Wrocław, Oslo, Tromsø]
+  - output parameter: duration in minutes
+    default value: 10
+
+  constraints:
+  - city constraint: "IF 'address::country' IS 'Poland' THEN 'address::city' IN ['Warsaw', 'Wrocław']"
+  - city constraint: "'address::country' IS 'Norway' => 'address::city' IN ['Oslo', 'Tromsø']"
+  - very old John: "NOT ('person_1::age' IS 'very old' AND 'person_1::name' IS 'John')"
+
+  assignments:
+  - meeting duration: "'person_1::age' IS 'very old' AND 'person_2::age' IS 'very old' => 'duration in minutes' = 120"
+
+
+
+
+

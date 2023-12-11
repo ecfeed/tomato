@@ -1,0 +1,56 @@
+functions:
+- function: 3 parameters
+  parameters:
+  - parameter: p1
+    choices: [p11, p12, p13, p14]
+    # choices: [p11, p12]
+  - parameter: p2
+    # choices: [p21]
+    choices: [p21, p22, p23, p24]
+  - parameter: p3
+    choices: [p31, p32, p33, p34]
+  - output parameter: p4
+    default value: 0
+  - output parameter: p5
+    default value: 0
+    # choices: [p31]
+  constraints:
+  #### SIMPLE INVARIANTS
+  # - constraint: "'p1' IS 'p11'"
+  # - constraint: "'p1' IS NOT 'p11'"
+  # - constraint: "'p1' IN ['p11', 'p12']"
+
+  ### NEGATED SIMPLE INVARIANTS
+  # - constraint: "NOT 'p1' IS 'p11'"
+  # - constraint: "NOT ('p1' IS 'p11')"
+  # - constraint: "NOT ('p1' IN ['p11', 'p12'])"
+    # - constraint: "NOT (NOT ('p1' IN ['p11', 'p12']))"
+
+  #### AND
+  # - constraint: "'p1' IS 'p11' AND 'p2' IS 'p21'"
+  # - constraint: "'p1' IS 'p11' AND 'p2' IS 'p21' AND 'p3' IS 'p31'"
+  # - constraint: "'p1' IN ['p11', 'p12'] AND 'p2' IS 'p21'"
+  # - constraint: "'p1' IN ['p11', 'p12'] AND 'p2' IS 'p21' AND 'p3' IS NOT 'p31'"
+
+  #### NEGATED AND
+  # - constraint: "NOT ('p1' IS 'p11' AND 'p2' IS 'p21')"
+  # - constraint: "NOT ('p1' IS 'p11') AND NOT('p2' IN ['p21', 'p22'])"
+  # - constraint: "NOT (NOT 'p1' IS 'p11' AND NOT 'p2' IN ['p21', 'p22'])"
+
+  #### OR
+  # - constraint: "'p1' IS 'p11' OR 'p2' IS 'p21'"
+  - constraint: "('p2' IN ['p21', 'p22']) OR ('p1' IS 'p11')"
+
+
+  # - constraint: "'p1' IS 'p11' OR 'p2' IS 'p24'"
+  # - constraint: "'p1' IS 'p11' AND 'p2' IS 'p24'"
+  # - constraint: "'p1' IS 'p11' AND 'p2' IN ['p24', 'p23']"
+
+
+  # - constraint: "'p1' IS 'p11' OR 'p1' IS 'p12' => 'p2' IS 'p21'"
+    # - constraint: "NOT ('p1' IS 'p11' AND 'p2' IS 'p21')"
+  
+
+  assignments:
+  # - assignment: "'p1' IS 'p11' => 'p4'=1"
+  - assignment: "'p1' IS 'p11' => 'p4'=1, 'p5' = 8"
