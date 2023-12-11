@@ -12,7 +12,8 @@ import { Parameter } from "./Parameter";
 import { ParameterProvider } from "./context/ParameterContext";
 import { PromptRenameParameter } from "./PromptRenameParameter";
 import { PromptRenameChoice } from "./PromptRenameChoice";
-// import { PanelParameterLeft } from "./PanelParameterLeft";
+import { FILTER_PATRYK } from "./abstract/Limitations";
+import { PanelParameterLeft } from "./PanelParameterLeft";
 
 export function MockParameter({
   root,
@@ -33,15 +34,15 @@ export function MockParameter({
       parentMouseEvent={parentMouseEvent}
       top={top}>
       <Container>
-        <OptionsParameterLeft />
-        {/* <PanelParameterLeft /> */}
+        {/* <OptionsParameterLeft /> */}
+        {FILTER_PATRYK && <PanelParameterLeft />}
         <Parameter>
           <Main>
             <Header />
-            <BodyParameters />
-             <BodyChoices />
+            {!FILTER_PATRYK && <BodyParameters />}
+             {!FILTER_PATRYK && <BodyChoices />}
           </Main>
-           <OptionsBottom />
+          {!FILTER_PATRYK && <OptionsBottom />}
         </Parameter>
       </Container>
       <PromptAddNestedChoices />

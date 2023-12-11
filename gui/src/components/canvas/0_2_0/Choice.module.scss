@@ -1,0 +1,8 @@
+.choice {
+    position: relative;
+    padding-left: 1rem;
+
+    &--active {
+        background-color: lightgray;
+    }
+}

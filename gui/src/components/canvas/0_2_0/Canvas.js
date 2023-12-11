@@ -8,6 +8,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { addParameter, createParameter, getIndex, update } from "./logic/model";
 import { ButtonAdd } from "./ButtonAdd";
+import { FILTER_PATRYK } from "./abstract/Limitations";
 
 const data = {
   name: "root",
@@ -146,7 +147,7 @@ export function Canvas() {
           />
         </div>
 
-        <Console text={text} />
+        {!FILTER_PATRYK && <Console text={text} />}
       </div>
     </DndProvider>
   );

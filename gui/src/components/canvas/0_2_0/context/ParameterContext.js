@@ -15,6 +15,7 @@ import {
   renameChoice,
   renameParameter,
 } from "../logic/model";
+import { FILTER_PATRYK } from "../abstract/Limitations";
 
 const ParameterContext = createContext();
 
@@ -220,7 +221,7 @@ export function ParameterProvider({
   const handleMouseHeaderClick = (e) => {
     e.preventDefault();
 
-    if (isLocked) {
+    if (isLocked || FILTER_PATRYK) {
       return;
     }
 
@@ -259,18 +260,6 @@ export function ParameterProvider({
 
   //-------------------------------------------------------------------------------------------
 
-  const handleAddParameterParentCancel = () => {
-    dispatch({ type: "prompt:parameter-parent-add:off" });
-
-    setIsLocked(false);
-  };
-
-  const handleAddParameterParent = () => {
-    dispatch({ type: "prompt:parameter-parent-add:on" });
-
-    setIsLocked(true);
-  };
-
   const handleAddParameterParentLogic = (input) => {
     if (!input) {
       return;
@@ -278,15 +267,9 @@ export function ParameterProvider({
 
     const parentId = getParentId(id);
     const index = getIndex(root, id, parentId);
-    const candidate = addParameter(root, parentId, createParameter(input), index);
+    const candidate = addParameter(root, parentId, createParameter('tmp'), index);
 
     setRoot(candidate);
-
-    handleAddParameterParentCancel();
-  };
-
-  const handleAddParameterParentPlaceholder = () => {
-    return faker.internet.domainWord();
   };
 
   //-------------------------------------------------------------------------------------------
@@ -321,10 +304,7 @@ export function ParameterProvider({
 
   //-------------------------------------------------------------------------------------------
 
-  const handleRemoveParameterParentLogic = (input) => {
-    if (!input) {
-      return;
-    }
+  const handleRemoveParameterParentLogic = () => {
 
     const candidate = removeParameter(root, id);
 
@@ -459,10 +439,7 @@ export function ParameterProvider({
         handleRenameParameterPlaceholder,
 
         showAddParameterParent,
-        handleAddParameterParent,
         handleAddParameterParentLogic,
-        handleAddParameterParentCancel,
-        handleAddParameterParentPlaceholder,
 
         handleRemoveParameterParentLogic,
 

@@ -1,0 +1,41 @@
+// * {
+//   border: 1px solid black;
+// }
+
+.canvas {
+  width: 100%;
+  height: 90%;
+  position: relative;
+}
+
+.header {
+  width: 75%;
+  text-align: center;
+  margin: 0 auto;
+  button {
+    width: 100px;
+    margin: 10px;
+  }
+}
+
+.main {
+  display: flex;
+  margin-top: 2.5rem;
+}
+
+.parameters{
+  display: flex;
+  margin-right: 1rem;
+
+
+}
+.parameter{
+
+
+}
+
+.tips {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
