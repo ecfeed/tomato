@@ -1,1 +1,0 @@
-export const FILTER_PATRYK = true;

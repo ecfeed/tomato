@@ -10,6 +10,7 @@ const labelInputDeleted = "↳ Delete the parameter.";
 
 export function Header() {
   const {
+    activeParameter,
     root,
     id,
     name,
@@ -28,6 +29,12 @@ export function Header() {
   const element = useRef(null);
 
   useEffect(() => {
+    if (activeParameter === id) {
+      element.current.focus();
+    }
+  }, [activeParameter, id]);
+
+  useEffect(() => {
     setNameValue(name);
   }, [name]);
 
@@ -40,7 +47,11 @@ export function Header() {
           handleRenameParameterLogic(nameValue);
         }
       } else if (e.code === "Escape") {
-        setNameValue(name);
+        if (name) {
+          setNameValue(name);
+        } else {
+          handleRemoveParameterParentLogic();
+        }
       } else if (e.code === "Delete") {
         handleRemoveParameterParentLogic();
       }
@@ -93,12 +104,20 @@ export function Header() {
   };
 
   const handleFocusIn = (e) => {
-    setLabelValue(labelInputUnchanged);
+    if (name) {
+      setLabelValue(labelInputUnchanged);
+    } else {
+      setLabelValue(labelInputDeleted);
+    }
     setIsDuplicated(false);
   };
 
   const handleFocusOut = (e) => {
-    setNameValue(name);
+    if (name) {
+      setNameValue(name);
+    } else {
+      handleRemoveParameterParentLogic();
+    }
   };
 
   const isUnderlined = false && (choices?.length > 0 || parameters?.length > 0) && !isFolded;
@@ -106,6 +125,7 @@ export function Header() {
   const classParameter = `
     ${styles["parameter-header"]} 
     ${isSelected ? styles["negative"] : styles["default"]} 
+    ${styles["ephemeral"]} 
   `;
 
   const classInput = `

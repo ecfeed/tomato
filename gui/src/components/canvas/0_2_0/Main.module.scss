@@ -11,6 +11,10 @@
     width: 100%;
   }
 
+  &--ephemeral {
+    border: 1px dashed black;
+  }
+
   &--negative {
     background-color: black;
     color: white;

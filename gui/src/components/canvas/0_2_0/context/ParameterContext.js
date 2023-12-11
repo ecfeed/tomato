@@ -15,7 +15,6 @@ import {
   renameChoice,
   renameParameter,
 } from "../logic/model";
-import { FILTER_PATRYK } from "../abstract/Limitations";
 
 const ParameterContext = createContext();
 
@@ -26,12 +25,9 @@ const initialState = {
 
   isOnParameter: false,
   isOnParameterChild: false,
-  isOnOptionsLeft: false,
   isOnOptionsBottom: false,
 
   showAddParameter: false,
-  showAddParameterParent: false,
-  showRenameParameter: false,
   showAddChoice: false,
   showRenameChoice: false,
 };
@@ -39,12 +35,9 @@ const initialState = {
 const clean = {
   isOnParameter: false,
   isOnParameterChild: false,
-  isOnOptionsLeft: false,
   isOnOptionsBottom: false,
 
   showAddParameter: false,
-  showAddParameterParent: false,
-  showRenameParameter: false,
   showAddChoice: false,
   showRenameChoice: false,
 };
@@ -57,10 +50,6 @@ const reducer = (state, action) => {
       return { ...state, isOnParameter: true };
     case "mouse:body:leave":
       return { ...state, ...clean };
-    case "mouse:options-left:enter":
-      return { ...state, ...clean, isOnParameter: true, isOnOptionsLeft: true };
-    case "mouse:options-left:leave":
-      return { ...state, isOnOptionsLeft: false };
     case "mouse:options-bottom:enter":
       return { ...state, ...clean, isOnParameter: true, isOnOptionsBottom: true };
     case "mouse:options-bottom:leave":
@@ -74,14 +63,6 @@ const reducer = (state, action) => {
     case "prompt:parameter-add:on":
       return { ...state, ...clean, showAddParameter: true };
     case "prompt:parameter-add:off":
-      return { ...state, ...clean };
-    case "prompt:parameter-parent-add:on":
-      return { ...state, ...clean, showAddParameterParent: true };
-    case "prompt:parameter-parent-add:off":
-      return { ...state, ...clean, showAddParameterParent: false };
-    case "prompt:parameter-rename:on":
-      return { ...state, ...clean, showRenameParameter: true };
-    case "prompt:parameter-rename:off":
       return { ...state, ...clean };
     case "prompt:parameter-remove":
       return { ...state, ...clean };
@@ -99,6 +80,8 @@ const reducer = (state, action) => {
 };
 
 export function ParameterProvider({
+  activeParameter,
+  setActiveParameter,
   root,
   setRoot,
   isLocked,
@@ -113,8 +96,6 @@ export function ParameterProvider({
   const { isOnParameter, isOnParameterChild, isOnOptionsLeft } = state;
   const {
     showAddParameter,
-    showAddParameterParent,
-    showRenameParameter,
     showAddChoice,
     showRenameChoice,
   } = state;
@@ -125,8 +106,7 @@ export function ParameterProvider({
   const { id, name, parameters = [], choices = [] } = parameter;
   const isStructure = parameters.length > 0;
 
-  const isSelected =
-    showAddChoice || showAddParameter || showAddParameterParent || showRenameParameter;
+  const isSelected = showAddChoice || showAddParameter;
 
   // eslint-disable-next-line no-unused-vars
   const [{ _isDragging }, drag] = useDrag(() => ({
@@ -166,26 +146,6 @@ export function ParameterProvider({
     }
   };
 
-  const handleMouseOptionsLeftEnter = (e) => {
-    e.preventDefault();
-
-    if (isLocked) {
-      return;
-    }
-
-    dispatch({ type: "mouse:options-left:enter" });
-  };
-
-  const handleMouseOptionsLeftLeave = (e) => {
-    e.preventDefault();
-
-    if (isLocked) {
-      return;
-    }
-
-    dispatch({ type: "mouse:options-left:leave" });
-  };
-
   const handleMouseOptionsBottomEnter = (e) => {
     e.preventDefault();
 
@@ -221,7 +181,7 @@ export function ParameterProvider({
   const handleMouseHeaderClick = (e) => {
     e.preventDefault();
 
-    if (isLocked || FILTER_PATRYK) {
+    if (isLocked) {
       return;
     }
 
@@ -249,7 +209,10 @@ export function ParameterProvider({
       return;
     }
 
-    setRoot(addParameter(root, id, createParameter(input), index));
+    const [candidate, parameter] = addParameter(root, id, createParameter(input), index);
+
+    setRoot(candidate);
+    setActiveParameter(parameter.id);
 
     handleAddParameterCancel();
   };
@@ -267,24 +230,13 @@ export function ParameterProvider({
 
     const parentId = getParentId(id);
     const index = getIndex(root, id, parentId);
-    const candidate = addParameter(root, parentId, createParameter('tmp'), index);
+    const [candidate, parameter] = addParameter(root, parentId, createParameter(''), index);
 
     setRoot(candidate);
+    setActiveParameter(parameter.id);
   };
 
   //-------------------------------------------------------------------------------------------
-
-  const handleRenameParameterCancel = () => {
-    dispatch({ type: "prompt:parameter-rename:off" });
-
-    setIsLocked(false);
-  };
-
-  const handleRenameParameter = () => {
-    dispatch({ type: "prompt:parameter-rename:on" });
-
-    setIsLocked(true);
-  };
 
   const handleRenameParameterLogic = (input) => {
     if (!input) {
@@ -294,12 +246,6 @@ export function ParameterProvider({
     const candidate = renameParameter(root, id, input);
 
     setRoot(candidate);
-
-    handleRenameParameterCancel();
-  };
-
-  const handleRenameParameterPlaceholder = () => {
-    return name;
   };
 
   //-------------------------------------------------------------------------------------------
@@ -383,6 +329,8 @@ export function ParameterProvider({
   return (
     <ParameterContext.Provider
       value={{
+        activeParameter,
+        setActiveParameter,
         root,
         setRoot,
 
@@ -397,8 +345,6 @@ export function ParameterProvider({
 
         handleMouseParameterEnter,
         handleMouseParameterLeave,
-        handleMouseOptionsLeftEnter,
-        handleMouseOptionsLeftLeave,
         handleMouseOptionsBottomEnter,
         handleMouseOptionsBottomLeave,
 
@@ -432,13 +378,8 @@ export function ParameterProvider({
         handleAddParameterCancel,
         handleAddParameterPlaceholder,
 
-        showRenameParameter,
-        handleRenameParameter,
         handleRenameParameterLogic,
-        handleRenameParameterCancel,
-        handleRenameParameterPlaceholder,
 
-        showAddParameterParent,
         handleAddParameterParentLogic,
 
         handleRemoveParameterParentLogic,

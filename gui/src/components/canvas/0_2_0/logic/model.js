@@ -137,10 +137,6 @@ export const addParameter = (root, id, parameter, index) => {
     throw new Error("The 'id' of the parent is undefined!");
   }
 
-  if (!parameter.name) {
-    throw new Error("The 'name' of the parameter is undefined!");
-  }
-
   let results = createDeepCopy(root);
   let parent = getElement(results, id);
 
@@ -158,7 +154,7 @@ export const addParameter = (root, id, parameter, index) => {
 
   update(parameter, parent.id ? parent.id : "root");
 
-  return results;
+  return [results, parameter];
 };
 
 export const removeParameter = (root, id) => {

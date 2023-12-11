@@ -2,7 +2,6 @@ import { useState } from "react";
 import styles from "./Choice.module.scss";
 import { useParameter } from "./context/ParameterContext";
 import { OptionsChoiceLeft } from "./OptionsChoiceLeft";
-import { FILTER_PATRYK } from "./abstract/Limitations";
 
 export function Choice({ name, id }) {
   const { activeChoice, isLocked } = useParameter();
@@ -40,7 +39,7 @@ export function Choice({ name, id }) {
       className={`${styles.choice} ${isOnChoice && !isLocked ? styles["choice--active"] : ""}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}>
-      {!FILTER_PATRYK && <OptionsChoiceLeft
+      <OptionsChoiceLeft
         name={name}
         isOnChoice={isOnChoice}
         setIsOnChoice={setIsOnChoice}
@@ -48,7 +47,7 @@ export function Choice({ name, id }) {
         setIsOnChoiceOptionsLeft={setIsOnChoiceOptionsLeft}
         handleMouseOptionsChoiceLeftEnter={handleMouseOptionsChoiceLeftEnter}
         handleMouseOptionsChoiceLeftLeave={handleMouseOptionsChoiceLeftLeave}
-      />}
+      />
       {name}
     </div>
   );

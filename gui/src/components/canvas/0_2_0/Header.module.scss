@@ -1,14 +1,4 @@
-@mixin overflow {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-// -----------------------------------------------------------------------------------
-
 .parameter-header {
-  // @include overflow();
-
   position: relative;
   
   text-align: center;
@@ -24,7 +14,6 @@
   border: none;
 
   text-align: center;
-  // text-transform: uppercase;
 
   &:focus {
     outline: none;
