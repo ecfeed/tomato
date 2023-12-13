@@ -14,6 +14,8 @@ global parameters:
 functions:
 - function: meeting
   parameters: 
+  - parameter: time of a day
+    choices: [sunrise, morning, afternoon, evening]
   - linked parameter: person_1
     linked to: Person
   - linked parameter: person_2
@@ -23,15 +25,36 @@ functions:
     - parameter: country
       choices: [Poland, Norway]
     - parameter: city
-      choices: [Warsaw, Wrocław, Oslo, Tromsø]
+      choices: 
+      - Poland:
+        choices: [Warsaw, Wrocław]
+      - Norway:
+        choices: [Oslo, Tromsø]
   - output parameter: duration in minutes
     default value: 10
 
   constraints:
-  - city constraint: "IF 'address::country' IS 'Poland' THEN 'address::city' IN ['Warsaw', 'Wrocław']"
-  - city constraint: "'address::country' IS 'Norway' => 'address::city' IN ['Oslo', 'Tromsø']"
-  - very old John: "NOT ('person_1::age' IS 'very old' AND 'person_1::name' IS 'John')"
+  - city constraint: 
+      "IF 
+        'address::country' IS 'Poland' 
+       THEN 
+        'address::city' IN ['Poland::Warsaw', 'Poland::Wrocław']"
 
+  - city constraint: "'address::country' IS 'Norway' 
+                      => 
+                      'address::city' IS 'Norway'"
+          
+  - very old John: "NOT ('person_1::age' IS 'very old' 
+                        AND 
+                        'person_1::name' IS 'John')"
+
+  - young Mary sleeps until noon: "NOT (
+                                  'person_2::age' IS 'young adult' 
+                                  AND 
+                                  'person_2::name' IS 'Mary' 
+                                  AND 
+                                  'time of a day' IN ['sunset', 'morning'])"  
+  
   assignments:
   - meeting duration: "'person_1::age' IS 'very old' AND 'person_2::age' IS 'very old' => 'duration in minutes' = 120"
 
