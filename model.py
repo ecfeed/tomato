@@ -1,6 +1,7 @@
 from copy import deepcopy
 import sys
 import yaml
+import fileinput
 
 class ParameterParent:
     def get_parameter(name):
@@ -224,20 +225,24 @@ class Function:
 class Model:
     def __init__(self, file):
         try:
-            with open(file, 'r') as f:
-                model = yaml.safe_load(f.read())
-                global_params = {}
-                if 'global parameters' in model:
-                    for parameter in model['global parameters']:
-                        global_params[parameter['parameter']] = Parameter(parameter, global_params)
-                        
-                if 'functions' in model:
-                    self.functions = {f.name : f for f in [Function(global_params, function) for function in model['functions']]}
-                elif 'function' in model:
-                    self.functions = {function.name : function for function in [Function(global_params, model['function'])]}
-                else:
-                    print('Error: no function specified')
-                    sys.exit(1)
+            if file is not None:
+                with open(file, 'r') as f:
+                    model = yaml.safe_load(f.read())
+            else:
+                model = yaml.safe_load(''.join(fileinput.input()))
+                
+            global_params = {}
+            if 'global parameters' in model:
+                for parameter in model['global parameters']:
+                    global_params[parameter['parameter']] = Parameter(parameter, global_params)
+                    
+            if 'functions' in model:
+                self.functions = {f.name : f for f in [Function(global_params, function) for function in model['functions']]}
+            elif 'function' in model:
+                self.functions = {function.name : function for function in [Function(global_params, model['function'])]}
+            else:
+                print('Error: no function specified')
+                sys.exit(1)
         except OSError as e:
             print(f'Error: unable to open file {file}: {e}')
             sys.exit(1)

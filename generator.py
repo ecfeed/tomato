@@ -40,10 +40,13 @@ def random(function, length=0, duplicates=False, restricted_tests=[]):
 
         solver.new_test_case()
         test_case = [None] * len(input_list)
+        # print_csv_line("",test_case)
         for i in indices:
             candidate = list(copy(test_case))
             for choice in input_list[i]:
                 candidate[i] = choice
+                # clean_line()
+                # print_csv_line("", candidate)
                 if solver.test(candidate):
                     solver.choice_selected(i, choice)
                     test_case = candidate
@@ -52,10 +55,12 @@ def random(function, length=0, duplicates=False, restricted_tests=[]):
             solver.restrict_test_case(test_case)
             
         if any([choice is None for choice in test_case]):
+            # clean_line()
             break
         
         assigner.adapt(test_case)
         generated_tests += 1
+        # clean_line()
         yield test_case            
 
 def adaptive_random(function, length=0, duplicates=False):

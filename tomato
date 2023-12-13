@@ -8,8 +8,13 @@ import generator
 def parse_args():
     """Parse the command line arguments"""
     parser = argparse.ArgumentParser()
-    parser.add_argument("input_file", type=str,
-                        help="Input file containing the model")
+    
+    input_group = parser.add_mutually_exclusive_group()
+    input_group.add_argument("input_file", type=str, nargs='?', default=None,
+                        help="Input file containing the model.")
+    input_group.add_argument("--stdin", action='store_true', 
+        default=False, 
+        help="Use stdin for input file")
     
     parser.add_argument("-f", "--function", type=str, default=None, 
         help="Function name to generate tests for. If not provided\
@@ -17,6 +22,7 @@ def parse_args():
     parser.add_argument("-H", "--no-headrow", action='store_true', 
         default=False, 
         help="do not print the head row with the parameter names")
+    
     
     group = parser.add_argument_group('Generators', 'Define a generator to use')
     generator_group = group.add_mutually_exclusive_group()
@@ -53,16 +59,18 @@ def parse_args():
     
     if not args.nwise and (args.n is not None or args.coverage is not None):
         parser.error("-n and --coverage can only be used with --nwise")
+        
+    if args.input_file is None and not args.stdin:
+        parser.error("Input file is required. Use --stdin to read from stdin")
             
     return args
     
 if __name__ == '__main__':
     args = parse_args()
     
-    input_file = sys.argv[1]
+    function_name = args.function
+    model = Model(args.input_file)
     
-    function_name = args.function    
-    model = Model(input_file)
     if function_name is None:
         function = list(model.functions.values())[0]
     else:
