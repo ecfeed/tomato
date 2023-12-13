@@ -229,7 +229,7 @@ class Model:
                 with open(file, 'r') as f:
                     model = yaml.safe_load(f.read())
             else:
-                model = yaml.safe_load(''.join(fileinput.input()))
+                model = yaml.safe_load(''.join(fileinput.input(files=[])))
                 
             global_params = {}
             if 'global parameters' in model:
