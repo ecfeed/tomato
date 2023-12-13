@@ -117,6 +117,6 @@ if __name__ == '__main__':
     for test in gen:
         if not args.use_choice_names:
             test = function.replace_choice_names_with_values(test)
-        print(','.join(test))
+        print(', '.join(test))
     
     
