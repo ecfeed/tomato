@@ -53,6 +53,22 @@ class Choice:
             return result
         else:
             return []
+        
+    def get_choice(self, name):
+        if '::' in name:
+            tokens = name.split('::')
+            child_name = tokens[0]
+            remains = '::'.join(tokens[1:])
+            
+            for choice in self.choices:
+                if choice.name == child_name:
+                    return choice.get_choice(remains)
+        else:
+            for choice in self.choices:
+                if choice.name == name:
+                    return choice
+        return None
+
 
 class OutputParameter:
     def __init__(self, description):
@@ -131,6 +147,36 @@ class Parameter:
             return result
         else:
             return []
+
+    def get_parameter(self, name):
+        if '::' in name:
+            tokens = name.split('::')
+            child_name = tokens[0]
+            remains = '::'.join(tokens[1:])
+            
+            for parameter in self.parameters:
+                if parameter.name == child_name:
+                    return parameter.get_parameter(remains)
+        else:
+            for parameter in self.parameters:
+                if parameter.name == name:
+                    return parameter
+        return None
+        
+    def get_choice(self, name):
+        if '::' in name:
+            tokens = name.split('::')
+            child_name = tokens[0]
+            remains = '::'.join(tokens[1:])
+            
+            for choice in self.choices:
+                if choice.name == child_name:
+                    return choice.get_choice(remains)
+        else:
+            for choice in self.choices:
+                if choice.name == name:
+                    return choice
+        return None
 
 class Function:
     def __init__(self, global_params, description):
@@ -221,6 +267,18 @@ class Function:
     
     def get_generator_input(self):
         return self.get_parameter_names(), self.get_leaf_choices()
+
+    def replace_choice_names_with_values(self, test_case):
+        parameter_names = self.get_parameter_names()
+        for i, name in enumerate(parameter_names):
+            if name in [p.name for p in self.output_parameters]:
+                continue
+            parameter = self.get_parameter(name)
+            choice_name = test_case[i]
+            choice = parameter.get_choice(choice_name)
+            choice_value = choice.value
+            test_case[i] = choice_value
+        return test_case
 
 class Model:
     def __init__(self, file):

@@ -22,6 +22,9 @@ def parse_args():
     parser.add_argument("-H", "--no-headrow", action='store_true', 
         default=False, 
         help="do not print the head row with the parameter names")
+    parser.add_argument("--use-choice-names", action='store_true', 
+        default=False, 
+        help="do not print the head row with the parameter names")
     
     
     group = parser.add_argument_group('Generators', 'Define a generator to use')
@@ -64,7 +67,7 @@ def parse_args():
         parser.error("Input file is required. Use --stdin to read from stdin")
             
     return args
-    
+
 if __name__ == '__main__':
     args = parse_args()
     
@@ -112,6 +115,8 @@ if __name__ == '__main__':
     if not args.no_headrow:
         print(','.join(function.get_parameter_names()))        
     for test in gen:
+        if not args.use_choice_names:
+            test = function.replace_choice_names_with_values(test)
         print(','.join(test))
     
     
