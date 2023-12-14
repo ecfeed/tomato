@@ -23,7 +23,9 @@ functions:
   - parameter: address
     parameters:
     - parameter: country
-      choices: [Poland, Norway]
+      choices: 
+      - Poland: Pl
+      - Norway: No
     - parameter: city
       choices: 
       - Poland:
@@ -58,7 +60,19 @@ functions:
   assignments:
   - meeting duration: "'person_1::age' IS 'very old' AND 'person_2::age' IS 'very old' => 'duration in minutes' = 120"
 
+- function: dinner
+  parameters:
+  - parameter: soup
+    choices: [🍅, 🌶, 🍆, 🥦]
+  - parameter: main course
+    choices: [🍗, 🍖, 🥩, 🐟, 🥗]
+  - parameter: dessert
+    choices: [🍨, 🍦, 🍧]
+  - parameter: drink
+    choices: [🍷, 🍸, 🍹]
 
+  constraints:
+  - martini to ice cream with fish only: "'dessert' IS '🍨' AND 'main course' IS '🐟' => 'drink' IS '🍸'"
 
 
 
