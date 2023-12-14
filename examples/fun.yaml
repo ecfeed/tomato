@@ -1,15 +1,16 @@
 functions:
   - function: dinner
     parameters:
-    - parameter: soup
+    - parameter: 🥗
       choices: [🍅, 🌶, 🍆, 🥦]
-    - parameter: main course
-      choices: [🍗, 🍖, 🥩, 🐟, 🥗]
-    - parameter: dessert
-      choices: [🍨, 🍦, 🍧]
-    - parameter: drink
-      choices: [🍷, 🍸, 🍹]
+    - parameter: 🍲
+      choices: [🍖, 🥩, 🐟, 🍗]
+    - parameter: 🍨
+      choices: [🍦, 🍧, 🍰]
+    - parameter: 🍷
+      choices: [🍸, 🍺, 🍹 ]
 
     constraints:
-    - martini to ice cream with fish only: "'dessert' IS '🍨' AND 'main course' IS '🐟' => 'drink' IS '🍸'"
+    - martini to ice cream with fish only: "'🍨' IS '🍰' AND '🍲' IS '🐟' => '🍷' IS '🍸'"
+    - no beer and chilli: "NOT ('🍲' IS '🌶' AND '🍷' IS '🍺')"
 
