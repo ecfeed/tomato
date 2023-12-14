@@ -1,4 +1,5 @@
 from itertools import combinations, product
+from math import ceil
 from solver import TomatoSolver
 import random as rand
 from copy import copy, deepcopy
@@ -180,7 +181,7 @@ def nwise(function, n, coverage=100):
             yield from tuples_from_template(input_list, template)
 
     tuples_to_cover = {t for t in tuples(input_list, n) if solver.test(t)}
-    end_tuples_count = len(tuples_to_cover) * ((100 - coverage) // 100)
+    end_tuples_count = ceil(len(tuples_to_cover) * ((100 - coverage) / 100))
     end_condition = lambda: len(tuples_to_cover) <= end_tuples_count
 
     def tuple_score(candidate):
@@ -199,8 +200,8 @@ def nwise(function, n, coverage=100):
         rand.shuffle(indices)
         
         constructed_test_case = copy(tuple_to_cover)
-        print_csv_line("",constructed_test_case)
-        # print_csv_line(str(len(tuples_to_cover)) + ' tuples to go', constructed_test_case)
+        # print_csv_line("",constructed_test_case)
+        print_csv_line(str(len(tuples_to_cover)) + ' tuples to go', constructed_test_case)
         for i in indices:
             best_choice, best_candidate, best_score = None, None, -1
             choices = input_list[i]
@@ -209,8 +210,8 @@ def nwise(function, n, coverage=100):
                 candidate = list(copy(constructed_test_case))
                 candidate[i] = choice
                 clean_line()
-                print_csv_line("", candidate)
-                # print_csv_line(str(len(tuples_to_cover)) + ' tuples to go', candidate)
+                # print_csv_line("", candidate)
+                print_csv_line(str(len(tuples_to_cover)) + ' tuples to go', candidate)
                 score = tuple_score(candidate)                    
                 if score > best_score:
                     best_candidate = candidate

@@ -81,11 +81,11 @@ if __name__ == '__main__':
     
     if args.nwise:
         n = args.n
-        coverage = args.coverage
         if n is None:
             n = 2
-        if coverage is None:
-            coverage = 100
+        if args.coverage is None:
+            args.coverage = 100
+        coverage = int(args.coverage)
             
         gen = generator.nwise(function, n, coverage=coverage)
 
