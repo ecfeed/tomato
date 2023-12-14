@@ -11,6 +11,6 @@ functions:
       choices: [🍸, 🍺, 🍹 ]
 
     constraints:
-    - martini to ice cream with fish only: "'🍨' IS '🍰' AND '🍲' IS '🐟' => '🍷' IS '🍸'"
+    - martini always to ice cream with fish: "'🍨' IS '🍰' AND '🍲' IS '🐟' => '🍷' IS '🍸'"
     - no beer and chilli: "NOT ('🍲' IS '🌶' AND '🍷' IS '🍺')"
 
