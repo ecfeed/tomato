@@ -15,6 +15,11 @@
     &:focus {
       outline: none;
     }
+
+    &::selection {
+      color: white;
+      background: black;
+    }
   }
 
   &__label {
