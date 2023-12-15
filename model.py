@@ -1,6 +1,7 @@
 from copy import deepcopy
 import sys
 import yaml
+import fileinput
 
 class ParameterParent:
     def get_parameter(name):
@@ -52,6 +53,22 @@ class Choice:
             return result
         else:
             return []
+        
+    def get_choice(self, name):
+        if '::' in name:
+            tokens = name.split('::')
+            child_name = tokens[0]
+            remains = '::'.join(tokens[1:])
+            
+            for choice in self.choices:
+                if choice.name == child_name:
+                    return choice.get_choice(remains)
+        else:
+            for choice in self.choices:
+                if choice.name == name:
+                    return choice
+        return None
+
 
 class OutputParameter:
     def __init__(self, description):
@@ -130,6 +147,36 @@ class Parameter:
             return result
         else:
             return []
+
+    def get_parameter(self, name):
+        if '::' in name:
+            tokens = name.split('::')
+            child_name = tokens[0]
+            remains = '::'.join(tokens[1:])
+            
+            for parameter in self.parameters:
+                if parameter.name == child_name:
+                    return parameter.get_parameter(remains)
+        else:
+            for parameter in self.parameters:
+                if parameter.name == name:
+                    return parameter
+        return None
+        
+    def get_choice(self, name):
+        if '::' in name:
+            tokens = name.split('::')
+            child_name = tokens[0]
+            remains = '::'.join(tokens[1:])
+            
+            for choice in self.choices:
+                if choice.name == child_name:
+                    return choice.get_choice(remains)
+        else:
+            for choice in self.choices:
+                if choice.name == name:
+                    return choice
+        return None
 
 class Function:
     def __init__(self, global_params, description):
@@ -221,23 +268,39 @@ class Function:
     def get_generator_input(self):
         return self.get_parameter_names(), self.get_leaf_choices()
 
+    def replace_choice_names_with_values(self, test_case):
+        parameter_names = self.get_parameter_names()
+        for i, name in enumerate(parameter_names):
+            if name in [p.name for p in self.output_parameters]:
+                continue
+            parameter = self.get_parameter(name)
+            choice_name = test_case[i]
+            choice = parameter.get_choice(choice_name)
+            choice_value = choice.value
+            test_case[i] = choice_value
+        return test_case
+
 class Model:
     def __init__(self, file):
         try:
-            with open(file, 'r') as f:
-                model = yaml.safe_load(f.read())
-                global_params = {}
-                if 'global parameters' in model:
-                    for parameter in model['global parameters']:
-                        global_params[parameter['parameter']] = Parameter(parameter, global_params)
-                        
-                if 'functions' in model:
-                    self.functions = {f.name : f for f in [Function(global_params, function) for function in model['functions']]}
-                elif 'function' in model:
-                    self.functions = {function.name : function for function in [Function(global_params, model['function'])]}
-                else:
-                    print('Error: no function specified')
-                    sys.exit(1)
+            if file is not None:
+                with open(file, 'r') as f:
+                    model = yaml.safe_load(f.read())
+            else:
+                model = yaml.safe_load(''.join(fileinput.input(files=[])))
+                
+            global_params = {}
+            if 'global parameters' in model:
+                for parameter in model['global parameters']:
+                    global_params[parameter['parameter']] = Parameter(parameter, global_params)
+                    
+            if 'functions' in model:
+                self.functions = {f.name : f for f in [Function(global_params, function) for function in model['functions']]}
+            elif 'function' in model:
+                self.functions = {function.name : function for function in [Function(global_params, model['function'])]}
+            else:
+                print('Error: no function specified')
+                sys.exit(1)
         except OSError as e:
             print(f'Error: unable to open file {file}: {e}')
             sys.exit(1)

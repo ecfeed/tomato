@@ -21,6 +21,12 @@ global parameters:
   choices: [1, 2]
 
 functions:
+- function: 2 x 2
+  parameters:
+  - linked parameter: one
+    linked to: two
+  - linked parameter: two
+    linked to: two
 - function: performance test 10x10 parameters
   parameters:
   - linked parameter: one

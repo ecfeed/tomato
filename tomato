@@ -1,144 +1,122 @@
 #!/usr/bin/env python3
 
 import sys
-import yaml
-from copy import deepcopy, copy
-from itertools import combinations, product
-from collections import Counter
-import random
 from model import Model
-from constraint_solver import TomatoSolver
+import argparse
+import generator
 
-def print_csv_line(header, line, output=sys.stderr):
-    cleaned_line = [str(element) if element is not None else ' ' for element in line]
-    # if header is not None:
-    #     output.write('(' + header + ') ')
-    output.write(','.join(cleaned_line) + '\n')
-    output.flush()
-    # pass
+def parse_args():
+    """Parse the command line arguments"""
+    parser = argparse.ArgumentParser()
     
-def clean_line(output=sys.stderr):
-    output.write('\033[1A')
-    output.write('\033[K')
-    output.flush()
-    # output.write('\n')
-    # pass
+    input_group = parser.add_mutually_exclusive_group()
+    input_group.add_argument("input_file", type=str, nargs='?', default=None,
+                        help="Input file containing the model.")
+    input_group.add_argument("--stdin", action='store_true', 
+        default=False, 
+        help="Use stdin for input file")
+    
+    parser.add_argument("-f", "--function", type=str, default=None, 
+        help="Function name to generate tests for. If not provided\
+            tests for the first function defined in the model will be generated")
+    parser.add_argument("-H", "--no-headrow", action='store_true', 
+        default=False, 
+        help="do not print the head row with the parameter names")
+    parser.add_argument("--use-choice-names", action='store_true', 
+        default=False, 
+        help="do not print the head row with the parameter names")
+    
+    
+    group = parser.add_argument_group('Generators', 'Define a generator to use')
+    generator_group = group.add_mutually_exclusive_group()
+    generator_group.add_argument("--cartesian", action='store_true', 
+        help="generate cartesian product of input choices")
+    generator_group.add_argument("--random", action='store_true', 
+        help="generate random test cases")
+    generator_group.add_argument("--nwise", action='store_true',
+        help="nwise generator (default)")
+    
+    random_group = parser.add_argument_group('Random generator options:')
+    random_group.add_argument("-l", "--length", type=int, default=None,
+        help="length of the randomly generated suite. 0 for infinite")
+    random_group.add_argument("-D", "--duplicates", action='store_true', default=None,
+        help="""Allows test cases to repeat. If not set and the number of test cases is 0,
+            tests will be generated indifinitely""")
+    random_group.add_argument("--adaptive", action='store_true', default=None,
+        help="""Use adaptive techniques to generate tests that are far from 
+            the ones already generated""")
 
+    nwise_group = parser.add_argument_group('Nwise generator options')
+    nwise_group.add_argument("-n", type=int, default=None, help="n in nwise. Default value: 2")
+    nwise_group.add_argument("-c", "--coverage", default=None, 
+        help="""Required coverage. 100 means all test cases that are allowed
+            by constraints. Available for nwise and cartesian generators. Default vaule: 100""")
+    
 
-def nwise(input_list, n, solver, assigner):
-    if n > len(input_list):
-        raise ValueError("n cannot be greater than the length of the input list")
+    args = parser.parse_args()
+    if not (args.random or args.nwise or args.cartesian):
+        args.nwise = True
 
-    def tuples_covered(test_case, n):
-        if n > len(test_case):
-            raise ValueError("n cannot be greater than the size of the test case")
-
-        indices = [i for i, _ in enumerate(test_case) if test_case[i] is not None]
+    if not args.random and (args.length is not None or args.duplicates is not None or args.adaptive is not None):
+        parser.error("--length, --duplicates and --no-adaptive can only be used with --random")
+    
+    if not args.nwise and (args.n is not None or args.coverage is not None):
+        parser.error("-n and --coverage can only be used with --nwise")
         
-        combinations_ = combinations(indices, n)
-        def uncompress(indices):
-            return tuple([test_case[i] if i in indices else None for i in range(len(test_case))])
-        yield from [uncompress(test) for test in combinations_]
-        
-    def tuples(input_list, n):
-        def tuple_template(n, input_size):
-            if n > input_size:
-                raise ValueError("n cannot be greater than m")
-
-            for combination in combinations(range(input_size), n):
-                template = [False] * input_size
-                for index in combination:
-                    template[index] = True
-                yield template
-
-        def tuples_from_template(input_list, template):
-            len_input_list = len(input_list)
-            if len_input_list != len(template):
-                raise ValueError("Input list and template must have the same length")
-
-            selected_indices = [i for i, is_selected in enumerate(template) if is_selected]
-
-            for combination in product(*[input_list[i] for i in selected_indices]):
-                result = [None] * len_input_list
-                for i, index in enumerate(selected_indices):
-                    result[index] = combination[i]
-                yield tuple(result) # tuple is hashable, list is not
-                
-        if n > len(input_list):
-            raise ValueError("n cannot be greater than the length of the input list")
-
-        for template in tuple_template(n, len(input_list)):
-            yield from tuples_from_template(input_list, template)
-
-    tuples_to_cover = {t for t in tuples(input_list, n) if solver.test(t)}
-
-    def tuple_score(candidate):
-        if not solver.test(candidate):
-            return -1
-        else:
-            covered_tuples = tuples_covered(candidate, n)
-            score = len(tuples_to_cover.intersection(covered_tuples))
-            # print(f'Score of {candidate}: {score}')
-            return score
-
-    while len(tuples_to_cover) > 0:
-        # for tuple_to_cover in tuples_to_cover:
-        solver.new_test_case()
-        tuple_to_cover = random.choice(list(tuples_to_cover))
-        solver.tuple_selected(tuple_to_cover)
-        indices = [i for i, x in enumerate(tuple_to_cover) if x is None]
-        random.shuffle(indices)
-        
-        constructed_test_case = copy(tuple_to_cover)
-        print_csv_line(str(len(tuples_to_cover)) + ' tuples to go', constructed_test_case)
-        for i in indices:
-            best_choice, best_candidate, best_score = None, None, -1
-            choices = input_list[i]
-            random.shuffle(choices)
-            for choice in choices:
-                candidate = list(copy(constructed_test_case))
-                candidate[i] = choice
-                clean_line()
-                print_csv_line(str(len(tuples_to_cover)) + ' tuples to go', candidate)
-                score = tuple_score(candidate)                    
-                if score > best_score:
-                    best_candidate = candidate
-                    best_score = tuple_score(candidate)
-                    best_choice = choice
-                    
-            constructed_test_case = best_candidate
-            solver.choice_selected(i, best_choice)
+    if args.input_file is None and not args.stdin:
+        parser.error("Input file is required. Use --stdin to read from stdin")
             
-            for t in tuples_covered(constructed_test_case, n):
-                tuples_to_cover.discard(t) 
-        test_case = assigner.adapt(constructed_test_case)
-        clean_line()
-        # print(f'Constructed test case: {constructed_test_case}')
-        # yield constructed_test_case
-        yield test_case
+    return args
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2 or len(sys.argv) > 3:
-        print('Usage: python3 tomato <input_file> [<\'function name\'>]')
-        sys.exit(1)
-        
-    input_file = sys.argv[1]
+    args = parse_args()
     
-    function_name = None
-    if len(sys.argv) == 3:
-        function_name = sys.argv[2]
+    function_name = args.function
+    model = Model(args.input_file)
     
-    model = Model(input_file)
     if function_name is None:
         function = list(model.functions.values())[0]
     else:
         function = model.functions[function_name]
     
-    params, choices = function.get_generator_input()
+    if args.nwise:
+        n = args.n
+        if n is None:
+            n = 2
+        if args.coverage is None:
+            args.coverage = 100
+        coverage = int(args.coverage)
+            
+        gen = generator.nwise(function, n, coverage=coverage)
 
-    solver = TomatoSolver(function)
-    print(','.join(params))
-    for test in nwise(choices, 2, solver, solver):
-        print(','.join(test))
+    if args.cartesian:
+        gen = generator.cartesian(function)
+        
+    if args.random:
+        length = args.length
+        duplicates = args.duplicates
+        adaptive = args.adaptive
+        if length is None:
+            length = 0
+        if duplicates is None:
+            duplicates = False
+        if adaptive is None:
+            adaptive = False
+            
+        if not adaptive: 
+            gen = generator.random(function,
+                               length=length, 
+                               duplicates=duplicates)
+        else:
+            gen = generator.adaptive_random(function,
+                               length=length, 
+                               duplicates=duplicates)
+    
+    if not args.no_headrow:
+        print(','.join(function.get_parameter_names()))        
+    for test in gen:
+        if not args.use_choice_names:
+            test = function.replace_choice_names_with_values(test)
+        print(', '.join(test))
     
     

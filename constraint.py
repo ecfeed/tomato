@@ -1,5 +1,5 @@
 from pysat.formula import CNF
-from pysat.process import Processor
+from pyparsing import *
 
 def parse_expression(expression_tokens):
     while len(expression_tokens) == 1:
@@ -41,15 +41,11 @@ class CompositeExpression:
         return '(' + str(self.lval) + ' ' + self.operator + ' ' + str(self.rval) + ')'
     
     def to_cnf(self, choice_mapping, top_id):
-        #y = A AND B compiles to [A, !y] AND [B, !y] AND [!A, !B, y]
-        
+        #y = A AND B compiles to [A, !y] AND [B, !y] AND [!A, !B, y]        
         lval_id, lval = self.lval.to_cnf(choice_mapping, top_id)
         rval_id, rval = self.rval.to_cnf(choice_mapping, lval_id)
         clauses = lval.clauses + rval.clauses
         my_id = rval_id + 1
-        
-        # print(f'lval_clauses: {lval.clauses}')
-        # print(f'rval_clauses: {rval.clauses}')
         
         if self.operator == 'AND':
             clauses.extend([[lval_id, -my_id], [rval_id, -my_id], [-lval_id, -rval_id, my_id]])
@@ -123,12 +119,6 @@ class PrimitiveStatement:
         clauses = []
 
         my_id = top_id + 1  
-        # if len(allowed) == 1:
-        #     clause = allowed
-        #     clause.append(-my_id)
-        #     clauses = [clause]
-            
-        # elif len(allowed) > 1:
         last_clause = []
         for x in allowed:
             clauses.append([-x, my_id])
@@ -169,8 +159,6 @@ class Implication:
         
 class Assignment:
     def __init__(self, function, precondition_tokens, assignments_tokens):
-        # print(f'Create assignment: {precondition_tokens} implies {assignments_tokens}')
-        # print(f'Output parameters: {output_parameters}')
         self.function = function
         self.precondition = parse_expression(precondition_tokens)
         self.assignments = {}
@@ -189,3 +177,58 @@ class Assignment:
         for name, value in self.assignments.items():
             test_case[self.function.get_parameter_index(name)] = value
             
+class Parser:
+    def __init__(self):
+        self.is_literal = CaselessLiteral("IS")
+        self.not_literal = CaselessLiteral("NOT")
+        self.in_literal = CaselessLiteral("IN")
+
+        self.is_relation = self.is_literal
+        self.is_not_relation = Combine(self.is_literal + self.not_literal, adjacent=False, joinString=' ')
+        self.in_relation = self.in_literal
+        self.not_in_relation = Combine(self.not_literal + self.in_literal, adjacent=False, joinString=' ')
+
+        self.name = QuotedString('\'', escChar='\\') | QuotedString('"', escChar='\\')
+        self.aggregated_name = Group(Suppress('[') + self.name + OneOrMore(Suppress(',') + self.name) + Suppress(']'))
+
+        self.simple_statement = self.name + self.is_relation + self.name | self.name + self.is_not_relation + self.name
+        self.aggregate_statement = self.name + self.in_relation + self.aggregated_name | self.name + self.not_in_relation + self.aggregated_name
+        self.primitive_statement = Group(self.simple_statement | self.aggregate_statement)
+
+        self.and_literal = CaselessLiteral("AND")
+        self.or_literal = CaselessLiteral("OR")
+        self.logical_operator = self.and_literal | self.or_literal
+        self.logical_operator.setResultsName('logical_operator')
+        self.expression = Group(infixNotation(self.primitive_statement, 
+            [
+                (self.not_literal, 1, opAssoc.RIGHT), 
+                (self.logical_operator, 2, opAssoc.LEFT), 
+                (self.or_literal, 2, opAssoc.LEFT)
+            ]))
+
+        self.if_literal = CaselessLiteral("IF")
+        self.then_literal = CaselessLiteral("THEN")
+        self.implies_literal = CaselessLiteral("=>")
+        
+    def parse_constraint(self, constraint_string):
+        implication = self.expression + Suppress(self.implies_literal) + self.expression | Suppress(self.if_literal) + self.expression + Suppress(self.then_literal) + self.expression
+        invariant = self.expression
+        constraint = implication | invariant
+        tokens = constraint.parseString(constraint_string, parseAll=True)
+        if len(tokens) == 1:
+            # invariant
+            return Invariant(tokens[0])
+        if len(tokens) == 2:
+            # implication
+            return Implication(tokens[0], tokens[1])
+
+    def parse_assignment(self, assignment_string):
+        equals_literal = CaselessLiteral("=")
+        assignment_value = QuotedString('\'', escChar='\\') | Word(printables, excludeChars=',')
+        assignent_statement = Group(self.name + Suppress(equals_literal) + assignment_value)
+        assignents_list = Group(assignent_statement + ZeroOrMore(Suppress(',') + assignent_statement))
+        
+        # assignment = self.expression + Suppress(self.implies_literal) + assignents_list
+        assignment = self.expression + Suppress(self.implies_literal) + assignents_list | Suppress(self.if_literal) + self.expression + Suppress(self.then_literal) + assignents_list
+        return assignment.parseString(assignment_string, parseAll=True)
+
