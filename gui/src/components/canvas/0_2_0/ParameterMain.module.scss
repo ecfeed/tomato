@@ -1,8 +1,10 @@
-.main {
-  border: 0.1rem solid;
+@mixin common {
   border-radius: 10px;
   padding: 0.5rem;
+  box-shadow: 0.3rem 0.3rem 0.3rem rgba(black, 0.2);
+}
 
+.position {
   &--top {
     width: 25rem;
   }
@@ -10,19 +12,29 @@
   &--nested {
     width: 100%;
   }
+}
 
+.style {
   &--ephemeral {
+    @include common;
+
     border: 1px dashed black;
   }
 
   &--negative {
-    background-color: black;
+    @include common;
+
+    border: 0.1rem solid;
     color: white;
+    background-color: black;
   }
 
   &--default {
-    background-color: white;
-    color: black;
+    @include common;
+    
+    border: 0.1rem solid;
     border-color: black;
+    color: black;
+    background-color: white;
   }
 }

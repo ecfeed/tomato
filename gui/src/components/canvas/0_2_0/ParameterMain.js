@@ -5,14 +5,13 @@ export function ParameterMain({ children }) {
   const { name, isSelected, top } = useParameter();
 
   const classMain = `
-  ${styles["main"]} 
-  ${top ? styles["main--top"] : styles["main--nested"]} 
+  ${top ? styles["position--top"] : styles["position--nested"]} 
   ${
     isSelected
-      ? styles["main--negative"]
+      ? styles["style--negative"]
       : name.length !== 0
-      ? styles["main--default"]
-      : styles["main--ephemeral"]
+      ? styles["style--default"]
+      : styles["style--ephemeral"]
   } 
   `;
 

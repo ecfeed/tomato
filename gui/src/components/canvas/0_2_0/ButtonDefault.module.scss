@@ -1,0 +1,36 @@
+@mixin common {
+  cursor: default;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 0 1.5rem;
+  max-height: 4rem;
+  box-shadow: 0.3rem 0.3rem 0.3rem rgba(black, 0.2);
+}
+
+.button {
+  &--text {
+    text-align: center;
+    text-transform: uppercase;
+  }
+}
+
+.style {
+  &--default {
+    @include common;
+
+    color: black;
+    background-color: white;
+
+    &:hover {
+      color: white;
+      background-color: black;
+    }
+  }
+
+  &--forced {
+    @include common;
+
+    color: white;
+    background-color: black;
+  }
+}

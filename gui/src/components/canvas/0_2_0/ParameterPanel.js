@@ -1,4 +1,4 @@
-import { ButtonAdd } from "./ButtonAdd";
+import { ButtonDefault } from "./ButtonDefault";
 import styles from "./ParameterPanel.module.scss";
 import { useParameter } from "./context/ParameterContext";
 
@@ -17,7 +17,7 @@ export function ParameterPanel() {
   return (
     <>
       <div className={isLocked ? styles["panel-parameter"] : styles["panel-parameter--active"]}>
-        <ButtonAdd handleAddMainParameter={handleInternalAddParameter} />
+        <ButtonDefault handler={handleInternalAddParameter} text="add\nparameter" forceBackground={true}/>
       </div>
     </>
   );

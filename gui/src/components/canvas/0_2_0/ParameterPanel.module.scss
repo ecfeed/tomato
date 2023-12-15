@@ -1,4 +1,4 @@
-@mixin panel {
+@mixin common {
   cursor: default;
   padding: 1.5rem 1rem 0 0.5rem;
   margin: -1.5rem 0 -0.5rem -0.5rem;
@@ -8,10 +8,10 @@
 }
 
 .panel-parameter {
-  @include panel;
+  @include common;
 
   &--active {
-    @include panel;
+    @include common;
 
     transition: opacity 0.2s, width 0.2s 0.4s;
 

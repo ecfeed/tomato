@@ -38,10 +38,10 @@ export function ParameterStructure({
         <Parameter>
           <ParameterMain>
             <ParameterHeader />
-            <ChildrenParameters />
-            <ChildrenChoices />
+            {/* <ChildrenParameters /> */}
+            {/* <ChildrenChoices /> */}
           </ParameterMain>
-          <ParameterOptions />
+          {/* <ParameterOptions /> */}
         </Parameter>
       </ParameterContainer>
       <PromptAddNestedChoices />

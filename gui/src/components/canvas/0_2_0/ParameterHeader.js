@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./ParameterHeader.module.scss";
 import { useParameter } from "./context/ParameterContext";
 import { checkIfChildExists, getParentId } from "./logic/model";
-import Tooltip from "../../tooltip/0_1_0/Tooltip";
 
 const inputExists = "↳ The name is not unique.";
 const inputEmpty = "↳ The name is not defined.";
@@ -164,29 +163,21 @@ export function ParameterHeader() {
   return (
     <div className={classParameter} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <form onSubmit={handleInputOnSubmit}>
-        <Tooltip
-          hide={isFolded || isLocked || name.length < 22}
-          info={nameValue === name ? name : `Original: ${name}\xa0 0l`}>
-          <input
-            ref={element}
-            type="text"
-            className={classInput}
-            value={nameValue}
-            placeholder={name}
-            onChange={handleInputOnNameChange}
-            onFocus={handleInputFocusIn}
-            onBlur={handleInputFocusOut}
-            id="input"
-          />
-          <label className={styles["header__label"]}>{labelValue}</label>
-        </Tooltip>
+        <input
+          ref={element}
+          type="text"
+          className={classInput}
+          value={nameValue}
+          placeholder={name}
+          onChange={handleInputOnNameChange}
+          onFocus={handleInputFocusIn}
+          onBlur={handleInputFocusOut}
+          id="input"
+        />
+        <label className={styles["header__label"]}>{labelValue}</label>
       </form>
       {hover && !isFolded && !isLocked && <div className={styles["header__icon"]}>+</div>}
-      {name && (
-        <Tooltip hide={isFolded || isLocked} info="Hide the content of the parameter.">
-          <OptionsHeaderLeft menuLeftFold={handleMenuLeftFold} />
-        </Tooltip>
-      )}
+      {name && <OptionsHeaderLeft menuLeftFold={handleMenuLeftFold} />}
       {name && !isFolded && <OptionsHeaderRight menuRightToggle={handleMenuRightToggle} />}
       {name && !isFolded && (
         <MenuPanel
@@ -201,21 +192,17 @@ export function ParameterHeader() {
 
 function OptionsHeaderLeft({ menuLeftFold }) {
   return (
-    <>
-      <div className={styles["options-header-left"]} onClick={() => menuLeftFold()}>
-        &#8635;
-      </div>
-    </>
+    <div className={styles["options-header-left"]} onClick={() => menuLeftFold()}>
+      &#8635;
+    </div>
   );
 }
 
 function OptionsHeaderRight({ menuRightToggle }) {
   return (
-    <>
-      <div className={styles["options-header-right"]} onClick={menuRightToggle}>
-        &#8230;
-      </div>
-    </>
+    <div className={styles["options-header-right"]} onClick={menuRightToggle}>
+      &#8230;
+    </div>
   );
 }
 

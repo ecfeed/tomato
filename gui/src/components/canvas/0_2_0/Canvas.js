@@ -5,7 +5,7 @@ import { ParameterStructure } from "./ParameterStructure";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { addParameter, createParameter, getIndex, update } from "./logic/model";
-import { ButtonAdd } from "./ButtonAdd";
+import { ButtonDefault } from "./ButtonDefault";
 import { useState } from "react";
 
 const data = {
@@ -92,7 +92,7 @@ export function Canvas() {
               </div>
             ))}
           </div>
-          <ButtonAdd handleAddMainParameter={handleAddMainParameterLogic} />
+          <ButtonDefault handler={handleAddMainParameterLogic} text="add\nparameter"/>
         </div>
 
         {/* <Console text={text} /> */}
