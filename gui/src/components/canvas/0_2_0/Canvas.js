@@ -1,6 +1,6 @@
-import { faker } from "@faker-js/faker";
+// import { faker } from "@faker-js/faker";
 import styles from "./Canvas.module.scss";
-import { MockParameter } from "./MockParameter";
+import { ParameterStructure } from "./ParameterStructure";
 // import { Console } from "./Console";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -11,40 +11,7 @@ import { useState } from "react";
 const data = {
   name: "root",
   parameters: [
-    {
-      name: "parameter 1",
-      parameters: [
-        {
-          name: "parameter 11",
-          choices: [
-            {
-              name: "choice 1a",
-              value: "value 1a",
-            },
-            {
-              name: "choice 1b",
-              value: "value 1b",
-            },
-          ],
-        },
-        {
-          name: "parameter 12",
-        },
-      ],
-    },
-    {
-      name: "parameter 2",
-      choices: [
-        {
-          name: "choice 2a",
-          value: "value 2a",
-        },
-        {
-          name: "choice 2b",
-          value: "value 2b",
-        },
-      ],
-    },
+    
   ],
 };
 
@@ -56,46 +23,46 @@ export function Canvas() {
 
   //---------------------------------------------------------------------
 
-  const handleAddMainParameterLogic = (input, id) => {
+  const handleAddMainParameterLogic = (input ,id) => {
     const index = getIndex(structure, id);
-    const [candidate, parameter] = addParameter(structure, "root", createParameter(""), index);
+    const candidate = addParameter(structure, "root", createParameter(""), index);
 
+    setIsLocked(true);
     setStructure(candidate);
-    setActiveParameter(parameter.id);
   };
 
-  const handleSave = () => {
-    localStorage.setItem("canvas", JSON.stringify(structure));
-  };
+  // const handleSave = () => {
+  //   localStorage.setItem("canvas", JSON.stringify(structure));
+  // };
 
-  const handleLoad = () => {
-    const data = localStorage.getItem("canvas");
+  // const handleLoad = () => {
+  //   const data = localStorage.getItem("canvas");
 
-    if (!data) {
-      return;
-    }
+  //   if (!data) {
+  //     return;
+  //   }
 
-    setStructure(JSON.parse(data));
-  };
+  //   setStructure(JSON.parse(data));
+  // };
 
-  const handleReload = () => {
-    setStructure(data);
-  };
+  // const handleReload = () => {
+  //   setStructure(data);
+  // };
 
   // const handleExport = () => {
   //   setText(JSON.stringify(structure, null, 4));
   // };
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    // <DndProvider backend={HTML5Backend}>
       <div className={styles.canvas}>
-        <header className={styles.header}>
+        {/* <header className={styles.header}>
           <button onClick={handleSave}>Save</button>
           <button onClick={handleLoad}>Load</button>
           <button onClick={handleReload}>Reload</button>
-          {/* <button onClick={handleExport}>Export</button> */}
-        </header>
-        <ul className={styles.tips}>
+          <button onClick={handleExport}>Export</button>
+        </header> */}
+        {/* <ul className={styles.tips}>
           <li>To add a new parameter, hover the mouse pointer between two active parameters.</li>
           <li>To add a new parameter at the last position, click on the 'add' button.</li>
           <li>
@@ -107,12 +74,12 @@ export function Canvas() {
           <li>To cancel, press 'escape'.</li>
           <li>It is not possible to add a parameter if its name already exists.</li>
           <li>To store your model between sessions, use the 'save'/'load' buttons.</li>
-        </ul>
+        </ul> */}
         <div className={styles.main}>
           <div className={styles.parameters}>
-            {structure.parameters.map((e, index) => (
-              <div className={styles.parameter} key={`${index} ${e.name}`}>
-                <MockParameter
+            {structure.parameters.map((e) => (
+              <div className={styles.parameter} key={e.name}>
+                <ParameterStructure
                   activeParameter={activeParameter}
                   setActiveParameter={setActiveParameter}
                   root={structure}
@@ -130,6 +97,6 @@ export function Canvas() {
 
         {/* <Console text={text} /> */}
       </div>
-    </DndProvider>
+    // </DndProvider>
   );
 }

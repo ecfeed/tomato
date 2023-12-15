@@ -1,7 +1,7 @@
-import styles from "./OptionsBottom.module.scss";
+import styles from "./ParameterOptions.module.scss";
 import { useParameter } from "./context/ParameterContext";
 
-export function OptionsBottom() {
+export function ParameterOptions() {
   const {
     parameters,
     choices,

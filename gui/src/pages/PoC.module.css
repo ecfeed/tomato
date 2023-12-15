@@ -5,8 +5,8 @@
 .main {
     display: flex;
     position: relative;
-    border-bottom: 2px solid black;
-    border-top: 2px solid black;
+    /* border-bottom: 2px solid black; */
+    /* border-top: 2px solid black; */
     display: flex;
     overflow: scroll;
     height: 90vh;

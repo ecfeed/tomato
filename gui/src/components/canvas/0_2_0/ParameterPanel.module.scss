@@ -1,0 +1,30 @@
+@mixin panel {
+  cursor: default;
+  padding: 1.5rem 1rem 0 0.5rem;
+  margin: -1.5rem 0 -0.5rem -0.5rem;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.panel-parameter {
+  @include panel;
+
+  &--active {
+    @include panel;
+
+    transition: opacity 0.2s, width 0.2s 0.4s;
+
+    &:hover {
+      width: 11.5rem;
+
+      opacity: 1;
+      transition: width 0.2s 0.2s, opacity 0.2s 0.4s;
+    }
+  }
+}
+
+.panel-parameter--active:hover ~ .panel-icon {
+  opacity: 0;
+  transition: opacity 0.2s 0.2s;
+}

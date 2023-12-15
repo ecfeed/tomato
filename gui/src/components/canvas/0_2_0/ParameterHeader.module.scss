@@ -1,0 +1,156 @@
+// * {
+//   border: 1px solid red;
+// }
+
+.header {
+  position: relative;
+  padding: 0.25rem 0;
+
+  text-align: center;
+
+  &__input {
+    border: none;
+
+    text-align: center;
+    font-family: inherit;
+    font-size: 1.6rem;
+    font-weight: 700;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__label {
+    position: absolute;
+    top: 3rem;
+    left: 0;
+    opacity: 0;
+    white-space: nowrap;
+
+    transition: opacity 1s;
+  }
+
+  &__icon {
+    cursor: pointer;
+    position: absolute;
+    top: -2rem;
+    left: -2.1rem;
+
+    width: 1.5rem;
+    height: 1.5rem;
+
+    border: 1px solid black;
+    border-radius: 50%;
+
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+
+    z-index: -1;
+  }
+}
+
+.header__input:focus + .header__label {
+  opacity: 1;
+}
+
+.color {
+  &--default {
+    background-color: white;
+    color: black;
+  }
+
+  &--negative {
+    background-color: black;
+    color: white;
+  }
+}
+
+.style {
+  &--stroke {
+    text-decoration: line-through;
+  }
+
+  &--underline {
+    border-bottom: 0.1rem solid;
+  }
+}
+
+.options-header-left {
+  cursor: pointer;
+
+  position: absolute;
+  top: 0;
+  left: 0.5rem;
+}
+
+.options-header-right {
+  cursor: pointer;
+
+  position: absolute;
+  top: 0;
+  right: 0.5rem;
+}
+
+.menu-panel {
+  &__overlay {
+    position: absolute;
+    top: -1.5rem;
+    right: -18rem;
+    width: 20rem;
+    height: 15rem;
+    z-index: 10;
+  }
+
+  &__main {
+    position: absolute;
+    top: 1.75rem;
+    left: 3rem;
+    z-index: 100;
+    width: 15rem;
+
+    background-color: white;
+
+    border: 1px solid black;
+    border-radius: 0.5rem;
+
+    opacity: 0;
+
+    // transition: all 0.25s;
+
+    ul {
+      list-style-type: none;
+
+      padding: 0 1rem;
+      text-align: left;
+
+      li {
+        cursor: pointer;
+      }
+    }
+  }
+
+  &__header {
+    border-bottom: 1px solid black;
+  }
+
+  &__title {
+    display: inline-block;
+  }
+
+  &__close {
+    cursor: pointer;
+
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    padding: 0 0.5rem;
+  }
+}
+
+.menu-panel__overlay:hover > .menu-panel__main {
+  opacity: 1;
+}

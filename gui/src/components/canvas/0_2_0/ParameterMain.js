@@ -1,8 +1,8 @@
-import styles from "./Main.module.scss";
+import styles from "./ParameterMain.module.scss";
 import { useParameter } from "./context/ParameterContext";
 
-export function Main({ children }) {
-  const { name, isSelected, top, drag } = useParameter();
+export function ParameterMain({ children }) {
+  const { name, isSelected, top } = useParameter();
 
   const classMain = `
   ${styles["main"]} 
@@ -17,7 +17,7 @@ export function Main({ children }) {
   `;
 
   return (
-    <div ref={drag} className={classMain}>
+    <div className={classMain}>
       {children}
     </div>
   );

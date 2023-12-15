@@ -1,17 +1,17 @@
-import { OptionsBottom } from "./OptionsBottom";
+import { ParameterOptions } from "./ParameterOptions";
 import { PromptAddNestedChoices } from "./PromptAddNestedChoices";
 import { PromptAddNestedParameters } from "./PromptAddNestedParameters";
-import { BodyChoices } from "./BodyChoices";
-import { BodyParameters } from "./BodyParameters";
-import { Header } from "./Header";
-import { Main } from "./Main";
-import { Container } from "./Container";
+import { ChildrenChoices } from "./ChildrenChoices";
+import { ChildrenParameters } from "./ChildrenParameters";
+import { ParameterHeader } from "./ParameterHeader";
+import { ParameterMain } from "./ParameterMain";
+import { ParameterContainer } from "./ParameterContainer";
 import { Parameter } from "./Parameter";
 import { ParameterProvider } from "./context/ParameterContext";
 import { PromptRenameChoice } from "./PromptRenameChoice";
-import { PanelParameterLeft } from "./PanelParameterLeft";
+import { ParameterPanel } from "./ParameterPanel";
 
-export function MockParameter({
+export function ParameterStructure({
   activeParameter,
   setActiveParameter,
   root,
@@ -33,17 +33,17 @@ export function MockParameter({
       parameter={parameter}
       parentMouseEvent={parentMouseEvent}
       top={top}>
-      <Container>
-        <PanelParameterLeft />
+      <ParameterContainer>
+        <ParameterPanel />
         <Parameter>
-          <Main>
-            <Header />
-            {/* <BodyParameters /> */}
-            {/* <BodyChoices /> */}
-          </Main>
-          {/* <OptionsBottom /> */}
+          <ParameterMain>
+            <ParameterHeader />
+            <ChildrenParameters />
+            <ChildrenChoices />
+          </ParameterMain>
+          <ParameterOptions />
         </Parameter>
-      </Container>
+      </ParameterContainer>
       <PromptAddNestedChoices />
       <PromptAddNestedParameters />
       <PromptRenameChoice />

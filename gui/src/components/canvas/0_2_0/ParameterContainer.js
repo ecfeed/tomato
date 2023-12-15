@@ -1,12 +1,13 @@
-import styles from "./Container.module.scss";
+import styles from "./ParameterContainer.module.scss";
 import { useParameter } from "./context/ParameterContext";
 
-export function Container({ children }) {
-  const { id, top, isFolded, handleMouseParameterEnter, handleMouseParameterLeave } = useParameter();
-  
+export function ParameterContainer({ children }) {
+  const { id, top, isFolded, handleMouseParameterEnter, handleMouseParameterLeave } =
+    useParameter();
+
   return (
     <div
-    key={id}
+      key={id}
       className={`${styles["container"]} ${
         isFolded
           ? styles["container--folded"]

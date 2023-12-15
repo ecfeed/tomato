@@ -2,30 +2,30 @@
   overflow: hidden;
   text-overflow: ellipsis;
 
-  .info {
-    z-index: 999;
+  &__info {
     position: absolute;
-    padding: 5px;
-    margin-left: 10px;
-    max-width: 500px;
+    top: 2.5rem;
 
-    border-radius: 10px;
-
-    background-color: black;
+    padding: .25rem .5rem;
+    margin-left: -.5rem;
+    max-width: 50rem;
+    
+    border-radius: 0.5rem;
+    
+    background-color: rgba(black, 0.5);
     color: white;
-
-    /* Reset settings of the parent component */
+    
+    font-size: 1.4rem;
     white-space: normal;
     font-style: normal;
     text-align: left;
+    
+    z-index: 999;
 
-    /* Time and type of the animation */
     animation: 1s tooltipFadeIn;
-    /* Keep the element after the animation */
     animation-fill-mode: forwards;
-    /* Delay the animation */
-    animation-delay: 1s;
-    /* Initially the component should be hidden */
+
+    animation-delay: 2s;
     visibility: hidden;
   }
 }

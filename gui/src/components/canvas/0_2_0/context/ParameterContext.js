@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer, useRef } from "react";
 import { faker } from "@faker-js/faker";
-import { useDrag } from "react-dnd";
-import { ItemTypes } from "../abstract/ItemTypes";
+// import { useDrag } from "react-dnd";
+// import { ItemTypes } from "../abstract/ItemTypes";
 import {
   addChoice,
   addParameter,
@@ -26,6 +26,7 @@ const initialState = {
   isOnParameter: false,
   isOnParameterChild: false,
   isOnOptionsBottom: false,
+  isOnHeader: false,
 
   showAddParameter: false,
   showAddChoice: false,
@@ -36,6 +37,7 @@ const clean = {
   isOnParameter: false,
   isOnParameterChild: false,
   isOnOptionsBottom: false,
+  isOnHeader: false,
 
   showAddParameter: false,
   showAddChoice: false,
@@ -58,8 +60,16 @@ const reducer = (state, action) => {
       return { ...state, ...clean, isOnParameter: true, isOnParameterChild: true };
     case "mouse:child:leave":
       return { ...state, isOnParameterChild: false };
+    case "mouse:header:enter":
+      return { ...state, ...clean, isOnParameter: true, isOnHeader: true };
+    case "mouse:header:leave":
+      return { ...state, isOnHeader: false };
     case "folded:toggle":
       return { ...state, isFolded: !state.isFolded };
+    case "folded:on":
+      return { ...state, isFolded: true };
+    case "folded:off":
+      return { ...state, isFolded: false };
     case "prompt:parameter-add:on":
       return { ...state, ...clean, showAddParameter: true };
     case "prompt:parameter-add:off":
@@ -93,7 +103,7 @@ export function ParameterProvider({
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { isOnParameter, isOnParameterChild, isOnOptionsLeft } = state;
+  const { isOnParameter, isOnHeader, isOnParameterChild, isOnOptionsLeft } = state;
   const {
     showAddParameter,
     showAddChoice,
@@ -108,13 +118,12 @@ export function ParameterProvider({
 
   const isSelected = showAddChoice || showAddParameter;
 
-  // eslint-disable-next-line no-unused-vars
-  const [{ _isDragging }, drag] = useDrag(() => ({
-    type: ItemTypes.PARAMETER,
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
+  // const [{ _isDragging }, drag] = useDrag(() => ({
+  //   type: ItemTypes.PARAMETER,
+  //   collect: (monitor) => ({
+  //     isDragging: !!monitor.isDragging(),
+  //   }),
+  // }));
 
   //-------------------------------------------------------------------------------------------
 
@@ -125,6 +134,7 @@ export function ParameterProvider({
       return;
     }
 
+    setActiveParameter(id);
     dispatch({ type: "mouse:body:enter" });
 
     if (parentMouseEvent) {
@@ -139,11 +149,24 @@ export function ParameterProvider({
       return;
     }
 
+    setActiveParameter(null);
     dispatch({ type: "mouse:body:leave" });
 
     if (parentMouseEvent) {
       parentMouseEvent(false);
     }
+  };
+
+  const handleMouseHeaderEnter = (e) => {
+    e.preventDefault();
+
+    dispatch({ type: "mouse:header:enter" });
+  };
+
+  const handleMouseHeaderLeave = (e) => {
+    e.preventDefault();
+
+    dispatch({ type: "mouse:header:leave" });
   };
 
   const handleMouseOptionsBottomEnter = (e) => {
@@ -178,15 +201,22 @@ export function ParameterProvider({
     }
   };
 
-  const handleMouseHeaderClick = (e) => {
-    e.preventDefault();
+  const handleSetFolded = (value) => {
 
     if (isLocked) {
       return;
     }
 
     if (top) {
+      if (value === undefined) {
       dispatch({ type: "folded:toggle" });
+      } else {
+        if (value === true) {
+          dispatch({ type: "folded:on" });
+        } else if (value === false) {
+          dispatch({ type: "folded:off" });
+        }
+      }
     }
   };
 
@@ -230,10 +260,11 @@ export function ParameterProvider({
 
     const parentId = getParentId(id);
     const index = getIndex(root, id, parentId);
-    const [candidate, parameter] = addParameter(root, parentId, createParameter(''), index);
+    const candidate = addParameter(root, parentId, createParameter(''), index);
 
+    setActiveParameter(null);
+    setIsLocked(true);
     setRoot(candidate);
-    setActiveParameter(parameter.id);
   };
 
   //-------------------------------------------------------------------------------------------
@@ -245,6 +276,7 @@ export function ParameterProvider({
 
     const candidate = renameParameter(root, id, input);
 
+    setActiveParameter(null);
     setRoot(candidate);
   };
 
@@ -334,7 +366,7 @@ export function ParameterProvider({
         root,
         setRoot,
 
-        drag,
+        // drag,
 
         top,
 
@@ -345,14 +377,17 @@ export function ParameterProvider({
 
         handleMouseParameterEnter,
         handleMouseParameterLeave,
+        handleMouseHeaderEnter,
+        handleMouseHeaderLeave,
         handleMouseOptionsBottomEnter,
         handleMouseOptionsBottomLeave,
 
         handleMouseParameterChild,
-        handleMouseHeaderClick,
+        handleSetFolded,
 
         isOnOptionsLeft,
         isOnParameter,
+        isOnHeader,
         isOnParameterChild,
         isSelected,
         isLocked,

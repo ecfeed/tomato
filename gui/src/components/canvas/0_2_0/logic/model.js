@@ -154,7 +154,7 @@ export const addParameter = (root, id, parameter, index) => {
 
   update(parameter, parent.id ? parent.id : "root");
 
-  return [results, parameter];
+  return results;
 };
 
 export const removeParameter = (root, id) => {

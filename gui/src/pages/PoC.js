@@ -1,7 +1,8 @@
 import { Outlet, useLocation } from "react-router-dom";
 import styles from "./PoC.module.css";
-import { PageNav } from "./support/navigation/PageNav";
-import { PageSidebar } from "./support/navigation/PageSidebar";
+// import { PageNav } from "./support/navigation/PageNav";
+// import { PageSidebar } from "./support/navigation/PageSidebar";
+
 import { getAllVersions as getChoiceVersions } from "../drivers/choice/ChoiceDriver";
 import { getAllVersions as getTooltipVersions } from "../drivers/tooltip/TooltipDriver";
 import { getAllVersions as getCanvasVersions } from "../drivers/canvas/CanvasDriver";
@@ -26,7 +27,7 @@ function PoC() {
     <div className={styles.poc}>
       {/* <PageNav /> */}
       <div className={styles.main}>
-        <PageSidebar versions={versions} />
+        {/* <PageSidebar versions={versions} /> */}
         <Outlet />
       </div>
     </div>

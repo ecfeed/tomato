@@ -1,19 +1,23 @@
 .button {
+
+  &--text {
+    text-align: center;
+    text-transform: uppercase;
+  }
+
   &--next {
+    cursor: default;
     background-color: white;
     border: 1px solid black;
     border-radius: 10px;
-    height: 2.2rem;
-    width: 10rem;
-    margin-left: 0.1rem;
-    padding: 0 2rem;
-    text-transform: uppercase;
+    padding: 0 1.5rem;
+    max-height: 4rem;
+    
+    // transition: all 0.1s;
 
-    transition: all 0.25s;
-
-    &:hover {
-      color: white;
-      background-color: black;
-    }
+    // &:hover {
+    //   color: white;
+    //   background-color: black;
+    // }
   }
 }

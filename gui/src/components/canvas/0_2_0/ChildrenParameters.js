@@ -1,8 +1,8 @@
-import styles from "./BodyParameters.module.scss";
-import { MockParameter } from "./MockParameter";
+import styles from "./ChildrenParameters.module.scss";
+import { ParameterStructure } from "./ParameterStructure";
 import { useParameter } from "./context/ParameterContext";
 
-export function BodyParameters() {
+export function ChildrenParameters() {
   const {
     root,
     setRoot,
@@ -24,7 +24,7 @@ export function BodyParameters() {
   return (
     <div className={styles["children"]}>
       {parameters.map((e, index) => (
-        <MockParameter
+        <ParameterStructure
           root={root}
           setRoot={setRoot}
           key={`${index} ${e.name}`}
@@ -38,7 +38,7 @@ export function BodyParameters() {
           isLocked={isLocked}
           setIsLocked={setIsLocked}>
           {e}
-        </MockParameter>
+        </ParameterStructure>
       ))}
     </div>
   );
