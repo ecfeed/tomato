@@ -1,12 +1,19 @@
 from pysat.formula import CNF
 from pyparsing import *
 
-def parse_expression(expression_tokens):
+def parse_expression(expression_tokens, aliases):
+
+    if len(expression_tokens) == 1 and isinstance(expression_tokens[0], str):
+        if expression_tokens[0] in aliases:
+            return aliases[expression_tokens[0]].statement
+        else:
+            raise Exception(f"'{expression_tokens}' is not a defined alias")
+
     while len(expression_tokens) == 1:
         expression_tokens = expression_tokens[0]
-        
+
     if expression_tokens[0] == 'NOT':
-        return NegatedExpression(tokens=expression_tokens[1:])
+        return NegatedExpression(tokens=expression_tokens[1:], aliases=aliases)
         
     elif any(element in expression_tokens.asList() for element in ['AND', 'OR']) and len(expression_tokens):
         # conjunction or disjunction
@@ -14,7 +21,7 @@ def parse_expression(expression_tokens):
         operator = expression_tokens.pop()
         lval_tokens = expression_tokens
         
-        return CompositeExpression(operator, tokens=[lval_tokens, rval_tokens])
+        return CompositeExpression(operator, tokens=[lval_tokens, rval_tokens], aliases=aliases)
             
     elif any(element in expression_tokens.asList() for element in ['IS', 'IS NOT', 'IN', 'NOT IN']) and len(expression_tokens) == 3:
         # primitive statement
@@ -26,13 +33,14 @@ def parse_expression(expression_tokens):
 
 class CompositeExpression:
     def __init__(self, operator, 
+                 aliases,
                  tokens=None, 
                  expr=None):
         
         self.operator = operator
         if tokens is not None:
-            self.lval = parse_expression(tokens[0])
-            self.rval = parse_expression(tokens[1])
+            self.lval = parse_expression(tokens[0], aliases)
+            self.rval = parse_expression(tokens[1], aliases)
         elif expr is not None:
             self.lval = expr[0]
             self.rval = expr[1]
@@ -100,7 +108,6 @@ class PrimitiveStatement:
     def to_cnf(self, choice_mapping, top_id):
         parameter_name = self.lval
         parameter_mapping = choice_mapping[parameter_name]
-        allowed_choices = []
         
         def filter_choices(choices, values):
             result = []
@@ -129,7 +136,7 @@ class PrimitiveStatement:
         return my_id, CNF(from_clauses=clauses)
 
 class Invariant:
-    def __init__(self, expression_tokens):
+    def __init__(self, expression_tokens, aliases):
         self.expression = parse_expression(expression_tokens)
 
     def __str__(self):
@@ -143,9 +150,9 @@ class Invariant:
         return invariant_id, result
     
 class Implication:
-    def __init__(self, precondition_tokens, postcondition_tokens):
-        self.precondition = parse_expression(precondition_tokens)
-        self.postcondition = parse_expression(postcondition_tokens)
+    def __init__(self, precondition_tokens, postcondition_tokens, aliases):
+        self.precondition = parse_expression(precondition_tokens, aliases)
+        self.postcondition = parse_expression(postcondition_tokens, aliases)
         
     def __str__(self):
         return 'IF ' + str(self.precondition) + ' THEN ' + str(self.postcondition)
@@ -158,9 +165,9 @@ class Implication:
         return postcondition_id, CNF(from_clauses=[[-precondition_id, postcondition_id]] + precondition_cnf.clauses + postcondition_cnf.clauses)
         
 class Assignment:
-    def __init__(self, function, precondition_tokens, assignments_tokens):
+    def __init__(self, function, precondition_tokens, assignments_tokens, aliases):
         self.function = function
-        self.precondition = parse_expression(precondition_tokens)
+        self.precondition = parse_expression(precondition_tokens, aliases)
         self.assignments = {}
         output_parameters = [p.name for p in function.output_parameters]
         for assignment in assignments_tokens:
@@ -176,7 +183,14 @@ class Assignment:
     def apply(self, test_case):
         for name, value in self.assignments.items():
             test_case[self.function.get_parameter_index(name)] = value
-            
+
+class StatementAlias:
+    def __init__(self, statement_tokens, aliases):
+        self.statement = parse_expression(statement_tokens, aliases)
+    
+    def __str__(self):
+        return "Alias: " + str(self.statement)
+
 class Parser:
     def __init__(self):
         self.is_literal = CaselessLiteral("IS")
@@ -194,12 +208,13 @@ class Parser:
         self.simple_statement = self.name + self.is_relation + self.name | self.name + self.is_not_relation + self.name
         self.aggregate_statement = self.name + self.in_relation + self.aggregated_name | self.name + self.not_in_relation + self.aggregated_name
         self.primitive_statement = Group(self.simple_statement | self.aggregate_statement)
+        self.alias = self.name
 
         self.and_literal = CaselessLiteral("AND")
         self.or_literal = CaselessLiteral("OR")
         self.logical_operator = self.and_literal | self.or_literal
         self.logical_operator.setResultsName('logical_operator')
-        self.expression = Group(infixNotation(self.primitive_statement, 
+        self.expression = Group(infixNotation(self.primitive_statement | self.alias, 
             [
                 (self.not_literal, 1, opAssoc.RIGHT), 
                 (self.logical_operator, 2, opAssoc.LEFT), 
@@ -209,20 +224,24 @@ class Parser:
         self.if_literal = CaselessLiteral("IF")
         self.then_literal = CaselessLiteral("THEN")
         self.implies_literal = CaselessLiteral("=>")
-        
-    def parse_constraint(self, constraint_string):
+
+    def parse_statement_alias(self, statement_alias_string, aliases):
+        tokens = self.expression.parseString(statement_alias_string, parseAll=True)
+        return StatementAlias(tokens, aliases)
+            
+    def parse_constraint(self, constraint_string, aliases):
         implication = self.expression + Suppress(self.implies_literal) + self.expression | Suppress(self.if_literal) + self.expression + Suppress(self.then_literal) + self.expression
         invariant = self.expression
         constraint = implication | invariant
         tokens = constraint.parseString(constraint_string, parseAll=True)
         if len(tokens) == 1:
             # invariant
-            return Invariant(tokens[0])
+            return Invariant(tokens[0], aliases)
         if len(tokens) == 2:
             # implication
-            return Implication(tokens[0], tokens[1])
+            return Implication(tokens[0], tokens[1], aliases)
 
-    def parse_assignment(self, assignment_string):
+    def parse_assignment(self, assignment_string, function, aliases):
         equals_literal = CaselessLiteral("=")
         assignment_value = QuotedString('\'', escChar='\\') | Word(printables, excludeChars=',')
         assignent_statement = Group(self.name + Suppress(equals_literal) + assignment_value)
@@ -230,5 +249,6 @@ class Parser:
         
         # assignment = self.expression + Suppress(self.implies_literal) + assignents_list
         assignment = self.expression + Suppress(self.implies_literal) + assignents_list | Suppress(self.if_literal) + self.expression + Suppress(self.then_literal) + assignents_list
-        return assignment.parseString(assignment_string, parseAll=True)
+        tokens = assignment.parseString(assignment_string, parseAll=True)
+        return Assignment(function, tokens[0], tokens[1], aliases)
 

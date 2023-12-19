@@ -15,9 +15,13 @@ class TomatoSolver:
         self.model_semantics = []
         self.__prepare_model_semantics()
 
+        aliases = {}
+        for name, formula in self.function.aliases.items():
+            aliases[name] = self.parser.parse_statement_alias(formula, aliases)
+
         for name, formulas_list in self.function.constraints.items():
             for formula in formulas_list:
-                constraint = self.parser.parse_constraint(formula)
+                constraint = self.parser.parse_constraint(formula, aliases)
                 self.top_id, cnf = constraint.to_cnf(self.choice_mapping, self.top_id)
                 self.model_semantics.extend(cnf.clauses)
               
@@ -28,9 +32,10 @@ class TomatoSolver:
             if name not in self.assignments:
                 self.assignments[name] = []
             for formula in formulas_list:
-                assignment_tokens = self.parser.parse_assignment(formula)
+                assignment = self.parser.parse_assignment(formula, self.function, aliases)
+                # assignment_tokens = self.parser.parse_assignment(formula)
                 
-                assignment = Assignment(self.function, assignment_tokens[0], assignment_tokens[1])
+                # assignment = Assignment(self.function, assignment_tokens[0], assignment_tokens[1])
                 self.assignments[name].append(assignment)
 
     def restrict_test_case(self, restricted):

@@ -196,26 +196,40 @@ class Function:
                 self.parameters.append(copy)
             else:
                 self.parameters.append(Parameter(parameter, global_params))
-                
+                        
+        self.aliases = {}
         self.constraints = {}
-        if 'constraints' in description:
-            for constraint in description['constraints']:
-                name = list(constraint.keys())[0]
-                value = constraint[name]
-
-                if name not in self.constraints:
-                    self.constraints[name] = []
-                self.constraints[name].append(value)
-                
         self.assignments = {}
-        if 'assignments' in description:
-            for assignment in description['assignments']:
-                name = list(assignment.keys())[0]
-                value = assignment[name]
+        if 'constraints' in description:
+            constraints_description = description['constraints']
+            
+            if 'aliases' in constraints_description:
+                for alias in constraints_description['aliases']:
+                    # print(f'parse alias: {alias}')
+                    name = list(alias.keys())[0]
+                    value = alias[name]
 
-                if name not in self.assignments:
-                    self.assignments[name] = []
-                self.assignments[name].append(value)
+                    if name in self.aliases:
+                        raise Exception(f"Alias '{name}' already defined")
+                    self.aliases[name] = value
+    
+            if 'input' in constraints_description:
+                for constraint in constraints_description['input']:
+                    name = list(constraint.keys())[0]
+                    value = constraint[name]
+
+                    if name not in self.constraints:
+                        self.constraints[name] = []
+                    self.constraints[name].append(value)
+                
+            if 'output' in constraints_description:
+                for assignment in constraints_description['output']:
+                    name = list(assignment.keys())[0]
+                    value = assignment[name]
+
+                    if name not in self.assignments:
+                        self.assignments[name] = []
+                    self.assignments[name].append(value)
         
     def __str__(self):
         return f'{self.name}({[parameter.name for parameter in self.parameters]})'

@@ -70,9 +70,34 @@ functions:
     choices: [🍨, 🍦, 🍧]
   - parameter: drink
     choices: [🍷, 🍸, 🍹]
+  - output parameter: price
+    default value: 100
 
   constraints:
-  - martini to ice cream with fish only: "'dessert' IS '🍨' AND 'main course' IS '🐟' => 'drink' IS '🍸'"
+    aliases:
+    - fish and wine: "'main course' IS '🐟' AND 'drink' IS '🍷'"
+    input:
+    - fish and tomato only with wine: "'soup' IS '🍅' AND 'main course' IS '🐟' => 'drink' IS '🍷'"
+    - martini to ice cream with fish only: "'dessert' IS '🍨' AND 'main course' IS '🐟' => 'drink' IS '🍸'"
+    - fish and wine with tomato not with ice cream: "'fish and wine' AND 'soup' IS '🍅' => 'dessert' IS NOT '🍨'"
+    output:
+    - price: "'soup' IS '🍅' AND 'main course' IS '🐟' => 'price'=150"
+    - price: "'fish and wine' AND 'soup' IN ['🍅', '🌶', '🍆'] => 'price'=200"
+
+- function: loan
+  parameters:
+  - parameter: amount
+    choices: [100k, 200k, 300k, 400k, 500k]
+  - parameter: duration in years
+    choices: [1, 2, 3, 4, 5]
+  - parameter: interest rate %
+    choices: [1, 2, 3, 4, 5]
+  - parameter: monthly payment
+    choices: [100, 200, 300, 400, 500]
+
+  constraints:
+  - monthly payment: "'amount' IS '100k' AND 'duration in years' IS '1' AND 'interest rate %' IS '1' => 'monthly payment' IS '100'"
+  - monthly payment: "'amount' IS '200k' AND 'duration in years' IS '2' AND 'interest rate %' IS '2' => 'monthly payment' IS '200'"
 
 
 
