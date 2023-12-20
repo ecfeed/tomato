@@ -137,7 +137,7 @@ class PrimitiveStatement:
 
 class Invariant:
     def __init__(self, expression_tokens, aliases):
-        self.expression = parse_expression(expression_tokens)
+        self.expression = parse_expression(expression_tokens, aliases)
 
     def __str__(self):
         return str(self.expression)        
@@ -202,7 +202,8 @@ class Parser:
         self.in_relation = self.in_literal
         self.not_in_relation = Combine(self.not_literal + self.in_literal, adjacent=False, joinString=' ')
 
-        self.name = QuotedString('\'', escChar='\\') | QuotedString('"', escChar='\\')
+        self.name = QuotedString('\'', escChar='\\') | QuotedString('"', escChar='\\') | Word(printables, excludeChars=',')
+        # self.name = QuotedString('\'', escChar='\\') | QuotedString('"', escChar='\\') | Word(pyparsing_unicode.printables, excludeChars=',')
         self.aggregated_name = Group(Suppress('[') + self.name + OneOrMore(Suppress(',') + self.name) + Suppress(']'))
 
         self.simple_statement = self.name + self.is_relation + self.name | self.name + self.is_not_relation + self.name
@@ -243,7 +244,8 @@ class Parser:
 
     def parse_assignment(self, assignment_string, function, aliases):
         equals_literal = CaselessLiteral("=")
-        assignment_value = QuotedString('\'', escChar='\\') | Word(printables, excludeChars=',')
+        assignment_value = QuotedString('\'', escChar='\\') | Word(printables, excludeChars=',=')
+        # assignment_value = QuotedString('\'', escChar='\\') | Word(pyparsing_unicode.printables, excludeChars=',=')
         assignent_statement = Group(self.name + Suppress(equals_literal) + assignment_value)
         assignents_list = Group(assignent_statement + ZeroOrMore(Suppress(',') + assignent_statement))
         
