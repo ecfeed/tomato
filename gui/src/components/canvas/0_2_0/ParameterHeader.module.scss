@@ -1,10 +1,13 @@
 .header {
-  position: relative;
-  padding: 0.25rem 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
 
-  text-align: center;
+  position: relative;
 
   &__input {
+    order: 0;
+ 
     border: none;
 
     text-align: center;
@@ -24,7 +27,7 @@
 
   &__label {
     position: absolute;
-    top: 3rem;
+    top: 2.5rem;
     left: 0;
     opacity: 0;
     white-space: nowrap;
@@ -62,18 +65,14 @@
 .options-header-left {
   cursor: pointer;
 
-  position: absolute;
-  top: 0;
-  left: 0.5rem;
+  order: -1;
+  z-index: 20;
 }
 
 .options-header-right {
   cursor: pointer;
 
-  position: absolute;
-  top: 0;
-  right: 0.5rem;
-
+  order: 1;
   z-index: 20;
 }
 
@@ -100,6 +99,8 @@
     border-radius: 0.4rem;
 
     box-shadow: 0.3rem 0.3rem 0.3rem rgba(black, 0.2);
+
+    text-align: center;
 
     opacity: 0;
 

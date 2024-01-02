@@ -1,7 +1,7 @@
 // import { faker } from "@faker-js/faker";
 import styles from "./Canvas.module.scss";
 import { ParameterStructure } from "./ParameterStructure";
-// import { Console } from "./Console";
+import { Console } from "./Console";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { addParameter, createParameter, getIndex, update } from "./logic/model";
@@ -15,7 +15,7 @@ const data = {
 
 export function Canvas() {
   const [structure, setStructure] = useState(update(data));
-  // const [text, setText] = useState();
+  const [text, setText] = useState();
   const [isLocked, setIsLocked] = useState(false);
   const [activeParameter, setActiveParameter] = useState(null);
 
@@ -29,27 +29,27 @@ export function Canvas() {
     setStructure(candidate);
   };
 
-  // const handleSave = () => {
-  //   localStorage.setItem("canvas", JSON.stringify(structure));
-  // };
+  const handleSave = () => {
+    localStorage.setItem("canvas", JSON.stringify(structure));
+  };
 
-  // const handleLoad = () => {
-  //   const data = localStorage.getItem("canvas");
+  const handleLoad = () => {
+    const data = localStorage.getItem("canvas");
 
-  //   if (!data) {
-  //     return;
-  //   }
+    if (!data) {
+      return;
+    }
 
-  //   setStructure(JSON.parse(data));
-  // };
+    setStructure(JSON.parse(data));
+  };
 
-  // const handleReload = () => {
-  //   setStructure(data);
-  // };
+  const handleReload = () => {
+    setStructure(data);
+  };
 
-  // const handleExport = () => {
-  //   setText(JSON.stringify(structure, null, 4));
-  // };
+  const handleExport = () => {
+    setText(JSON.stringify(structure, null, 4));
+  };
 
   return (
     // <DndProvider backend={HTML5Backend}>
