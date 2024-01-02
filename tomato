@@ -25,6 +25,8 @@ def parse_args():
     parser.add_argument("--use-choice-names", action='store_true', 
         default=False, 
         help="do not print the head row with the parameter names")
+    parser.add_argument("--separator", type=str, default=', ', 
+        help="Separator to use in the output")
     
     
     group = parser.add_argument_group('Generators', 'Define a generator to use')
@@ -112,11 +114,12 @@ if __name__ == '__main__':
                                length=length, 
                                duplicates=duplicates)
     
+    sep = args.separator
     if not args.no_headrow:
-        print(','.join(function.get_parameter_names()))        
+        print(sep.join(function.get_parameter_names()))        
     for test in gen:
         if not args.use_choice_names:
             test = function.replace_choice_names_with_values(test)
-        print(', '.join(test))
+        print(sep.join(test))
     
     
