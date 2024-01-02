@@ -1,10 +1,16 @@
 @mixin common {
   cursor: default;
-  padding: 1.5rem 1rem 0 0.5rem;
-  margin: -1.5rem 0 -0.5rem -0.5rem;
-  width: 0;
+
+  margin-top: -2rem;
+
   overflow: hidden;
   opacity: 0;
+
+  width: 2rem;
+
+  padding-top: 2rem;
+  padding-right: 1rem;
+  padding-left: 0.5rem;
 }
 
 .panel-parameter {
@@ -24,7 +30,44 @@
   }
 }
 
-.panel-parameter--active:hover ~ .panel-icon {
-  opacity: 0;
-  transition: opacity 0.2s 0.2s;
+.panel-parameter__icon {
+  cursor: pointer;
+  position: absolute;
+  left: 0.25rem;
+  top: -0.15rem;
+
+  width: 1.5rem;
+  height: 1.5rem;
+
+  border: 1px solid black;
+  border-radius: 50%;
+
+  box-shadow: 0.3rem 0.3rem 0.3rem rgba(black, 0.2);
+
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+
+  z-index: -1;
+
+  transition: 0.2s;
+  animation: animationIcon 0.2s ease-out;
+}
+
+@keyframes animationIcon {
+  0% {
+    transform: translateY(3rem);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.panel-parameter--active:hover ~ .panel-parameter__icon {
+  // opacity: 0;
+
+  // transition: 0.2s 0.4s;
 }

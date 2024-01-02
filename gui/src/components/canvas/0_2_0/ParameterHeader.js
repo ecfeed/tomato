@@ -5,10 +5,10 @@ import { checkIfChildExists, getParentId } from "./logic/model";
 
 const inputExists = "↳ The name is not unique.";
 const inputEmpty = "↳ The name is not defined.";
+const inputDelete = "↳ Delete the parameter.";
 
 export function ParameterHeader() {
   const {
-    isLocked,
     setIsLocked,
     isOnParameter,
     root,
@@ -27,7 +27,6 @@ export function ParameterHeader() {
   const [labelValue, setLabelValue] = useState("");
   const [isDuplicated, setIsDuplicated] = useState(false);
   const [showMenuRight, setShowMenuRight] = useState(false);
-  const [hover, setHover] = useState(false);
 
   const element = useRef(null);
 
@@ -101,7 +100,9 @@ export function ParameterHeader() {
 
     const duplicated = checkIfChildExists(root, getParentId(id), value);
 
-    if (duplicated) {
+    if (duplicated && !value) {
+      setLabelValue(inputDelete);
+    } else if (duplicated) {
       setLabelValue(inputExists);
     } else if (!value) {
       setLabelValue(inputEmpty);
@@ -143,13 +144,6 @@ export function ParameterHeader() {
     handleSetFolded(value);
   };
 
-  const handleMouseEnter = () => {
-    setHover(true);
-  };
-  const handleMouseLeave = () => {
-    setHover(false);
-  };
-
   const classParameter =
     `${styles["header"]} ` +
     `${isSelected ? styles["color--negative"] : styles["color--default"]} `;
@@ -161,7 +155,7 @@ export function ParameterHeader() {
     `${isDuplicated ? styles["style--stroke"] : ""}`;
 
   return (
-    <div className={classParameter} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div className={classParameter}>
       <form onSubmit={handleInputOnSubmit}>
         <input
           ref={element}
@@ -176,7 +170,6 @@ export function ParameterHeader() {
         />
         <label className={styles["header__label"]}>{labelValue}</label>
       </form>
-      {hover && !isFolded && !isLocked && <div className={styles["header__icon"]}>+</div>}
       {name && <OptionsHeaderLeft menuLeftFold={handleMenuLeftFold} />}
       {name && !isFolded && <OptionsHeaderRight menuRightToggle={handleMenuRightToggle} />}
       {name && !isFolded && (
@@ -216,9 +209,6 @@ function MenuPanel({ show, toggle, actionRemove }) {
       <div className={styles["menu-panel__main"]}>
         <div className={styles["menu-panel__header"]}>
           <div className={styles["menu-panel__title"]}>actions</div>
-          <div className={styles["menu-panel__close"]} onClick={toggle}>
-            &times;
-          </div>
         </div>
         <ul>
           <li onClick={actionRemove}>delete</li>

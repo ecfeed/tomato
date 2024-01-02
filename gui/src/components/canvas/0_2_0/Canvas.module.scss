@@ -19,12 +19,12 @@
 }
 
 .main {
-  display: flex;
-  margin-top: 2.5rem;
+  margin-top: .5rem;
 }
 
 .parameters{
   display: flex;
+  flex-wrap: wrap;
   margin-right: 1rem;
 
 
@@ -39,3 +39,7 @@
   line-height: 1;
 }
 
+.button {
+  margin-top: 1.6rem;
+  margin-left: 1.6rem;
+}
