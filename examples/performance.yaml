@@ -7,14 +7,14 @@ global parameters:
   choices: [🍅, 🍆]
 
 functions:
-- function: 2 x 2
+- function: 2^2
   parameters:
   - linked parameter: one
     linked to: two
   - linked parameter: two
     linked to: two
 
-- function: 10 x 10
+- function: 10^10
   parameters:
   - linked parameter: one
     linked to: ten
@@ -37,7 +37,7 @@ functions:
   - linked parameter: ten
     linked to: ten
 
-- function: 20 x 5
+- function: 20^5
   parameters:
   - linked parameter: one
     linked to: five
@@ -80,7 +80,7 @@ functions:
   - linked parameter: twenty
     linked to: five
 
-- function: 50 x 5
+- function: 50^5
   parameters:
   - linked parameter: one
     linked to: five
@@ -183,7 +183,7 @@ functions:
   - linked parameter: fifty
     linked to: five
 
-- function: 50 x 2
+- function: 50^2
   parameters:
   - linked parameter: one
     linked to: two
@@ -286,7 +286,7 @@ functions:
   - linked parameter: fifty
     linked to: two
 
-- function: 20 x 2
+- function: 20^2
   parameters:
   - linked parameter: one
     linked to: two
@@ -329,7 +329,7 @@ functions:
   - linked parameter: twenty
     linked to: two
 
-- function: 75 x 2
+- function: 75^2
   parameters:
   - linked parameter: one
     linked to: two
