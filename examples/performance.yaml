@@ -482,3 +482,206 @@ functions:
   - linked parameter: seventy five
     linked to: two
 
+- function: 100^2
+  parameters:
+  - linked parameter: one
+    linked to: two
+  - linked parameter: two
+    linked to: two
+  - linked parameter: three
+    linked to: two
+  - linked parameter: four
+    linked to: two
+  - linked parameter: five
+    linked to: two
+  - linked parameter: six
+    linked to: two
+  - linked parameter: seven
+    linked to: two
+  - linked parameter: eight
+    linked to: two
+  - linked parameter: nine
+    linked to: two
+  - linked parameter: ten
+    linked to: two
+  - linked parameter: eleven
+    linked to: two
+  - linked parameter: twelve
+    linked to: two
+  - linked parameter: thirteen
+    linked to: two
+  - linked parameter: fourteen
+    linked to: two
+  - linked parameter: fifteen
+    linked to: two
+  - linked parameter: sixteen
+    linked to: two
+  - linked parameter: seventeen
+    linked to: two
+  - linked parameter: eighteen
+    linked to: two
+  - linked parameter: nineteen
+    linked to: two
+  - linked parameter: twenty
+    linked to: two
+  - linked parameter: twenty one
+    linked to: two
+  - linked parameter: twenty two
+    linked to: two
+  - linked parameter: twenty three
+    linked to: two
+  - linked parameter: twenty four
+    linked to: two
+  - linked parameter: twenty five
+    linked to: two
+  - linked parameter: twenty six
+    linked to: two
+  - linked parameter: twenty seven
+    linked to: two
+  - linked parameter: twenty eight
+    linked to: two
+  - linked parameter: twenty nine
+    linked to: two
+  - linked parameter: thirty
+    linked to: two
+  - linked parameter: thirty one
+    linked to: two
+  - linked parameter: thirty two
+    linked to: two
+  - linked parameter: thirty three
+    linked to: two
+  - linked parameter: thirty four
+    linked to: two
+  - linked parameter: thirty five
+    linked to: two
+  - linked parameter: thirty six
+    linked to: two
+  - linked parameter: thirty seven
+    linked to: two
+  - linked parameter: thirty eight
+    linked to: two
+  - linked parameter: thirty nine
+    linked to: two
+  - linked parameter: forty
+    linked to: two
+  - linked parameter: forty one
+    linked to: two
+  - linked parameter: forty two
+    linked to: two
+  - linked parameter: forty three
+    linked to: two
+  - linked parameter: forty four
+    linked to: two
+  - linked parameter: forty five
+    linked to: two
+  - linked parameter: forty six
+    linked to: two
+  - linked parameter: forty seven
+    linked to: two
+  - linked parameter: forty eight
+    linked to: two
+  - linked parameter: forty nine
+    linked to: two
+  - linked parameter: fifty
+    linked to: two
+  - linked parameter: fifty one
+    linked to: two
+  - linked parameter: fifty two
+    linked to: two
+  - linked parameter: fifty three
+    linked to: two
+  - linked parameter: fifty four
+    linked to: two
+  - linked parameter: fifty five
+    linked to: two
+  - linked parameter: fifty six
+    linked to: two
+  - linked parameter: fifty seven
+    linked to: two
+  - linked parameter: fifty eight
+    linked to: two
+  - linked parameter: fifty nine
+    linked to: two
+  - linked parameter: sixty
+    linked to: two
+  - linked parameter: sixty one
+    linked to: two
+  - linked parameter: sixty two
+    linked to: two
+  - linked parameter: sixty three
+    linked to: two
+  - linked parameter: sixty four
+    linked to: two
+  - linked parameter: sixty five
+    linked to: two
+  - linked parameter: sixty six
+    linked to: two
+  - linked parameter: sixty seven
+    linked to: two
+  - linked parameter: sixty eight
+    linked to: two
+  - linked parameter: sixty nine
+    linked to: two
+  - linked parameter: seventy
+    linked to: two
+  - linked parameter: seventy one
+    linked to: two
+  - linked parameter: seventy two
+    linked to: two
+  - linked parameter: seventy three
+    linked to: two
+  - linked parameter: seventy four
+    linked to: two
+  - linked parameter: seventy five
+    linked to: two
+  - linked parameter: seventy six
+    linked to: two
+  - linked parameter: seventy seven
+    linked to: two
+  - linked parameter: seventy eight
+    linked to: two
+  - linked parameter: seventy nine
+    linked to: two
+  - linked parameter: eighty
+    linked to: two
+  - linked parameter: eighty one
+    linked to: two
+  - linked parameter: eighty two
+    linked to: two
+  - linked parameter: eighty three
+    linked to: two
+  - linked parameter: eighty four
+    linked to: two
+  - linked parameter: eighty five
+    linked to: two
+  - linked parameter: eighty six
+    linked to: two
+  - linked parameter: eighty seven
+    linked to: two
+  - linked parameter: eighty eight
+    linked to: two
+  - linked parameter: eighty nine
+    linked to: two
+  - linked parameter: ninety
+    linked to: two
+  - linked parameter: ninety one
+    linked to: two
+  - linked parameter: ninety two
+    linked to: two
+  - linked parameter: ninety three
+    linked to: two
+  - linked parameter: ninety four
+    linked to: two
+  - linked parameter: ninety five
+    linked to: two
+  - linked parameter: ninety six
+    linked to: two
+  - linked parameter: ninety seven
+    linked to: two
+  - linked parameter: ninety eight
+    linked to: two
+  - linked parameter: ninety nine
+    linked to: two
+  - linked parameter: hundred
+    linked to: two
+
