@@ -1,24 +1,10 @@
 global parameters:
-- parameter: Age
-  parameters:
-  - parameter: years
-    choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  - parameter: months
-    choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-- parameter: Person
-  parameters:
-  - parameter: name
-    choices: [John, Mary, Peter, Paul, George, Ringo]
-  - parameter: surname
-    choices: [Smith, Jones, Taylor, Brown, Williams, Wilson]
-  - linked parameter: age
-    linked to: Age
 - parameter: ten
-  choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  choices: [🎷, 🎸, 🎺, 🎻, 🎤, 🎶, 🥁, 🪘, 🪕, 📯]
 - parameter: five
-  choices: [1, 2, 3, 4, 5]
+  choices: [🍗, 🍖, 🥩, 🐟, 🥗]
 - parameter: two
-  choices: [1, 2]
+  choices: [🍅, 🍆]
 
 functions:
 - function: 2 x 2
@@ -27,7 +13,8 @@ functions:
     linked to: two
   - linked parameter: two
     linked to: two
-- function: performance test 10x10 parameters
+
+- function: 10 x 10
   parameters:
   - linked parameter: one
     linked to: ten
@@ -50,7 +37,7 @@ functions:
   - linked parameter: ten
     linked to: ten
 
-- function: performance test 20x5 parameters
+- function: 20 x 5
   parameters:
   - linked parameter: one
     linked to: five
@@ -93,7 +80,110 @@ functions:
   - linked parameter: twenty
     linked to: five
 
-- function: performance test 50x2 parameters
+- function: 50 x 5
+  parameters:
+  - linked parameter: one
+    linked to: five
+  - linked parameter: two
+    linked to: five
+  - linked parameter: three
+    linked to: five
+  - linked parameter: four
+    linked to: five
+  - linked parameter: five
+    linked to: five
+  - linked parameter: six
+    linked to: five
+  - linked parameter: seven
+    linked to: five
+  - linked parameter: eight
+    linked to: five
+  - linked parameter: nine
+    linked to: five
+  - linked parameter: ten
+    linked to: five
+  - linked parameter: eleven
+    linked to: five
+  - linked parameter: twelve
+    linked to: five
+  - linked parameter: thirteen
+    linked to: five
+  - linked parameter: fourteen
+    linked to: five
+  - linked parameter: fifteen
+    linked to: five
+  - linked parameter: sixteen
+    linked to: five
+  - linked parameter: seventeen
+    linked to: five
+  - linked parameter: eighteen
+    linked to: five
+  - linked parameter: nineteen
+    linked to: five
+  - linked parameter: twenty
+    linked to: five
+  - linked parameter: twenty one
+    linked to: five
+  - linked parameter: twenty five
+    linked to: five
+  - linked parameter: twenty three
+    linked to: five
+  - linked parameter: twenty four
+    linked to: five
+  - linked parameter: twenty five
+    linked to: five
+  - linked parameter: twenty six
+    linked to: five
+  - linked parameter: twenty seven
+    linked to: five
+  - linked parameter: twenty eight
+    linked to: five
+  - linked parameter: twenty nine
+    linked to: five
+  - linked parameter: thirty
+    linked to: five
+  - linked parameter: thirty one
+    linked to: five
+  - linked parameter: thirty five
+    linked to: five
+  - linked parameter: thirty three
+    linked to: five
+  - linked parameter: thirty four
+    linked to: five
+  - linked parameter: thirty five
+    linked to: five
+  - linked parameter: thirty six
+    linked to: five
+  - linked parameter: thirty seven
+    linked to: five
+  - linked parameter: thirty eight
+    linked to: five
+  - linked parameter: thirty nine
+    linked to: five
+  - linked parameter: forty
+    linked to: five
+  - linked parameter: forty one
+    linked to: five
+  - linked parameter: forty five
+    linked to: five
+  - linked parameter: forty three
+    linked to: five
+  - linked parameter: forty four
+    linked to: five
+  - linked parameter: forty five
+    linked to: five
+  - linked parameter: forty six
+    linked to: five
+  - linked parameter: forty seven
+    linked to: five
+  - linked parameter: forty eight
+    linked to: five
+  - linked parameter: forty nine
+    linked to: five
+  - linked parameter: fifty
+    linked to: five
+
+- function: 50 x 2
   parameters:
   - linked parameter: one
     linked to: two
@@ -196,7 +286,7 @@ functions:
   - linked parameter: fifty
     linked to: two
 
-- function: performance test 20x2 parameters
+- function: 20 x 2
   parameters:
   - linked parameter: one
     linked to: two
@@ -238,3 +328,157 @@ functions:
     linked to: two
   - linked parameter: twenty
     linked to: two
+
+- function: 75 x 2
+  parameters:
+  - linked parameter: one
+    linked to: two
+  - linked parameter: two
+    linked to: two
+  - linked parameter: three
+    linked to: two
+  - linked parameter: four
+    linked to: two
+  - linked parameter: five
+    linked to: two
+  - linked parameter: six
+    linked to: two
+  - linked parameter: seven
+    linked to: two
+  - linked parameter: eight
+    linked to: two
+  - linked parameter: nine
+    linked to: two
+  - linked parameter: ten
+    linked to: two
+  - linked parameter: eleven
+    linked to: two
+  - linked parameter: twelve
+    linked to: two
+  - linked parameter: thirteen
+    linked to: two
+  - linked parameter: fourteen
+    linked to: two
+  - linked parameter: fifteen
+    linked to: two
+  - linked parameter: sixteen
+    linked to: two
+  - linked parameter: seventeen
+    linked to: two
+  - linked parameter: eighteen
+    linked to: two
+  - linked parameter: nineteen
+    linked to: two
+  - linked parameter: twenty
+    linked to: two
+  - linked parameter: twenty one
+    linked to: two
+  - linked parameter: twenty two
+    linked to: two
+  - linked parameter: twenty three
+    linked to: two
+  - linked parameter: twenty four
+    linked to: two
+  - linked parameter: twenty five
+    linked to: two
+  - linked parameter: twenty six
+    linked to: two
+  - linked parameter: twenty seven
+    linked to: two
+  - linked parameter: twenty eight
+    linked to: two
+  - linked parameter: twenty nine
+    linked to: two
+  - linked parameter: thirty
+    linked to: two
+  - linked parameter: thirty one
+    linked to: two
+  - linked parameter: thirty two
+    linked to: two
+  - linked parameter: thirty three
+    linked to: two
+  - linked parameter: thirty four
+    linked to: two
+  - linked parameter: thirty five
+    linked to: two
+  - linked parameter: thirty six
+    linked to: two
+  - linked parameter: thirty seven
+    linked to: two
+  - linked parameter: thirty eight
+    linked to: two
+  - linked parameter: thirty nine
+    linked to: two
+  - linked parameter: forty
+    linked to: two
+  - linked parameter: forty one
+    linked to: two
+  - linked parameter: forty two
+    linked to: two
+  - linked parameter: forty three
+    linked to: two
+  - linked parameter: forty four
+    linked to: two
+  - linked parameter: forty five
+    linked to: two
+  - linked parameter: forty six
+    linked to: two
+  - linked parameter: forty seven
+    linked to: two
+  - linked parameter: forty eight
+    linked to: two
+  - linked parameter: forty nine
+    linked to: two
+  - linked parameter: fifty
+    linked to: two
+  - linked parameter: fifty one
+    linked to: two
+  - linked parameter: fifty two
+    linked to: two
+  - linked parameter: fifty three
+    linked to: two
+  - linked parameter: fifty four
+    linked to: two
+  - linked parameter: fifty five
+    linked to: two
+  - linked parameter: fifty six
+    linked to: two
+  - linked parameter: fifty seven
+    linked to: two
+  - linked parameter: fifty eight
+    linked to: two
+  - linked parameter: fifty nine
+    linked to: two
+  - linked parameter: sixty
+    linked to: two
+  - linked parameter: sixty one
+    linked to: two
+  - linked parameter: sixty two
+    linked to: two
+  - linked parameter: sixty three
+    linked to: two
+  - linked parameter: sixty four
+    linked to: two
+  - linked parameter: sixty five
+    linked to: two
+  - linked parameter: sixty six
+    linked to: two
+  - linked parameter: sixty seven
+    linked to: two
+  - linked parameter: sixty eight
+    linked to: two
+  - linked parameter: sixty nine
+    linked to: two
+  - linked parameter: seventy
+    linked to: two
+  - linked parameter: seventy one
+    linked to: two
+  - linked parameter: seventy two
+    linked to: two
+  - linked parameter: seventy three
+    linked to: two
+  - linked parameter: seventy four
+    linked to: two
+  - linked parameter: seventy five
+    linked to: two
+

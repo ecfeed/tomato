@@ -15,7 +15,7 @@ def parse_args():
     input_group.add_argument("--stdin", action='store_true', 
         default=False, 
         help="Use stdin for input file")    
-    input_group.add_argument("-f", "--function", type=str, default=None, 
+    parser.add_argument("-f", "--function", type=str, default=None, 
         help="Function name to generate tests for. If not provided\
             tests for the first function defined in the model will be generated")
     

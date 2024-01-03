@@ -76,7 +76,7 @@ functions:
     aliases:
     - 🐟🍷: "'main course' IS '🐟' AND 'drink' IS '🍷'"
     constraints:
-    - martini to ice cream with fish only: "'dessert' IS '🍨' AND 'main course' IS '🐟' => 'drink' IS '🍸'"
+    - martini to ice cream with fish only: "'drink' IS '🍸' => 'dessert' IS '🍨' AND 'main course' IS '🐟'"
     - fish and wine or tomato: "'🐟🍷' OR 'soup' IS '🍅'"
     assignments:
     - price: "'soup' IS '🍅' AND 'main course' IS '🐟' => 'price' = 150"
