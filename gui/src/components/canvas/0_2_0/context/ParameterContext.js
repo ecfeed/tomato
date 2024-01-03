@@ -263,6 +263,7 @@ export function ParameterProvider({
     const candidate = addParameter(root, parentId, createParameter(''), index);
 
     setActiveParameter(null);
+    dispatch({ type: "mouse:body:leave" });
     setIsLocked(true);
     setRoot(candidate);
   };
