@@ -25,45 +25,44 @@ functions:
     - parameter: country
       choices: 
       - Poland: Pl
-      - Norway: No
+      - Norway: 'No'
     - parameter: city
       choices: 
       - Poland:
         choices: [Warsaw, Wrocław]
       - Norway:
         choices: [Oslo, Tromsø]
-  - output parameter: duration in minutes
+  - output parameter: duration[minutes]
     default value: 10
 
-  constraints:
-  - city constraint: 
-      "IF 
-        'address::country' IS 'Poland' 
-       THEN 
-        'address::city' IN ['Poland::Warsaw', 'Poland::Wrocław']"
+  logic:
+    constraints:
+    - city constraint: 
+        "IF 
+          'address::country' IS 'Poland'
+        THEN 
+          'address::city' IN ['Poland::Warsaw', 'Poland::Wrocław']"
 
-  - city constraint: "'address::country' IS 'Norway' 
-                      => 
-                      'address::city' IS 'Norway'"
-          
-  - very old John: "NOT ('person_1::age' IS 'very old' 
-                        AND 
-                        'person_1::name' IS 'John')"
+    - city constraint: "'address::country' IS 'Norway'
+                        => 
+                        'address::city' IS 'Norway'"
+            
+    - very old John: "NOT('person_1::age' IS 'very old' AND 'person_1::name' IS 'John')"
 
-  - young Mary sleeps until noon: "NOT (
-                                  'person_2::age' IS 'young adult' 
-                                  AND 
-                                  'person_2::name' IS 'Mary' 
-                                  AND 
-                                  'time of a day' IN ['sunset', 'morning'])"  
-  
-  assignments:
-  - meeting duration: "'person_1::age' IS 'very old' AND 'person_2::age' IS 'very old' => 'duration in minutes' = 120"
+    - young Mary sleeps until noon: "NOT(
+                                    'person_2::age' IS 'young adult' 
+                                    AND 
+                                    'person_2::name' IS 'Mary' 
+                                    AND 
+                                    'time of a day' IN ['sunset', 'morning'])"  
+    
+    assignments:
+    - meeting duration: "'person_1::age' IS 'very old' AND 'person_2::age' IS 'very old' => 'duration[minutes]'=120"
 
 - function: dinner
   parameters:
   - parameter: soup
-    choices: [🍅, 🌶, 🍆, 🥦]
+    choices: [🍅, '🌶 ', 🍆, 🥦]
   - parameter: main course
     choices: [🍗, 🍖, 🥩, 🐟, 🥗]
   - parameter: dessert
@@ -73,15 +72,15 @@ functions:
   - output parameter: price
     default value: 100
 
-  constraints:
+  logic:
     aliases:
-    - 🐟🍷: "'main course' IS '🐟' AND drink IS '🍷'"
-    input:
+    - 🐟🍷: "'main course' IS '🐟' AND 'drink' IS '🍷'"
+    constraints:
     - martini to ice cream with fish only: "'dessert' IS '🍨' AND 'main course' IS '🐟' => 'drink' IS '🍸'"
     - fish and wine or tomato: "'🐟🍷' OR 'soup' IS '🍅'"
-    output:
-    - price: "soup IS '🍅' AND 'main course' IS '🐟' => price = 150"
-    - price: " '🐟🍷' AND 'soup' IN ['🌶', '🍆'] => 'price'=200"
+    assignments:
+    - price: "'soup' IS '🍅' AND 'main course' IS '🐟' => 'price' = 150"
+    - price: " '🐟🍷' AND 'soup' IN ['🌶 ', '🍆'] => 'price'=200"
 
 - function: loan
   parameters:
@@ -94,9 +93,10 @@ functions:
   - parameter: monthly payment
     choices: [100, 200, 300, 400, 500]
 
+  begaviour logic:
   constraints:
-  - monthly payment: "'amount' IS '100k' AND 'duration in years' IS '1' AND 'interest rate %' IS '1' => 'monthly payment' IS '100'"
-  - monthly payment: "'amount' IS '200k' AND 'duration in years' IS '2' AND 'interest rate %' IS '2' => 'monthly payment' IS '200'"
+    - monthly payment: "'amount' IS '100k' AND 'duration in years' IS '1' AND 'interest rate %' IS '1' => 'monthly payment' IS '100'"
+    - monthly payment: "'amount' IS '200k' AND 'duration in years' IS '2' AND 'interest rate %' IS '2' => 'monthly payment' IS '200'"
 
 
 

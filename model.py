@@ -200,12 +200,11 @@ class Function:
         self.aliases = {}
         self.constraints = {}
         self.assignments = {}
-        if 'constraints' in description:
-            constraints_description = description['constraints']
+        if 'logic' in description:
+            logic = description['logic']
             
-            if 'aliases' in constraints_description:
-                for alias in constraints_description['aliases']:
-                    # print(f'parse alias: {alias}')
+            if 'aliases' in logic:
+                for alias in logic['aliases']:
                     name = list(alias.keys())[0]
                     value = alias[name]
 
@@ -213,8 +212,8 @@ class Function:
                         raise Exception(f"Alias '{name}' already defined")
                     self.aliases[name] = value
     
-            if 'input' in constraints_description:
-                for constraint in constraints_description['input']:
+            if 'constraints' in logic:
+                for constraint in logic['constraints']:
                     name = list(constraint.keys())[0]
                     value = constraint[name]
 
@@ -222,8 +221,8 @@ class Function:
                         self.constraints[name] = []
                     self.constraints[name].append(value)
                 
-            if 'output' in constraints_description:
-                for assignment in constraints_description['output']:
+            if 'assignments' in logic:
+                for assignment in logic['assignments']:
                     name = list(assignment.keys())[0]
                     value = assignment[name]
 

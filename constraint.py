@@ -2,7 +2,6 @@ from pysat.formula import CNF
 from pyparsing import *
 
 def parse_expression(expression_tokens, aliases):
-
     if len(expression_tokens) == 1 and isinstance(expression_tokens[0], str):
         if expression_tokens[0] in aliases:
             return aliases[expression_tokens[0]].statement
@@ -71,10 +70,11 @@ class CompositeExpression:
 class NegatedExpression:
     def __init__(self, 
                  tokens = None, 
-                 expr = None):
+                 expr = None,
+                 aliases = None):
         
         if tokens is not None:
-            self.expression = parse_expression(tokens)
+            self.expression = parse_expression(tokens, aliases)
         elif expr is not None:
             self.expression = expr        
     
@@ -202,7 +202,8 @@ class Parser:
         self.in_relation = self.in_literal
         self.not_in_relation = Combine(self.not_literal + self.in_literal, adjacent=False, joinString=' ')
 
-        self.name = QuotedString('\'', escChar='\\') | QuotedString('"', escChar='\\') | Word(printables, excludeChars=',')
+        self.name = QuotedString('\'', escChar='\\') | QuotedString('"', escChar='\\') 
+        # self.name = QuotedString('\'', escChar='\\') | QuotedString('"', escChar='\\') | Word(printables, excludeChars=',')
         # self.name = QuotedString('\'', escChar='\\') | QuotedString('"', escChar='\\') | Word(pyparsing_unicode.printables, excludeChars=',')
         self.aggregated_name = Group(Suppress('[') + self.name + OneOrMore(Suppress(',') + self.name) + Suppress(']'))
 
@@ -227,14 +228,20 @@ class Parser:
         self.implies_literal = CaselessLiteral("=>")
 
     def parse_statement_alias(self, statement_alias_string, aliases):
-        tokens = self.expression.parseString(statement_alias_string, parseAll=True)
+        try:
+            tokens = self.expression.parseString(statement_alias_string, parseAll=True)
+        except ParseException as e:
+            raise Exception(f'Parsing statement alias {statement_alias_string}: {e.msg}, {e.explain(e)}')
         return StatementAlias(tokens, aliases)
             
     def parse_constraint(self, constraint_string, aliases):
         implication = self.expression + Suppress(self.implies_literal) + self.expression | Suppress(self.if_literal) + self.expression + Suppress(self.then_literal) + self.expression
         invariant = self.expression
         constraint = implication | invariant
-        tokens = constraint.parseString(constraint_string, parseAll=True)
+        try:
+            tokens = constraint.parseString(constraint_string, parseAll=True)
+        except ParseException as e:
+            raise Exception(f'Parsing constraint {constraint_string}: {e.msg}, {e.explain(e)}')
         if len(tokens) == 1:
             # invariant
             return Invariant(tokens[0], aliases)
@@ -251,6 +258,9 @@ class Parser:
         
         # assignment = self.expression + Suppress(self.implies_literal) + assignents_list
         assignment = self.expression + Suppress(self.implies_literal) + assignents_list | Suppress(self.if_literal) + self.expression + Suppress(self.then_literal) + assignents_list
-        tokens = assignment.parseString(assignment_string, parseAll=True)
+        try:
+            tokens = assignment.parseString(assignment_string, parseAll=True)
+        except ParseException as e:
+            raise Exception(f'Parsing assignment {assignment_string}: {e.msg}, {e.explain(e)}')
         return Assignment(function, tokens[0], tokens[1], aliases)
 

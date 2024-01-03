@@ -14,20 +14,20 @@ def parse_args():
                         help="Input file containing the model.")
     input_group.add_argument("--stdin", action='store_true', 
         default=False, 
-        help="Use stdin for input file")
-    
-    parser.add_argument("-f", "--function", type=str, default=None, 
+        help="Use stdin for input file")    
+    input_group.add_argument("-f", "--function", type=str, default=None, 
         help="Function name to generate tests for. If not provided\
             tests for the first function defined in the model will be generated")
-    parser.add_argument("-H", "--no-headrow", action='store_true', 
-        default=False, 
-        help="do not print the head row with the parameter names")
-    parser.add_argument("--use-choice-names", action='store_true', 
-        default=False, 
-        help="do not print the head row with the parameter names")
-    parser.add_argument("--separator", type=str, default=', ', 
-        help="Separator to use in the output")
     
+    formatting_group = parser.add_argument_group('Formatting')
+    formatting_group.add_argument("-H", "--no-headrow", action='store_true', 
+        default=False, 
+        help="do not print the head row with the parameter names")
+    formatting_group.add_argument("--use-choice-names", action='store_true', 
+        default=False, 
+        help="do not print the head row with the parameter names")
+    formatting_group.add_argument("--separator", type=str, default=', ', 
+        help="Separator to use in the output")    
     
     group = parser.add_argument_group('Generators', 'Define a generator to use')
     generator_group = group.add_mutually_exclusive_group()
