@@ -11,7 +11,6 @@ export function ParameterHeader() {
   const {
     setIsLocked,
     isOnParameter,
-    root,
     id,
     name,
     handleSetFolded,
@@ -98,7 +97,7 @@ export function ParameterHeader() {
   const handleInputOnNameChange = (e) => {
     const value = e.target.value;
 
-    const duplicated = checkIfChildExists(root, getParentId(id), value);
+    const duplicated = checkIfChildExists(getParentId(id), value);
 
     if (duplicated && !value) {
       setLabelValue(inputDelete);

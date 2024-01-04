@@ -2,7 +2,7 @@ import styles from "./ParameterMain.module.scss";
 import { useParameter } from "./context/ParameterContext";
 
 export function ParameterMain({ children }) {
-  const { name, isSelected, top } = useParameter();
+  const { name, drag, isFolded, isSelected, top } = useParameter();
 
   const classMain = `
   ${top ? styles["position--top"] : styles["position--nested"]} 
@@ -16,7 +16,7 @@ export function ParameterMain({ children }) {
   `;
 
   return (
-    <div className={classMain}>
+    <div ref={isFolded ? null : drag} className={classMain}>
       {children}
     </div>
   );

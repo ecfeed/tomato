@@ -1,5 +1,23 @@
 const separator = "\u2192";
 
+//----------------------------------------------------------------------------------
+
+let root = {};
+
+export const setRoot = (structure) => {
+  root = structure;
+};
+
+//----------------------------------------------------------------------------------
+
+let added = '';
+
+export const checkAdded = (id) => {
+  return added === id;
+}
+
+//----------------------------------------------------------------------------------
+
 export const createParameter = (name) => {
   return { name };
 };
@@ -42,10 +60,6 @@ export const update = (element, parentId) => {
 
 //----------------------------------------------------------------------------------
 
-const createDeepCopy = (reference) => {
-  return JSON.parse(JSON.stringify(reference));
-};
-
 export const getParentId = (id) => {
   if (id === null || id === "root") {
     return "root";
@@ -70,7 +84,7 @@ export const getNameFromId = (id) => {
   return path.pop();
 };
 
-export const getIndex = (model, id) => {
+const getIndex = (model, id) => {
   const parentId = id ? getParentId(id) : "root";
   const parent = getElement(model, parentId);
 
@@ -91,6 +105,10 @@ export const getIndex = (model, id) => {
   }
 
   return null;
+};
+
+const createDeepCopy = (model) => {
+  return JSON.parse(JSON.stringify(model));
 };
 
 const getElement = (model, id) => {
@@ -124,63 +142,79 @@ const getElement = (model, id) => {
   }
 
   if (element.id !== id) {
-    throw new Error(`The element could not be found: ${id}!`);
+    return null;
   }
-  
+
   return element;
 };
 
 //----------------------------------------------------------------------------------
 
-export const addParameter = (root, id, parameter, index) => {
-  if (!id) {
+export const addParameter = (parentId, body, siblingId) => {
+  if (!parentId) {
     throw new Error("The 'id' of the parent is undefined!");
   }
 
-  let results = createDeepCopy(root);
-  let parent = getElement(results, id);
+  if (!body) {
+    throw new Error("The body of the parameter is undefined!");
+  }
+
+  const results = createDeepCopy(root);
+  const parent = getElement(results, parentId);
 
   if (!parent.parameters) {
-    parent.parameters = [parameter];
+    parent.parameters = [body];
   } else {
-    if (index === null) {
-      parent.parameters.push(parameter);
-    } else if (Number(index) >= 0) {
-      parent.parameters.splice(Number(index), 0, parameter);
+    if (siblingId === null) {
+      parent.parameters.push(body);
     } else {
-      parent.parameters.push(parameter);
+      const index = getIndex(results, siblingId);
+
+      if (index >= 0) {
+        parent.parameters.splice(index, 0, body);
+      } else {
+        parent.parameters.push(body);
+      }
     }
   }
 
-  update(parameter, parent.id ? parent.id : "root");
+  update(body, parent.id ? parent.id : "root");
+
+  added = body.id;
 
   return results;
 };
 
-export const removeParameter = (root, id) => {
+export const removeParameter = (id) => {
   if (!id) {
     throw new Error("The 'id' of the parameter is undefined!");
   }
 
-  let results = createDeepCopy(root);
-  const parentId = getParentId(id);
-  let parent = getElement(results, parentId);
+  const results = createDeepCopy(root);
+  const parent = getElement(results, getParentId(id));
+
+  const occurrences = [];
 
   if (!parent.parameters) {
     throw new Error("The selected parameter does not exist!");
   } else {
     for (let i = 0; i < parent.parameters.length; i++) {
       if (parent.parameters[i].id === id) {
-        parent.parameters.splice(i, 1);
-        return results;
+        occurrences.push(i);
       }
+    }
+
+    for (let i = 0; i < occurrences.length; i++) {
+      parent.parameters.splice(occurrences[i] - i, 1);
     }
   }
 
-  throw new Error("The selected parameter could not be removed!");
+  added = '';
+
+  return results;
 };
 
-export const renameParameter = (root, id, name) => {
+export const renameParameter = (id, name) => {
   if (!id) {
     throw new Error("The 'id' of the parameter is undefined!");
   }
@@ -189,20 +223,54 @@ export const renameParameter = (root, id, name) => {
     throw new Error("The 'name' of the parameter is undefined!");
   }
 
-  let results = createDeepCopy(root);
-  let element = getElement(results, id);
+  const results = createDeepCopy(root);
+  const element = getElement(results, id);
 
   element.name = name;
 
   update(element);
+
+  added = element.id;
+
+  return results;
+};
+
+export const moveParameter = (id, siblingId) => {
+  if (id === siblingId) {
+    return root;
+  }
+
+  const parentId = getParentId(id);
+  const parameter = createDeepCopy(getElement(root, id));
+
+  const results = createDeepCopy(root);
+  const parent = getElement(results, parentId);
+
+  if (!parent.parameters) {
+    throw new Error("The selected parameter does not exist!");
+  } else {
+    for (let i = 0; i < parent.parameters.length; i++) {
+      if (parent.parameters[i].id === id) {
+        parent.parameters.splice(i, 1);
+        break;
+      }
+    }
+  }
+
+  const sibling = getElement(results, siblingId);
+
+  parent.parameters.splice(getIndex(results, sibling.id), 0, parameter);
+
+  update(parameter, parentId);
+
+  added = '';
 
   return results;
 };
 
 //----------------------------------------------------------------------------------
 
-export const addChoice = (root, id, choice, index) => {
-
+export const addChoice = (id, choice, index) => {
   if (!id) {
     throw new Error("The 'id' of the parent is undefined!");
   }
@@ -231,14 +299,14 @@ export const addChoice = (root, id, choice, index) => {
   return results;
 };
 
-export const removeChoice = (root, id) => {
+export const removeChoice = (id) => {
   if (!id) {
     throw new Error("The 'id' of the choice is undefined!");
   }
 
   let results = createDeepCopy(root);
   const parentId = getParentId(id);
-  console.log(root, parentId);
+
   let parent = getElement(results, parentId);
 
   if (!parent.choices) {
@@ -255,7 +323,7 @@ export const removeChoice = (root, id) => {
   throw new Error("The selected choice could not be removed!");
 };
 
-export const renameChoice = (root, id, name) => {
+export const renameChoice = (id, name) => {
   if (!id) {
     throw new Error("The 'id' of the choice is undefined!");
   }
@@ -276,11 +344,10 @@ export const renameChoice = (root, id, name) => {
 
 //----------------------------------------------------------------------------------
 
-export const checkIfChildExists = (root, parentId, childName) => {
-  
+export const checkIfChildExists = (parentId, childName) => {
   const parent = getElement(root, parentId);
   if (parent.parameters && parent.parameters.length > 0) {
-    for (let i = 0 ; i < parent.parameters.length ; i++) {
+    for (let i = 0; i < parent.parameters.length; i++) {
       if (parent.parameters[i].name === childName) {
         return true;
       }
@@ -288,7 +355,7 @@ export const checkIfChildExists = (root, parentId, childName) => {
   }
 
   if (parent.choices && parent.choices.length > 0) {
-    for (let i = 0 ; i < parent.choices.length ; i++) {
+    for (let i = 0; i < parent.choices.length; i++) {
       if (parent.choices[i].name === childName) {
         return true;
       }
@@ -296,4 +363,4 @@ export const checkIfChildExists = (root, parentId, childName) => {
   }
 
   return false;
-}
+};

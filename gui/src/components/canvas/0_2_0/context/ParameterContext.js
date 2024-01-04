@@ -1,15 +1,15 @@
 import { createContext, useContext, useReducer, useRef } from "react";
 import { faker } from "@faker-js/faker";
-// import { useDrag } from "react-dnd";
-// import { ItemTypes } from "../abstract/ItemTypes";
+import { useDrag, useDrop } from "react-dnd";
+import { ItemTypes } from "../abstract/ItemTypes";
 import {
   addChoice,
   addParameter,
   createChoice,
   createParameter,
-  getIndex,
   getNameFromId,
   getParentId,
+  moveParameter,
   removeChoice,
   removeParameter,
   renameChoice,
@@ -92,7 +92,7 @@ const reducer = (state, action) => {
 export function ParameterProvider({
   activeParameter,
   setActiveParameter,
-  root,
+
   setRoot,
   isLocked,
   setIsLocked,
@@ -104,11 +104,7 @@ export function ParameterProvider({
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const { isOnParameter, isOnHeader, isOnParameterChild, isOnOptionsLeft } = state;
-  const {
-    showAddParameter,
-    showAddChoice,
-    showRenameChoice,
-  } = state;
+  const { showAddParameter, showAddChoice, showRenameChoice } = state;
   const { isFolded } = state;
 
   const activeChoice = useRef();
@@ -118,12 +114,27 @@ export function ParameterProvider({
 
   const isSelected = showAddChoice || showAddParameter;
 
-  // const [{ _isDragging }, drag] = useDrag(() => ({
-  //   type: ItemTypes.PARAMETER,
-  //   collect: (monitor) => ({
-  //     isDragging: !!monitor.isDragging(),
-  //   }),
-  // }));
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: ItemTypes.PARAMETER,
+    item: { id: parameter.id },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    })
+  }));
+
+  const [{ canDrop, isOver }, drop] = useDrop(() => ({
+    accept: ItemTypes.PARAMETER,
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+    drop(item) {
+      const candidate = moveParameter(item.id, id);
+      setActiveParameter(null);
+      dispatch({ type: "mouse:body:leave" });
+      setRoot(candidate);
+    },
+  }));
 
   //-------------------------------------------------------------------------------------------
 
@@ -202,14 +213,13 @@ export function ParameterProvider({
   };
 
   const handleSetFolded = (value) => {
-
     if (isLocked) {
       return;
     }
 
     if (top) {
       if (value === undefined) {
-      dispatch({ type: "folded:toggle" });
+        dispatch({ type: "folded:toggle" });
       } else {
         if (value === true) {
           dispatch({ type: "folded:on" });
@@ -239,7 +249,7 @@ export function ParameterProvider({
       return;
     }
 
-    const [candidate, parameter] = addParameter(root, id, createParameter(input), index);
+    const [candidate, parameter] = addParameter(id, createParameter(input), index);
 
     setRoot(candidate);
     setActiveParameter(parameter.id);
@@ -259,8 +269,7 @@ export function ParameterProvider({
     }
 
     const parentId = getParentId(id);
-    const index = getIndex(root, id, parentId);
-    const candidate = addParameter(root, parentId, createParameter(''), index);
+    const candidate = addParameter(parentId, createParameter(""), id);
 
     setActiveParameter(null);
     dispatch({ type: "mouse:body:leave" });
@@ -275,7 +284,7 @@ export function ParameterProvider({
       return;
     }
 
-    const candidate = renameParameter(root, id, input);
+    const candidate = renameParameter(id, input);
 
     setActiveParameter(null);
     setRoot(candidate);
@@ -284,8 +293,7 @@ export function ParameterProvider({
   //-------------------------------------------------------------------------------------------
 
   const handleRemoveParameterParentLogic = () => {
-
-    const candidate = removeParameter(root, id);
+    const candidate = removeParameter(id);
 
     setRoot(candidate);
   };
@@ -310,10 +318,9 @@ export function ParameterProvider({
     }
 
     if (activeChoice.current) {
-      const index = getIndex(root, activeChoice.current);
-      setRoot(addChoice(root, id, createChoice(input), index));
+      setRoot(addChoice(id, createChoice(input), activeChoice.current));
     } else {
-      setRoot(addChoice(root, id, createChoice(input)));
+      setRoot(addChoice(id, createChoice(input)));
     }
   };
 
@@ -328,7 +335,7 @@ export function ParameterProvider({
       return;
     }
 
-    setRoot(removeChoice(root, activeChoice.current));
+    setRoot(removeChoice(activeChoice.current));
   };
 
   //-------------------------------------------------------------------------------------------
@@ -346,7 +353,7 @@ export function ParameterProvider({
   };
 
   const handleRenameChoiceLogic = (input) => {
-    const candidate = renameChoice(root, activeChoice.current, input);
+    const candidate = renameChoice(activeChoice.current, input);
 
     setRoot(candidate);
 
@@ -364,10 +371,13 @@ export function ParameterProvider({
       value={{
         activeParameter,
         setActiveParameter,
-        root,
         setRoot,
 
-        // drag,
+        drag,
+        isDragging,
+        drop,
+        canDrop,
+        isOver,
 
         top,
 
