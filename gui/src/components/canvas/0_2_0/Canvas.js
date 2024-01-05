@@ -2,11 +2,19 @@
 import styles from "./Canvas.module.scss";
 import { ParameterStructure } from "./ParameterStructure";
 import { Console } from "./Console";
-import { DndProvider } from "react-dnd";
+import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { addParameter, createParameter, setRoot, update } from "./logic/model";
+import {
+  addParameter,
+  createParameter,
+  moveParameter,
+  removeParameter,
+  setRoot,
+  update,
+} from "./logic/model";
 import { ButtonDefault } from "./ButtonDefault";
 import { useEffect, useState } from "react";
+import { ItemTypes } from "./abstract/ItemTypes";
 
 const data = {
   name: "root",
@@ -77,7 +85,7 @@ export function Canvas() {
           <li>To store your model between sessions, use the 'save'/'load' buttons.</li>
         </ul> */}
         <div className={styles.main}>
-          <div className={styles.parameters}>
+          <div className={styles.elements}>
             {structure.parameters.map((e) => (
               <div className={styles.parameter} key={e.id}>
                 <ParameterStructure
@@ -92,9 +100,9 @@ export function Canvas() {
                 />
               </div>
             ))}
-            <div className={styles["button"]}>
-              <ButtonDefault handler={handleAddMainParameterLogic} text="add\nparameter" />
-            </div>
+            <ElementPanel setActiveParameter={setActiveParameter} setStructure={setStructure} />
+            <ElementButton handleAddMainParameterLogic={handleAddMainParameterLogic} />
+            <ElementThrash setActiveParameter={setActiveParameter} setStructure={setStructure} />
           </div>
         </div>
 
@@ -103,3 +111,49 @@ export function Canvas() {
     </DndProvider>
   );
 }
+
+const ElementPanel = ({ setActiveParameter, setStructure }) => {
+  const [, drop] = useDrop(() => ({
+    accept: ItemTypes.PARAMETER,
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+    drop(item) {
+      const candidate = moveParameter(item.id);
+      setActiveParameter(null);
+      setStructure(candidate);
+    },
+  }));
+
+  return <div ref={drop} className={styles["panel"]} />;
+};
+
+const ElementButton = ({ handleAddMainParameterLogic }) => {
+  return (
+    <div className={styles["button"]}>
+      <ButtonDefault handler={handleAddMainParameterLogic} text="add\nparameter" />
+    </div>
+  );
+};
+
+const ElementThrash = ({ setActiveParameter, setStructure }) => {
+  const [, drop] = useDrop(() => ({
+    accept: ItemTypes.PARAMETER,
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+    drop(item) {
+      const candidate = removeParameter(item.id);
+      setActiveParameter(null);
+      setStructure(candidate);
+    },
+  }));
+
+  return (
+    <div ref={drop} className={styles["thrash"]} enabled={false}>
+      &#128465;
+    </div>
+  );
+};

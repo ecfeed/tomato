@@ -10,11 +10,11 @@ export const setRoot = (structure) => {
 
 //----------------------------------------------------------------------------------
 
-let added = '';
+let added = "";
 
 export const checkAdded = (id) => {
   return added === id;
-}
+};
 
 //----------------------------------------------------------------------------------
 
@@ -209,7 +209,7 @@ export const removeParameter = (id) => {
     }
   }
 
-  added = '';
+  added = "";
 
   return results;
 };
@@ -257,13 +257,15 @@ export const moveParameter = (id, siblingId) => {
     }
   }
 
-  const sibling = getElement(results, siblingId);
-
-  parent.parameters.splice(getIndex(results, sibling.id), 0, parameter);
+  if (siblingId) {
+    parent.parameters.splice(getIndex(results, getElement(results, siblingId).id), 0, parameter);
+  } else {
+    parent.parameters.push(parameter);
+  }
 
   update(parameter, parentId);
 
-  added = '';
+  added = "";
 
   return results;
 };

@@ -3,7 +3,16 @@ import styles from "./ParameterPanel.module.scss";
 import { useParameter } from "./context/ParameterContext";
 
 export function ParameterPanel() {
-  const { top, isLocked, isFolded, isOnParameter, drop, canDrop, handleAddParameterParentLogic } = useParameter();
+  const {
+    id,
+    top,
+    activeParameter,
+    isLocked,
+    isFolded,
+    isOnParameter,
+    drop,
+    handleAddParameterParentLogic,
+  } = useParameter();
 
   if (!top) {
     return null;
@@ -13,16 +22,20 @@ export function ParameterPanel() {
     handleAddParameterParentLogic(input);
   };
 
+  console.log(activeParameter)
+
   return (
     <>
-      <div ref={drop} className={isLocked ? styles["panel-parameter"] : styles["panel-parameter--active"]}>
+      <div
+        ref={drop}
+        className={isLocked ? styles["panel-parameter"] : styles["panel-parameter--active"]}>
         <ButtonDefault
           handler={handleInternalAddParameter}
           text="add\nparameter"
           forceBackground={true}
         />
       </div>
-      {isOnParameter && !isFolded && !isLocked && (
+      {isOnParameter && !isFolded && !isLocked && activeParameter === id && (
         <div className={styles["panel-parameter__icon"]}>+</div>
       )}
     </>
