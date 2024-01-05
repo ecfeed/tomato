@@ -9,16 +9,16 @@ const inputDelete = "↳ Delete the parameter.";
 
 export function ParameterHeader() {
   const {
-    setIsLocked,
-    isOnParameter,
-    root,
     id,
     name,
-    handleSetFolded,
-    isFolded,
-    isSelected,
     choices,
     parameters,
+    isFolded,
+    isSelected,
+    isDragged,
+    isOnParameter,
+    setIsLocked,
+    handleSetFolded,
     handleRenameParameterLogic,
     handleRemoveParameterParentLogic,
   } = useParameter();
@@ -38,6 +38,12 @@ export function ParameterHeader() {
       element.current.focus();
     }
   }, [name]);
+
+  useEffect(() => {
+    if (name) {
+      element.current.blur();
+    }
+  }, [name, isDragged]);
 
   useEffect(() => {
     if (!isOnParameter) {
@@ -98,7 +104,7 @@ export function ParameterHeader() {
   const handleInputOnNameChange = (e) => {
     const value = e.target.value;
 
-    const duplicated = checkIfChildExists(root, getParentId(id), value);
+    const duplicated = checkIfChildExists(getParentId(id), value);
 
     if (duplicated && !value) {
       setLabelValue(inputDelete);
@@ -171,7 +177,7 @@ export function ParameterHeader() {
         <label className={styles["header__label"]}>{labelValue}</label>
       </form>
       {name && <OptionsHeaderLeft menuLeftFold={handleMenuLeftFold} />}
-      {name && !isFolded && <OptionsHeaderRight menuRightToggle={handleMenuRightToggle} />}
+      {name && <OptionsHeaderRight menuRightToggle={handleMenuRightToggle} />}
       {name && !isFolded && (
         <MenuPanel
           show={showMenuRight}

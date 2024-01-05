@@ -1,12 +1,6 @@
 .parameter {
   cursor: default;
 
-  &--folded {
-    width: 22rem;
-    transform: rotate(90deg) translateX(-23.8rem);
-    transform-origin: left bottom;
-  }
-
   &--nested {
     width: 100%;
   }

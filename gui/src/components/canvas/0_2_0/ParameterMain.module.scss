@@ -5,7 +5,12 @@
 }
 
 .position {
+
   &--top {
+    width: 25rem;
+  }
+
+  &--folded {
     width: 25rem;
   }
 
@@ -31,10 +36,20 @@
 
   &--default {
     @include common;
-    
+
     border: 0.1rem solid;
     border-color: black;
     color: black;
     background-color: white;
   }
+}
+
+.drag {
+  padding: 0.5rem;
+  width: 25rem;
+  border: 0.1rem dashed black;
+  text-align: center;
+  background-color: rgba(white, 0.25);
+  font-size: 1.6rem;
+  font-weight: 700;
 }

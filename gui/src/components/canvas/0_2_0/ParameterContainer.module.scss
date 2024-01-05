@@ -1,8 +1,8 @@
 .container {
   display: flex;
   position: relative;
-  padding-top: 1.5rem;
-  padding-bottom: 0.25rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 
   &--nested {
     width: 100%;
@@ -10,10 +10,32 @@
   }
 
   &--folded {
-    margin-left: 1rem;
-    width: 3rem;
-    height: 31rem;
-    justify-content: space-around;
-    flex-flow: column;
+    animation: animateRotation 0.3s;
+    animation-fill-mode: forwards;
   }
+}
+
+@keyframes animateRotation {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  25% {
+    width: 0;
+    opacity: 0;
+    transform: translateY(0) rotateZ(0) ;
+    transform-origin: left bottom;
+  }
+  50% {
+    width: 0;
+    opacity: 1;
+    transform: translateY(0) rotateZ(90) ;
+    transform-origin: left bottom;
+  }
+  100% {
+    width: 0;
+    transform: translateY(-100%) rotateZ(90deg) ;
+    transform-origin: left bottom;
+  }
+  
 }
