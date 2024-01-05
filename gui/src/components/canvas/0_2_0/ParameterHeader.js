@@ -9,15 +9,16 @@ const inputDelete = "↳ Delete the parameter.";
 
 export function ParameterHeader() {
   const {
-    setIsLocked,
-    isOnParameter,
     id,
     name,
-    handleSetFolded,
-    isFolded,
-    isSelected,
     choices,
     parameters,
+    isFolded,
+    isSelected,
+    isDragged,
+    isOnParameter,
+    setIsLocked,
+    handleSetFolded,
     handleRenameParameterLogic,
     handleRemoveParameterParentLogic,
   } = useParameter();
@@ -37,6 +38,12 @@ export function ParameterHeader() {
       element.current.focus();
     }
   }, [name]);
+
+  useEffect(() => {
+    if (name) {
+      element.current.blur();
+    }
+  }, [name, isDragged]);
 
   useEffect(() => {
     if (!isOnParameter) {

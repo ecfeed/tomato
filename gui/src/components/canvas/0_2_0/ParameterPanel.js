@@ -1,18 +1,36 @@
+import { useDrop } from "react-dnd";
 import { ButtonDefault } from "./ButtonDefault";
 import styles from "./ParameterPanel.module.scss";
 import { useParameter } from "./context/ParameterContext";
+import { moveParameter } from "./logic/model";
+import { ItemTypes } from "./abstract/ItemTypes";
 
 export function ParameterPanel() {
   const {
     id,
     top,
+    setRoot,
     activeParameter,
+    setActiveParameter,
     isLocked,
     isFolded,
+    isDragged,
     isOnParameter,
-    drop,
     handleAddParameterParentLogic,
   } = useParameter();
+
+  const [, drop] = useDrop(() => ({
+    accept: ItemTypes.PARAMETER,
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+    drop(item) {
+      const candidate = moveParameter(item.id, id);
+      setActiveParameter(null);
+      setRoot(candidate);
+    },
+  }));
 
   if (!top) {
     return null;
@@ -21,8 +39,6 @@ export function ParameterPanel() {
   const handleInternalAddParameter = (input) => {
     handleAddParameterParentLogic(input);
   };
-
-  console.log(activeParameter)
 
   return (
     <>
@@ -35,7 +51,7 @@ export function ParameterPanel() {
           forceBackground={true}
         />
       </div>
-      {isOnParameter && !isFolded && !isLocked && activeParameter === id && (
+      {isOnParameter && !isFolded && !isLocked && !isDragged && activeParameter === id && (
         <div className={styles["panel-parameter__icon"]}>+</div>
       )}
     </>

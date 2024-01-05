@@ -1,7 +1,5 @@
-import { createContext, useContext, useReducer, useRef } from "react";
+import { createContext, useContext, useReducer, useRef, useState } from "react";
 import { faker } from "@faker-js/faker";
-import { useDrag, useDrop } from "react-dnd";
-import { ItemTypes } from "../abstract/ItemTypes";
 import {
   addChoice,
   addParameter,
@@ -9,7 +7,6 @@ import {
   createParameter,
   getNameFromId,
   getParentId,
-  moveParameter,
   removeChoice,
   removeParameter,
   renameChoice,
@@ -90,18 +87,18 @@ const reducer = (state, action) => {
 };
 
 export function ParameterProvider({
+  top,
   activeParameter,
   setActiveParameter,
-
   setRoot,
   isLocked,
   setIsLocked,
   children,
   parameter,
   parentMouseEvent,
-  top,
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [isDragged, setIsDragged] = useState(false);
 
   const { isOnParameter, isOnHeader, isOnParameterChild, isOnOptionsLeft } = state;
   const { showAddParameter, showAddChoice, showRenameChoice } = state;
@@ -113,28 +110,6 @@ export function ParameterProvider({
   const isStructure = parameters.length > 0;
 
   const isSelected = showAddChoice || showAddParameter;
-
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: ItemTypes.PARAMETER,
-    item: { id: parameter.id },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    })
-  }));
-
-  const [{ canDrop, isOver }, drop] = useDrop(() => ({
-    accept: ItemTypes.PARAMETER,
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
-    drop(item) {
-      const candidate = moveParameter(item.id, id);
-      setActiveParameter(null);
-      dispatch({ type: "mouse:body:leave" });
-      setRoot(candidate);
-    },
-  }));
 
   //-------------------------------------------------------------------------------------------
 
@@ -373,18 +348,15 @@ export function ParameterProvider({
         setActiveParameter,
         setRoot,
 
-        drag,
-        isDragging,
-        drop,
-        canDrop,
-        isOver,
-
         top,
 
         id,
         name,
         choices,
         parameters,
+
+        isDragged,
+        setIsDragged,
 
         handleMouseParameterEnter,
         handleMouseParameterLeave,

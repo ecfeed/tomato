@@ -1,4 +1,3 @@
-// import { faker } from "@faker-js/faker";
 import styles from "./Canvas.module.scss";
 import { ParameterStructure } from "./ParameterStructure";
 import { Console } from "./Console";
@@ -152,7 +151,7 @@ const ElementThrash = ({ setActiveParameter, setStructure }) => {
   }));
 
   return (
-    <div ref={drop} className={styles["thrash"]} enabled={false}>
+    <div ref={drop} className={styles["thrash"]} enabled={"false"}>
       &#128465;
     </div>
   );

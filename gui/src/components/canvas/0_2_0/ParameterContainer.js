@@ -5,16 +5,16 @@ export function ParameterContainer({ children }) {
   const { id, top, isFolded, handleMouseParameterEnter, handleMouseParameterLeave } =
     useParameter();
 
+  const classStyle = isFolded
+    ? styles["container--folded"]
+    : top
+    ? styles["container--top"]
+    : styles["container--nested"];
+
   return (
     <div
       key={id}
-      className={`${styles["container"]} ${
-        isFolded
-          ? styles["container--folded"]
-          : top
-          ? styles["container--top"]
-          : styles["container--nested"]
-      }`}
+      className={`${styles["container"]} ${classStyle}`}
       onMouseEnter={handleMouseParameterEnter}
       onMouseLeave={handleMouseParameterLeave}>
       {children}
