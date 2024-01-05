@@ -24,8 +24,13 @@
 
 .elements {
   display: flex;
+  justify-content: start;
   flex-wrap: wrap;
   margin-right: 1rem;
+}
+
+.parameter {
+  flex: 0 0 5rem;
 }
 
 .tips {
@@ -34,11 +39,13 @@
 }
 
 .panel {
-  width: 1.6rem;
+  flex: 0 0 1.6rem;
 }
 
 .button {
-  margin-top: 1.4rem;
+  flex: 0;
+  margin-top: 2rem;
+  margin-right: auto;
 }
 
 .thrash {

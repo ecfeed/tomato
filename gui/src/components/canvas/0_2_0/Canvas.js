@@ -101,8 +101,8 @@ export function Canvas() {
             ))}
             <ElementPanel setActiveParameter={setActiveParameter} setStructure={setStructure} />
             <ElementButton handleAddMainParameterLogic={handleAddMainParameterLogic} />
-            <ElementThrash setActiveParameter={setActiveParameter} setStructure={setStructure} />
           </div>
+          <ElementThrash setActiveParameter={setActiveParameter} setStructure={setStructure} />
         </div>
 
         {/* <Console text={text} /> */}

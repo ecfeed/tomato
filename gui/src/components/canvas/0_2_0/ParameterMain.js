@@ -25,7 +25,7 @@ export function ParameterMain({ children }) {
     dragPreview(getEmptyImage());
   }, [dragPreview]);
 
-  const classType = top ? styles["position--top"] : styles["position--nested"];
+  const classType = top ? isFolded ? styles['position--folded'] : styles["position--top"] : styles["position--nested"];
   const classStyle = isSelected
     ? styles["style--negative"]
     : name.length !== 0
@@ -38,12 +38,12 @@ export function ParameterMain({ children }) {
       <div ref={isFolded ? null : drag} className={classMain}>
         {children}
       </div>
-      <ParameterMainDragLayer />
+      <ParameterMainDragLayer id={id}/>
     </>
   );
 }
 
-const ParameterMainDragLayer = () => {
+const ParameterMainDragLayer = ({ id }) => {
   const { isDragging, currentOffset, item } = useDragLayer((monitor) => {
     return {
       isDragging: monitor.isDragging(),
@@ -52,7 +52,7 @@ const ParameterMainDragLayer = () => {
     };
   });
 
-  return isDragging && currentOffset ? (
+  return isDragging && currentOffset && id === item.id? (
     <div
       style={{
         transform: `translate(${currentOffset.x}px, ${currentOffset.y}px)`,

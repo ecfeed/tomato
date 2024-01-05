@@ -30,6 +30,10 @@
   }
 }
 
+.panel-parameter--empty {
+  @include common;
+}
+
 .panel-parameter__icon {
   cursor: pointer;
   position: absolute;

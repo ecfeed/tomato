@@ -177,7 +177,7 @@ export function ParameterHeader() {
         <label className={styles["header__label"]}>{labelValue}</label>
       </form>
       {name && <OptionsHeaderLeft menuLeftFold={handleMenuLeftFold} />}
-      {name && !isFolded && <OptionsHeaderRight menuRightToggle={handleMenuRightToggle} />}
+      {name && <OptionsHeaderRight menuRightToggle={handleMenuRightToggle} />}
       {name && !isFolded && (
         <MenuPanel
           show={showMenuRight}

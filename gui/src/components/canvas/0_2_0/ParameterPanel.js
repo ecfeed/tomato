@@ -36,6 +36,10 @@ export function ParameterPanel() {
     return null;
   }
 
+  if (isFolded) {
+    return <div className={styles['panel-parameter--empty']} />
+  }
+
   const handleInternalAddParameter = (input) => {
     handleAddParameterParentLogic(input);
   };
