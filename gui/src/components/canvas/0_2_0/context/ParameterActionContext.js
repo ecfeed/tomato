@@ -4,7 +4,6 @@ import {
   addParameter,
   createChoice,
   createParameter,
-  getNameFromId,
   getParentId,
   isTop,
   removeChoice,
@@ -77,14 +76,6 @@ export function ParameterActionProvider({
 
   //-------------------------------------------------------------------------------------------
 
-  const handleAddParameterCancel = () => {
-    setIsLocked(false);
-  };
-
-  const handleAddParameter = () => {
-    setIsLocked(true);
-  };
-
   const handleAddParameterLogic = (input, index) => {
     if (!input) {
       return;
@@ -92,12 +83,10 @@ export function ParameterActionProvider({
 
     const candidate = addParameter(id, createParameter(input), index);
 
+    setActiveParameter(null);
+
     setRoot(candidate);
-
-    handleAddParameterCancel();
   };
-
-  //-------------------------------------------------------------------------------------------
 
   const handleAddParameterParentLogic = (input) => {
     if (!input) {
@@ -111,8 +100,6 @@ export function ParameterActionProvider({
     setRoot(candidate);
   };
 
-  //-------------------------------------------------------------------------------------------
-
   const handleRenameParameterLogic = (input) => {
     if (!input) {
       return;
@@ -125,27 +112,15 @@ export function ParameterActionProvider({
     setRoot(candidate);
   };
 
-  //-------------------------------------------------------------------------------------------
-
   const handleRemoveParameterParentLogic = () => {
     const candidate = removeParameter(id);
+
+    setActiveParameter(null); 
 
     setRoot(candidate);
   };
 
   //-------------------------------------------------------------------------------------------
-
-  const handleAddChoiceCancel = () => {
-    dispatch({ type: "prompt:choice-add:off" });
-
-    setIsLocked(false);
-  };
-
-  const handleAddChoice = () => {
-    dispatch({ type: "prompt:choice-add:on" });
-
-    setIsLocked(true);
-  };
 
   const handleAddChoiceLogic = (input) => {
     if (!input) {
@@ -159,7 +134,6 @@ export function ParameterActionProvider({
     }
   };
 
-  //-------------------------------------------------------------------------------------------
 
   const handleRemoveChoiceLogic = () => {
     if (!activeChoice.current) {
@@ -169,30 +143,10 @@ export function ParameterActionProvider({
     setRoot(removeChoice(activeChoice.current));
   };
 
-  //-------------------------------------------------------------------------------------------
-
-  const handleRenameChoiceCancel = () => {
-    dispatch({ type: "prompt:choice-rename:off" });
-
-    setIsLocked(false);
-  };
-
-  const handleRenameChoice = () => {
-    dispatch({ type: "prompt:choice-rename:on" });
-
-    setIsLocked(true);
-  };
-
   const handleRenameChoiceLogic = (input) => {
     const candidate = renameChoice(activeChoice.current, input);
 
     setRoot(candidate);
-
-    handleRenameChoiceCancel();
-  };
-
-  const handleRenameChoicePlaceholder = () => {
-    return getNameFromId(activeChoice.current);
   };
 
   //-------------------------------------------------------------------------------------------
@@ -216,25 +170,13 @@ export function ParameterActionProvider({
         isStructure,
         setIsLocked,
 
-        handleAddChoice,
         handleAddChoiceLogic,
-        handleAddChoiceCancel,
 
-        handleRenameChoice,
         handleRenameChoiceLogic,
-        handleRenameChoiceCancel,
-        handleRenameChoicePlaceholder,
-
-        handleAddParameter,
         handleAddParameterLogic,
-        handleAddParameterCancel,
-
         handleRenameParameterLogic,
-
         handleAddParameterParentLogic,
-
         handleRemoveParameterParentLogic,
-
         handleRemoveChoiceLogic,
 
         activeChoice,

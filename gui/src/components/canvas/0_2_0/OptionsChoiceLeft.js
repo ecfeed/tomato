@@ -9,18 +9,17 @@ export function OptionsChoiceLeft({
   handleMouseOptionsChoiceLeftEnter,
   handleMouseOptionsChoiceLeftLeave,
 }) {
-  const { handleAddChoice, handleRenameChoice, handleRemoveChoiceLogic, isSelected, isLocked } =
+  const { handleRemoveChoiceLogic, isSelected, isLocked } =
     useParameterAction();
 
   const handleInternalAddChoice = (input) => {
-    handleAddChoice(input);
+
 
     setIsOnChoice(false);
     setIsOnChoiceOptionsLeft(false);
   };
 
   const handleInternalRenameChoice = (input) => {
-    handleRenameChoice(input);
 
     setIsOnChoice(false);
     setIsOnChoiceOptionsLeft(false);

@@ -6,8 +6,6 @@ export function ParameterOptions() {
   const {
     parameters,
     choices,
-    handleAddParameter,
-    handleAddChoice,
     isSelected,
     isLocked,
     isFolded,
@@ -29,7 +27,7 @@ export function ParameterOptions() {
         className={styles["options-bottom"]}
         onMouseEnter={handleMouseOptionsBottomEnter}
         onMouseLeave={handleMouseOptionsBottomLeave}>
-        <div className={styles["option--center"]} role="button" onClick={handleAddParameter}>
+        <div className={styles["option--center"]} role="button" onClick={() => {}}>
           + p
         </div>
       </div>
@@ -42,7 +40,7 @@ export function ParameterOptions() {
         className={styles["options-bottom"]}
         onMouseEnter={handleMouseOptionsBottomEnter}
         onMouseLeave={handleMouseOptionsBottomLeave}>
-        <div className={styles["option--center"]} role="button" onClick={handleAddChoice}>
+        <div className={styles["option--center"]} role="button" onClick={() => {}}>
           + c
         </div>
       </div>
@@ -55,10 +53,10 @@ export function ParameterOptions() {
         className={styles["options-bottom"]}
         onMouseEnter={handleMouseOptionsBottomEnter}
         onMouseLeave={handleMouseOptionsBottomLeave}>
-        <div className={styles["option--left"]} role="button" onClick={handleAddParameter}>
+        <div className={styles["option--left"]} role="button" onClick={() => {}}>
           + p
         </div>
-        <div className={styles["option--right"]} role="button" onClick={handleAddChoice}>
+        <div className={styles["option--right"]} role="button" onClick={() => {}}>
           + c
         </div>
       </div>

@@ -60,6 +60,12 @@ export function ParameterHeader() {
   }, [name]);
 
   useEffect(() => {
+    if (isDragged) {
+    element.current.blur();
+    }
+  }, [isDragged])
+
+  useEffect(() => {
     const callback = (e) => {
       if (e.code === "Enter") {
         if (!isDuplicated && nameValue) {
