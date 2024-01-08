@@ -1,13 +1,14 @@
 import styles from "./ParameterContainer.module.scss";
 import { useParameter } from "./context/ParameterContext";
+import { isTop } from "./logic/model";
 
 export function ParameterContainer({ children }) {
-  const { id, top, isFolded, handleMouseParameterEnter, handleMouseParameterLeave } =
+  const { id, isFolded, handleMouseParameterEnter, handleMouseParameterLeave } =
     useParameter();
 
   const classStyle = isFolded
     ? styles["container--folded"]
-    : top
+    : isTop(id)
     ? styles["container--top"]
     : styles["container--nested"];
 

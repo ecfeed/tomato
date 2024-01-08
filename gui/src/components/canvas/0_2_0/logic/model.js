@@ -60,6 +60,16 @@ export const update = (element, parentId) => {
 
 //----------------------------------------------------------------------------------
 
+export const isTop = (id) => {
+  if (id === null || id === "root") {
+    return false;
+  }
+
+  const path = id.split(separator);
+
+  return path?.length === 2;
+}
+
 export const getParentId = (id) => {
   if (id === null || id === "root") {
     return "root";

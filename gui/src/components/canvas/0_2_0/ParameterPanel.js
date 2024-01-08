@@ -2,13 +2,12 @@ import { useDrop } from "react-dnd";
 import { ButtonDefault } from "./ButtonDefault";
 import styles from "./ParameterPanel.module.scss";
 import { useParameter } from "./context/ParameterContext";
-import { moveParameter } from "./logic/model";
+import { isTop, moveParameter } from "./logic/model";
 import { ItemTypes } from "./abstract/ItemTypes";
 
 export function ParameterPanel() {
   const {
     id,
-    top,
     setRoot,
     activeParameter,
     setActiveParameter,
@@ -32,7 +31,7 @@ export function ParameterPanel() {
     },
   }));
 
-  if (!top) {
+  if (!isTop(id)) {
     return null;
   }
 

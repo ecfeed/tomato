@@ -6,6 +6,7 @@ import {
   createParameter,
   getNameFromId,
   getParentId,
+  isTop,
   removeChoice,
   removeParameter,
   renameChoice,
@@ -20,13 +21,9 @@ const initialState = {
   isFolded: false,
 
   isOnParameter: false,
+  isOnHeader: false,
   isOnParameterChild: false,
   isOnOptionsBottom: false,
-  isOnHeader: false,
-
-  showAddParameter: false,
-  showAddChoice: false,
-  showRenameChoice: false,
 };
 
 const clean = {
@@ -34,10 +31,6 @@ const clean = {
   isOnParameterChild: false,
   isOnOptionsBottom: false,
   isOnHeader: false,
-
-  showAddParameter: false,
-  showAddChoice: false,
-  showRenameChoice: false,
 };
 
 const reducer = (state, action) => {
@@ -66,27 +59,12 @@ const reducer = (state, action) => {
       return { ...state, isFolded: true };
     case "folded:off":
       return { ...state, isFolded: false };
-    case "prompt:parameter-add:on":
-      return { ...state, ...clean, showAddParameter: true };
-    case "prompt:parameter-add:off":
-      return { ...state, ...clean };
-    case "prompt:parameter-remove":
-      return { ...state, ...clean };
-    case "prompt:choice-add:on":
-      return { ...state, ...clean, showAddChoice: true };
-    case "prompt:choice-add:off":
-      return { ...state, ...clean };
-    case "prompt:choice-rename:on":
-      return { ...state, ...clean, showRenameChoice: true };
-    case "prompt:choice-rename:off":
-      return { ...state, ...clean };
     default:
       throw new Error("Unknown action");
   }
 };
 
 export function ParameterProvider({
-  top,
   activeParameter,
   setActiveParameter,
   setRoot,
@@ -100,15 +78,12 @@ export function ParameterProvider({
   const [isDragged, setIsDragged] = useState(false);
 
   const { isOnParameter, isOnHeader, isOnParameterChild, isOnOptionsLeft } = state;
-  const { showAddParameter, showAddChoice, showRenameChoice } = state;
   const { isFolded } = state;
 
   const activeChoice = useRef();
 
   const { id, name, parameters = [], choices = [] } = parameter;
   const isStructure = parameters.length > 0;
-
-  const isSelected = showAddChoice || showAddParameter;
 
   //-------------------------------------------------------------------------------------------
 
@@ -191,7 +166,7 @@ export function ParameterProvider({
       return;
     }
 
-    if (top) {
+    if (isTop(id)) {
       if (value === undefined) {
         dispatch({ type: "folded:toggle" });
       } else {
@@ -339,8 +314,6 @@ export function ParameterProvider({
         setActiveParameter,
         setRoot,
 
-        top,
-
         id,
         name,
         choices,
@@ -363,24 +336,20 @@ export function ParameterProvider({
         isOnParameter,
         isOnHeader,
         isOnParameterChild,
-        isSelected,
         isLocked,
         isFolded,
         isStructure,
         setIsLocked,
 
-        showAddChoice,
         handleAddChoice,
         handleAddChoiceLogic,
         handleAddChoiceCancel,
 
-        showRenameChoice,
         handleRenameChoice,
         handleRenameChoiceLogic,
         handleRenameChoiceCancel,
         handleRenameChoicePlaceholder,
 
-        showAddParameter,
         handleAddParameter,
         handleAddParameterLogic,
         handleAddParameterCancel,

@@ -88,14 +88,13 @@ export function Canvas() {
             {structure.parameters.map((e) => (
               <div className={styles.parameter} key={e.id}>
                 <ParameterStructure
+                  parameter={e}
                   activeParameter={activeParameter}
                   setActiveParameter={setActiveParameter}
                   root={structure}
                   setRoot={setStructure}
-                  parameter={e}
                   isLocked={isLocked}
                   setIsLocked={setIsLocked}
-                  top={true}
                 />
               </div>
             ))}

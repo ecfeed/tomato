@@ -5,9 +5,10 @@ import { useParameter } from "./context/ParameterContext";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import { useEffect } from "react";
 import { ItemTypes } from "./abstract/ItemTypes";
+import { isTop } from "./logic/model";
 
 export function ParameterMain({ children }) {
-  const { id, top, name, isFolded, isSelected, setIsDragged } = useParameter();
+  const { id, name, isFolded, isSelected, setIsDragged } = useParameter();
 
   const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
     type: ItemTypes.PARAMETER,
@@ -25,7 +26,7 @@ export function ParameterMain({ children }) {
     dragPreview(getEmptyImage());
   }, [dragPreview]);
 
-  const classType = top ? isFolded ? styles['position--folded'] : styles["position--top"] : styles["position--nested"];
+  const classType = isTop(id) ? isFolded ? styles['position--folded'] : styles["position--top"] : styles["position--nested"];
   const classStyle = isSelected
     ? styles["style--negative"]
     : name.length !== 0
