@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./ParameterHeader.module.scss";
-import { useParameter } from "./context/ParameterContext";
+import { useParameterAction } from "./context/ParameterActionContext";
 import { checkIfChildExists, getParentId } from "./logic/model";
+import { useParameterMouse } from "./context/ParameterMouseContext";
 
 const inputExists = "↳ The name is not unique.";
 const inputEmpty = "↳ The name is not defined.";
@@ -15,13 +16,14 @@ export function ParameterHeader() {
     parameters,
     isFolded,
     isSelected,
-    isDragged,
-    isOnParameter,
     setIsLocked,
     handleSetFolded,
     handleRenameParameterLogic,
     handleRemoveParameterParentLogic,
-  } = useParameter();
+  } = useParameterAction();
+  const {
+    isDragged, isOnParameter
+  } = useParameterMouse();
 
   const [nameValue, setNameValue] = useState(name);
   const [labelValue, setLabelValue] = useState("");
@@ -35,15 +37,17 @@ export function ParameterHeader() {
 
   useEffect(() => {
     if (!name) {
+      setIsLocked(true);
       element.current.focus();
     }
-  }, [name]);
+  }, [name, setIsLocked]);
 
   useEffect(() => {
     if (name) {
+      setIsLocked(false);
       element.current.blur();
     }
-  }, [name, isDragged]);
+  }, [name, setIsLocked]);
 
   useEffect(() => {
     if (!isOnParameter) {

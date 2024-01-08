@@ -5,8 +5,9 @@ import { ParameterHeader } from "./ParameterHeader";
 import { ParameterMain } from "./ParameterMain";
 import { ParameterContainer } from "./ParameterContainer";
 import { Parameter } from "./Parameter";
-import { ParameterProvider } from "./context/ParameterContext";
+import { ParameterActionProvider } from "./context/ParameterActionContext";
 import { ParameterPanel } from "./ParameterPanel";
+import { ParameterMouseProvider } from "./context/ParameterMouseContext";
 
 export function ParameterStructure({
   activeParameter,
@@ -19,7 +20,7 @@ export function ParameterStructure({
   setIsLocked,
 }) {
   return (
-    <ParameterProvider
+    <ParameterActionProvider
       activeParameter={activeParameter}
       setActiveParameter={setActiveParameter}
       root={root}
@@ -28,17 +29,23 @@ export function ParameterStructure({
       setIsLocked={setIsLocked}
       parameter={parameter}
       parentMouseEvent={parentMouseEvent}>
-      <ParameterContainer>
-        <ParameterPanel />
-        <Parameter>
-          <ParameterMain>
-            <ParameterHeader />
-            {/* <ChildrenParameters /> */}
-            {/* <ChildrenChoices /> */}
-          </ParameterMain>
-          {/* <ParameterOptions /> */}
-        </Parameter>
-      </ParameterContainer>
-    </ParameterProvider>
+      <ParameterMouseProvider
+        id={parameter.id}
+        isLocked={isLocked}
+        parentMouseEvent={parentMouseEvent}
+        setActiveParameter={setActiveParameter}>
+        <ParameterContainer>
+          <ParameterPanel />
+          <Parameter>
+            <ParameterMain>
+              <ParameterHeader />
+              {/* <ChildrenParameters /> */}
+              {/* <ChildrenChoices /> */}
+            </ParameterMain>
+            {/* <ParameterOptions /> */}
+          </Parameter>
+        </ParameterContainer>
+      </ParameterMouseProvider>
+    </ParameterActionProvider>
   );
 }

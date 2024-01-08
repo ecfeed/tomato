@@ -1,20 +1,23 @@
 import styles from "./ParameterOptions.module.scss";
-import { useParameter } from "./context/ParameterContext";
+import { useParameterAction } from "./context/ParameterActionContext";
+import { useParameterMouse } from "./context/ParameterMouseContext";
 
 export function ParameterOptions() {
   const {
     parameters,
     choices,
-    handleMouseOptionsBottomEnter,
-    handleMouseOptionsBottomLeave,
     handleAddParameter,
     handleAddChoice,
-    isOnParameter,
-    isOnParameterChild,
     isSelected,
     isLocked,
     isFolded,
-  } = useParameter();
+  } = useParameterAction();
+  const {
+    handleMouseOptionsBottomEnter,
+    handleMouseOptionsBottomLeave,
+    isOnParameter,
+    isOnParameterChild,
+  } = useParameterMouse();
 
   if (!isOnParameter || isOnParameterChild || isSelected || isLocked || isFolded) {
     return null;

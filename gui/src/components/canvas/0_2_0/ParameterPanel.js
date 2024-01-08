@@ -1,9 +1,10 @@
 import { useDrop } from "react-dnd";
 import { ButtonDefault } from "./ButtonDefault";
 import styles from "./ParameterPanel.module.scss";
-import { useParameter } from "./context/ParameterContext";
+import { useParameterAction } from "./context/ParameterActionContext";
 import { isTop, moveParameter } from "./logic/model";
 import { ItemTypes } from "./abstract/ItemTypes";
+import { useParameterMouse } from "./context/ParameterMouseContext";
 
 export function ParameterPanel() {
   const {
@@ -13,10 +14,9 @@ export function ParameterPanel() {
     setActiveParameter,
     isLocked,
     isFolded,
-    isDragged,
-    isOnParameter,
     handleAddParameterParentLogic,
-  } = useParameter();
+  } = useParameterAction();
+  const { isDragged, isOnParameter } = useParameterMouse();
 
   const [, drop] = useDrop(() => ({
     accept: ItemTypes.PARAMETER,
@@ -36,7 +36,7 @@ export function ParameterPanel() {
   }
 
   if (isFolded) {
-    return <div className={styles['panel-parameter--empty']} />
+    return <div className={styles["panel-parameter--empty"]} />;
   }
 
   const handleInternalAddParameter = (input) => {

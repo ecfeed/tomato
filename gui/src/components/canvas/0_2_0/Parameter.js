@@ -1,9 +1,9 @@
 import styles from "./Parameter.module.scss";
-import { useParameter } from "./context/ParameterContext";
+import { useParameterAction } from "./context/ParameterActionContext";
 import { checkAdded, isTop } from "./logic/model";
 
 export function Parameter({ children }) {
-  const { id, isFolded } = useParameter();
+  const { id, isFolded } = useParameterAction();
 
   const styleAnimated = checkAdded(id) ? styles["parameter--animated"] : '';
   const styleNested = styles["parameter--nested"];

@@ -1,10 +1,11 @@
 import styles from "./ParameterContainer.module.scss";
-import { useParameter } from "./context/ParameterContext";
+import { useParameterAction } from "./context/ParameterActionContext";
+import { useParameterMouse } from "./context/ParameterMouseContext";
 import { isTop } from "./logic/model";
 
 export function ParameterContainer({ children }) {
-  const { id, isFolded, handleMouseParameterEnter, handleMouseParameterLeave } =
-    useParameter();
+  const { id, isFolded } = useParameterAction();
+  const { handleMouseParameterEnter, handleMouseParameterLeave } = useParameterMouse();
 
   const classStyle = isFolded
     ? styles["container--folded"]

@@ -1,5 +1,5 @@
 import styles from "./OptionsChoiceLeft.module.scss";
-import { useParameter } from "./context/ParameterContext";
+import { useParameterAction } from "./context/ParameterActionContext";
 
 export function OptionsChoiceLeft({
   isOnChoice,
@@ -10,7 +10,7 @@ export function OptionsChoiceLeft({
   handleMouseOptionsChoiceLeftLeave,
 }) {
   const { handleAddChoice, handleRenameChoice, handleRemoveChoiceLogic, isSelected, isLocked } =
-    useParameter();
+    useParameterAction();
 
   const handleInternalAddChoice = (input) => {
     handleAddChoice(input);

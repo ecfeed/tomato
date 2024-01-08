@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styles from "./Choice.module.scss";
-import { useParameter } from "./context/ParameterContext";
+import { useParameterAction } from "./context/ParameterActionContext";
 import { OptionsChoiceLeft } from "./OptionsChoiceLeft";
 
 export function Choice({ name, id }) {
-  const { activeChoice, isLocked } = useParameter();
+  const { activeChoice, isLocked } = useParameterAction();
 
   const [isOnChoice, setIsOnChoice] = useState();
   const [isOnOptionsChoiceLeft, setIsOnChoiceOptionsLeft] = useState();

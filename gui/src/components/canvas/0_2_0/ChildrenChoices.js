@@ -1,9 +1,9 @@
 import styles from "./ChildrenChoices.module.scss";
 import { Choice } from "./Choice";
-import { useParameter } from "./context/ParameterContext";
+import { useParameterAction } from "./context/ParameterActionContext";
 
 export function ChildrenChoices() {
-  const { choices, isFolded, isStructure } = useParameter();
+  const { choices, isFolded, isStructure } = useParameterAction();
 
   if (isFolded || isStructure) {
     return null;

@@ -1,14 +1,16 @@
 import { useDrag, useDragLayer } from "react-dnd";
 import styles from "./ParameterMain.module.scss";
-import { useParameter } from "./context/ParameterContext";
+import { useParameterAction } from "./context/ParameterActionContext";
 
 import { getEmptyImage } from "react-dnd-html5-backend";
 import { useEffect } from "react";
 import { ItemTypes } from "./abstract/ItemTypes";
 import { isTop } from "./logic/model";
+import { useParameterMouse } from "./context/ParameterMouseContext";
 
 export function ParameterMain({ children }) {
-  const { id, name, isFolded, isSelected, setIsDragged } = useParameter();
+  const { id, name, isFolded, isSelected } = useParameterAction();
+  const { setIsDragged} = useParameterMouse();
 
   const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
     type: ItemTypes.PARAMETER,

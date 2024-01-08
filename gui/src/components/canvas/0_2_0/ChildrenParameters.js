@@ -1,6 +1,7 @@
 import styles from "./ChildrenParameters.module.scss";
 import { ParameterStructure } from "./ParameterStructure";
-import { useParameter } from "./context/ParameterContext";
+import { useParameterAction } from "./context/ParameterActionContext";
+import { useParameterMouse } from "./context/ParameterMouseContext";
 
 export function ChildrenParameters() {
   const {
@@ -11,12 +12,15 @@ export function ChildrenParameters() {
     parameters,
     isLocked,
     setIsLocked,
-    handleMouseParameterChild,
     handleParameterUpdate,
     handleAddParameterParentLogic,
     handleRenameParameterLogic,
     handleRemoveParameterParentLogic,
-  } = useParameter();
+  } = useParameterAction();
+
+  const {
+    handleMouseParameterChild
+  } = useParameterMouse();
 
   if (isFolded) {
     return null;

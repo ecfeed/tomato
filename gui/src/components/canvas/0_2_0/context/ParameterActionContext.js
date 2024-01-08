@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useRef, useState } from "react";
+import { createContext, useContext, useReducer, useRef } from "react";
 import {
   addChoice,
   addParameter,
@@ -13,46 +13,19 @@ import {
   renameParameter,
 } from "../logic/model";
 
-const ParameterContext = createContext();
+const ParameterActionContext = createContext();
 
 const initialState = {
   structure: {},
 
   isFolded: false,
-
-  isOnParameter: false,
-  isOnHeader: false,
-  isOnParameterChild: false,
-  isOnOptionsBottom: false,
 };
 
-const clean = {
-  isOnParameter: false,
-  isOnParameterChild: false,
-  isOnOptionsBottom: false,
-  isOnHeader: false,
-};
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "structure:update":
       return { ...state, structure: action.payload };
-    case "mouse:body:enter":
-      return { ...state, isOnParameter: true };
-    case "mouse:body:leave":
-      return { ...state, ...clean };
-    case "mouse:options-bottom:enter":
-      return { ...state, ...clean, isOnParameter: true, isOnOptionsBottom: true };
-    case "mouse:options-bottom:leave":
-      return { ...state, isOnOptionsBottom: false };
-    case "mouse:child:enter":
-      return { ...state, ...clean, isOnParameter: true, isOnParameterChild: true };
-    case "mouse:child:leave":
-      return { ...state, isOnParameterChild: false };
-    case "mouse:header:enter":
-      return { ...state, ...clean, isOnParameter: true, isOnHeader: true };
-    case "mouse:header:leave":
-      return { ...state, isOnHeader: false };
     case "folded:toggle":
       return { ...state, isFolded: !state.isFolded };
     case "folded:on":
@@ -64,7 +37,7 @@ const reducer = (state, action) => {
   }
 };
 
-export function ParameterProvider({
+export function ParameterActionProvider({
   activeParameter,
   setActiveParameter,
   setRoot,
@@ -72,12 +45,9 @@ export function ParameterProvider({
   setIsLocked,
   children,
   parameter,
-  parentMouseEvent,
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [isDragged, setIsDragged] = useState(false);
 
-  const { isOnParameter, isOnHeader, isOnParameterChild, isOnOptionsLeft } = state;
   const { isFolded } = state;
 
   const activeChoice = useRef();
@@ -86,80 +56,6 @@ export function ParameterProvider({
   const isStructure = parameters.length > 0;
 
   //-------------------------------------------------------------------------------------------
-
-  const handleMouseParameterEnter = (e) => {
-    e.preventDefault();
-
-    if (isLocked) {
-      return;
-    }
-
-    setActiveParameter(id);
-    dispatch({ type: "mouse:body:enter" });
-
-    if (parentMouseEvent) {
-      parentMouseEvent(true);
-    }
-  };
-
-  const handleMouseParameterLeave = (e) => {
-    e.preventDefault();
-
-    if (isLocked) {
-      return;
-    }
-
-    setActiveParameter(null);
-    dispatch({ type: "mouse:body:leave" });
-
-    if (parentMouseEvent) {
-      parentMouseEvent(false);
-    }
-  };
-
-  const handleMouseHeaderEnter = (e) => {
-    e.preventDefault();
-
-    dispatch({ type: "mouse:header:enter" });
-  };
-
-  const handleMouseHeaderLeave = (e) => {
-    e.preventDefault();
-
-    dispatch({ type: "mouse:header:leave" });
-  };
-
-  const handleMouseOptionsBottomEnter = (e) => {
-    e.preventDefault();
-
-    if (!isLocked) {
-      activeChoice.current = null;
-    }
-
-    dispatch({ type: "mouse:options-bottom:enter" });
-  };
-
-  const handleMouseOptionsBottomLeave = (e) => {
-    e.preventDefault();
-
-    if (isLocked) {
-      return;
-    }
-
-    dispatch({ type: "mouse:options-bottom:leave" });
-  };
-
-  const handleMouseParameterChild = (value) => {
-    if (isLocked) {
-      return;
-    }
-
-    if (value) {
-      dispatch({ type: "mouse:child:enter" });
-    } else {
-      dispatch({ type: "mouse:child:leave" });
-    }
-  };
 
   const handleSetFolded = (value) => {
     if (isLocked) {
@@ -182,14 +78,10 @@ export function ParameterProvider({
   //-------------------------------------------------------------------------------------------
 
   const handleAddParameterCancel = () => {
-    dispatch({ type: "prompt:parameter-add:off" });
-
     setIsLocked(false);
   };
 
   const handleAddParameter = () => {
-    dispatch({ type: "prompt:parameter-add:on" });
-
     setIsLocked(true);
   };
 
@@ -198,10 +90,9 @@ export function ParameterProvider({
       return;
     }
 
-    const [candidate, parameter] = addParameter(id, createParameter(input), index);
+    const candidate = addParameter(id, createParameter(input), index);
 
     setRoot(candidate);
-    setActiveParameter(parameter.id);
 
     handleAddParameterCancel();
   };
@@ -213,12 +104,10 @@ export function ParameterProvider({
       return;
     }
 
-    const parentId = getParentId(id);
-    const candidate = addParameter(parentId, createParameter(""), id);
+    const candidate = addParameter(getParentId(id), createParameter(""), id);
 
     setActiveParameter(null);
-    dispatch({ type: "mouse:body:leave" });
-    setIsLocked(true);
+
     setRoot(candidate);
   };
 
@@ -232,6 +121,7 @@ export function ParameterProvider({
     const candidate = renameParameter(id, input);
 
     setActiveParameter(null);
+
     setRoot(candidate);
   };
 
@@ -308,7 +198,7 @@ export function ParameterProvider({
   //-------------------------------------------------------------------------------------------
 
   return (
-    <ParameterContext.Provider
+    <ParameterActionContext.Provider
       value={{
         activeParameter,
         setActiveParameter,
@@ -319,23 +209,8 @@ export function ParameterProvider({
         choices,
         parameters,
 
-        isDragged,
-        setIsDragged,
-
-        handleMouseParameterEnter,
-        handleMouseParameterLeave,
-        handleMouseHeaderEnter,
-        handleMouseHeaderLeave,
-        handleMouseOptionsBottomEnter,
-        handleMouseOptionsBottomLeave,
-
-        handleMouseParameterChild,
         handleSetFolded,
 
-        isOnOptionsLeft,
-        isOnParameter,
-        isOnHeader,
-        isOnParameterChild,
         isLocked,
         isFolded,
         isStructure,
@@ -365,15 +240,15 @@ export function ParameterProvider({
         activeChoice,
       }}>
       {children}
-    </ParameterContext.Provider>
+    </ParameterActionContext.Provider>
   );
 }
 
-export function useParameter() {
-  const context = useContext(ParameterContext);
+export function useParameterAction() {
+  const context = useContext(ParameterActionContext);
 
   if (context === undefined) {
-    throw new Error("ParameterContext was used outside of the ParameterProvider.");
+    throw new Error("ParameterActionContext was used outside of the ParameterActionProvider.");
   }
 
   return context;
