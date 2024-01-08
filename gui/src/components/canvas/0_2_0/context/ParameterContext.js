@@ -1,5 +1,4 @@
 import { createContext, useContext, useReducer, useRef, useState } from "react";
-import { faker } from "@faker-js/faker";
 import {
   addChoice,
   addParameter,
@@ -232,10 +231,6 @@ export function ParameterProvider({
     handleAddParameterCancel();
   };
 
-  const handleAddParameterPlaceholder = () => {
-    return faker.internet.domainWord();
-  };
-
   //-------------------------------------------------------------------------------------------
 
   const handleAddParameterParentLogic = (input) => {
@@ -297,10 +292,6 @@ export function ParameterProvider({
     } else {
       setRoot(addChoice(id, createChoice(input)));
     }
-  };
-
-  const handleAddChoicePlaceholder = () => {
-    return faker.internet.userName();
   };
 
   //-------------------------------------------------------------------------------------------
@@ -382,7 +373,6 @@ export function ParameterProvider({
         handleAddChoice,
         handleAddChoiceLogic,
         handleAddChoiceCancel,
-        handleAddChoicePlaceholder,
 
         showRenameChoice,
         handleRenameChoice,
@@ -394,7 +384,6 @@ export function ParameterProvider({
         handleAddParameter,
         handleAddParameterLogic,
         handleAddParameterCancel,
-        handleAddParameterPlaceholder,
 
         handleRenameParameterLogic,
 

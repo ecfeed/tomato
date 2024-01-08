@@ -3,7 +3,6 @@ import styles from "./PoC.module.css";
 // import { PageNav } from "./support/navigation/PageNav";
 // import { PageSidebar } from "./support/navigation/PageSidebar";
 
-import { getAllVersions as getChoiceVersions } from "../drivers/choice/ChoiceDriver";
 import { getAllVersions as getTooltipVersions } from "../drivers/tooltip/TooltipDriver";
 import { getAllVersions as getCanvasVersions } from "../drivers/canvas/CanvasDriver";
 import { getAllVersions as getPromptVersions } from "../drivers/prompt/PromptDriver";
@@ -13,9 +12,7 @@ function PoC() {
 
   let versions = [];
 
-  if (location.pathname.endsWith("choice")) {
-    versions = getChoiceVersions();
-  } else if (location.pathname.endsWith("tooltip")) {
+  if (location.pathname.endsWith("tooltip")) {
     versions = getTooltipVersions();
   } else if (location.pathname.endsWith("canvas")) {
     versions = getCanvasVersions();

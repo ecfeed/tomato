@@ -1,13 +1,12 @@
 .poc {
-
+    height: 90vh;
 }
 
 .main {
+    border: 1px solid red;
     display: flex;
     position: relative;
-    /* border-bottom: 2px solid black; */
-    /* border-top: 2px solid black; */
     display: flex;
-    overflow: scroll;
-    height: 90vh;
+    height: 100%;
+
 }

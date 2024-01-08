@@ -4,7 +4,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  /* border: 1px solid red; */
 }
 
 html {
@@ -14,10 +13,8 @@ html {
 
 body {
   font-size: 1.6rem;
-  height: 100%;
   margin: 0;
   padding: 0.4rem;
-  overflow: hidden;
 }
 
 h1 {

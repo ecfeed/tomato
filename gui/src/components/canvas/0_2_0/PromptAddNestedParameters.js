@@ -5,7 +5,6 @@ import { useParameter } from "./context/ParameterContext";
 export function PromptAddNestedParameters() {
   const {
     showAddParameter,
-    handleAddParameterPlaceholder,
     handleAddParameterCancel,
     handleAddParameterLogic,
   } = useParameter();
@@ -21,7 +20,7 @@ export function PromptAddNestedParameters() {
         text="
           The parameter will be added as a nested parameter.
         "
-        placeholder={handleAddParameterPlaceholder}
+        placeholder={() => "test"}
         handleCancel={handleAddParameterCancel}
         handleConfirm={handleAddParameterLogic}
         buttons={['add', 'cancel']}
